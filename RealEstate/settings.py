@@ -25,7 +25,7 @@ SECRET_KEY = 'svp68lt9ny@2k*pfmd8_!f-@o#x5lt64n!2t1yqr#tmzfmq^n#'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['161.35.120.182', 'localhost']
 
 
 # Application definition
@@ -88,16 +88,29 @@ WSGI_APPLICATION = 'RealEstate.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
+# Digital Ocean Database
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'RealEstate',
-        'USER': 'postgres',
-        'PASSWORD': '@rdeshir@md',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'realestae',
+        'USER': 'ardeshir',
+        'PASSWORD': '@rdeshiRdat@baS#',
         'HOST': 'localhost',
         'PORT': '',
     }
 }
+
+# My local PC database
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'RealEstate',
+#         'USER': 'postgres',
+#         'PASSWORD': '@rdeshir@md',
+#         'HOST': 'localhost',
+#         'PORT': '',
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -141,7 +154,7 @@ STATIC_URL = '/static/'
 # ]
 
 # The root for collecting all static files
-# STATIC_ROOT = os.path.join(BASE_DIR, 'allStaticFiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 # The root for uploaded files
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
