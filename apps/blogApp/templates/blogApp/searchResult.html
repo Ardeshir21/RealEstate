@@ -1,0 +1,231 @@
+{% extends "baseApp/base.html" %}
+{% load static %}
+{% load humanize %}
+{% load my_tags %}
+
+
+
+{% block head %}
+    <!-- Design fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{% static "blogApp/css/style.css" %}" rel="stylesheet">
+
+    <!-- Responsive styles for this template -->
+    <link href="{% static "blogApp/css/responsive.css" %}" rel="stylesheet">
+
+    <!-- Colors for this template -->
+    <link href="{% static "blogApp/css/colors.css" %}" rel="stylesheet">
+
+    <!-- Version Tech CSS for this template -->
+    <link href="{% static "blogApp/css/tech.css" %}" rel="stylesheet">
+{% endblock head %}
+
+
+{% block body_content %}
+  <!-- ##### Breadcumb Area Start ##### -->
+  <section class="breadcumb-area bg-img" style="background-image: url({{slideContent.image.url}});">
+      <div class="container h-100">
+          <div class="row h-100 align-items-center">
+              <div class="col-12">
+                  <div class="breadcumb-content">
+                      <h3 class="breadcumb-title">{{PageTitle}}</h3>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </section>
+  <!-- ##### Breadcumb Area End ##### -->
+
+  <!-- Results -->
+  <section class="south-blog-area section-padding-100">
+      <div class="container">
+          <!-- Posts -->
+          <div class="row">
+              <!-- Results Column -->
+              <div class="col-12 col-lg-8">
+                <div class="page-wrapper">
+                    <div class="blog-list clearfix">
+                      {% for post in allPosts %}
+                        <div class="blog-box row">
+                            <div class="col-md-4">
+                                <div class="post-media">
+                                    <a href="{% url 'blogApp:post_detail' slug=post.slug %}" title="">
+                                        <img src="{{post.image.url}}" alt="{{post.slug}}" class="img-fluid">
+                                        <div class="hovereffect"></div>
+                                    </a>
+                                </div><!-- end media -->
+                            </div><!-- end col -->
+                            <div class="blog-meta big-meta col-md-8">
+                                <h4><a href="{% url 'blogApp:post_detail' slug=post.slug %}" title="">{{post.title}}</a></h4>
+                                <p>{{post.shortContent}}</p>
+                                <small class="firstsmall"><a class="bg-orange" href="{% url 'blogApp:post_detail' slug=post.slug %}" title="">Read More</a></small>
+                                <small>{{post.created_on | date:"d M Y"}}</small>
+                                <small><a href="#" title="">{{post.author}}</a></small>
+                                <small><i class="fa fa-eye"></i> {{post.view}}</small>
+                            </div><!-- end meta -->
+                        </div><!-- end blog-box -->
+
+                        <hr class="invis">
+                      {% endfor %}
+                    </div><!-- end blog-list -->
+                </div><!-- end page-wrapper -->
+              </div>
+              <!-- Side Bar -->
+              <div class="col-12 col-lg-4">
+                <div class="blog-sidebar-area">
+                  <!-- Search Widget -->
+                  <div class="search-widget-area mb-70 ml-30">
+                      <form action="{% url 'blogApp:search' %}" method="GET">
+                          <input type="search" name="s" id="search" placeholder="Search a Keyword">
+                          <button type="submit"><i class="fa fa-search"></i></button>
+                      </form>
+                  </div>
+                  <!-- Catagories Widget -->
+                  <div class="south-catagories-card mb-70 ml-30">
+                      <h5>Categories</h5>
+                      <ul class="catagories-menu">
+                        {% for category in categories %}
+                          <li><a href="{% url 'blogApp:category_list' category=category.slug %}">{{category}}</a></li>
+                        {% endfor %}
+                      </ul>
+                  </div>
+
+                  <!-- Featured Properties -->
+                  <div class="featured-properties-slides owl-carousel">
+
+                    {% for property in featuredProperties %}
+                      <!-- Single Slide -->
+                      <div class="single-featured-property">
+                          <!-- Property Thumbnail -->
+                          <div class="property-thumb">
+                              <img src="{{property.image.url}}" alt="Property Picture">
+
+                              <!-- Tag -->
+                              <div class="tag">
+                                {% if property.tag == "FR" %}
+                                <div class="tag rentTag">
+                                    <span>{{property.get_tag_display}}</span>
+                                </div>
+                                {% else %}
+                                <div class="tag saleTag">
+                                    <span>{{property.get_tag_display}}</span>
+                                </div>
+                                {% endif %}
+                              </div>
+
+                              <!-- Price -->
+                              <div class="list-price">
+                                {% if property.tag == "FR" %}
+                                  <p>
+                                    {% filter floatformat:"0"|intcomma %}
+                                        {{property.price}}
+                                    {% endfilter %} $/Month
+                                  </p>
+                                {% else %}
+                                  <p>
+                                    {% filter floatformat:"0"|intcomma %}
+                                        {{property.price}}
+                                    {% endfilter %} $
+                                  </p>
+                                {% endif %}
+                              </div>
+                          </div>
+
+                          <!-- Property Content -->
+                          <div class="property-content">
+                              <a href="{% url 'baseApp:propertyView' property.id %}"><h5>{{property.title}}</h5></a>
+                              <p class="location"><img src="{% static "baseApp/img/icons/location.png" %}" alt="location icon">{{property.complex.region.name}}</p>
+                              <p class="thumbnailText">Complex: <em>{{property.complex.name}}</em></p>
+                              <div class="property-meta-data d-flex align-items-end justify-content-between">
+                                <div class="new-tag">
+                                    <img src="{% static "baseApp/img/icons/new.png" %}" alt="new icon">
+                                </div>
+                                <div class="bathroom">
+                                    <img src="{% static "baseApp/img/icons/bathtub.png" %}" alt="icon ">
+                                    <span>{{property.bathroom}}</span>
+                                </div>
+                                <div class="garage">
+                                    <img src="{% static "baseApp/img/icons/garage.png" %}" alt="icon">
+                                    <span>{{property.bedroom.number}}</span>
+                                </div>
+                                <div class="space">
+                                    <img src="{% static "baseApp/img/icons/space.png" %}" alt="icon">
+                                    <span>{{property.build_area}} Sq. m</span>
+                                </div>
+                              </div>
+                          </div>
+                      </div>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+          </div>
+
+          <!-- Paginate  -->
+          <div class="row">
+              <div class="col-12">
+                <!-- Paginate Buttons -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="south-pagination d-flex justify-content-center">
+                          <nav aria-label="Page navigation">
+                              <!-- Using a custom Template Tag Function in main_app/templatetags folder -->
+                              <!-- param_replace function -->
+                              <ul class="pagination">
+                                {% if is_paginated %}
+
+                                  <!-- Previose Button -->
+                                    {% if page_obj.has_previous %}
+                                      <li class="page-item">
+                                        <a href="?{% param_replace page=page_obj.previous_page_number %}" class="page-link">
+                                          Previous
+                                        </a>
+                                      </li>
+                                    {% else %}
+                                      <li class="page-item disabled">
+                                        <a href="#" class="page-link">
+                                          Previous
+                                        </a>
+                                      </li>
+                                    {% endif %}
+
+
+                                  <!-- Number Buttons -->
+                                  {% for i in page_obj.paginator.page_range %}
+                                    {% if page_obj.number == i %}
+                                      <li class="page-item active"><a href="?{% param_replace page=i %}" class="page-link">{{i}}</a></li>
+                                    {% else %}
+                                      <li class="page-item"><a href="?{% param_replace page=i %}" class="page-link">{{i}}</a></li>
+                                    {% endif %}
+                                  {% endfor %}
+
+
+                                  <!-- Next Button -->
+                                  {% if page_obj.has_next %}
+                                    <li class="page-item">
+                                      <a href="?{% param_replace page=page_obj.next_page_number %}" class="page-link">
+                                        Next
+                                      </a>
+                                    </li>
+                                  {% else %}
+                                    <li class="page-item disabled">
+                                      <a href="#" class="page-link">
+                                        Next
+                                      </a>
+                                    </li>
+                                  {% endif %}
+                                {% endif %}
+                              </ul>
+                              <p style="text-align:center;">Posts {{ page_obj.start_index }}—{{ page_obj.end_index}}</p>
+                          </nav>
+                        </div>
+                    </div>
+                </div>
+
+              </div>
+          </div>
+      </div>
+  </section>
+{% endblock body_content %}
