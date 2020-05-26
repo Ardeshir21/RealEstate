@@ -12,6 +12,23 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 
+
+
+# This part of code is for keep secret variables secure and also it to change some parameters for Development/Production
+# It returns the secrets_dict which can be used in the main code
+# This file is diiferent in Server and my local PC
+secret_file = 'RealEstateKEYS.txt'
+secrets = ['SECRET_KEY', 'DEBUG' , 'DATABASE_NAME', 'DATABASE_USERNAME', 'DATABASE_PASSWORD']
+SECRETS_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+filepath = os.path.join(SECRETS_DIR, secret_file)
+secrets_dict = {}
+with open(filepath) as fp:
+   line = fp.readline()
+   for item in secrets:
+       secrets_dict[item] = line.strip()
+       line = fp.readline()
+
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
@@ -20,12 +37,15 @@ TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'svp68lt9ny@2k*pfmd8_!f-@o#x5lt64n!2t1yqr#tmzfmq^n#'
+SECRET_KEY = secrets_dict['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = secrets_dict['DEBUG']
 
-ALLOWED_HOSTS = ['161.35.103.31', 'localhost']
+ALLOWED_HOSTS = ['161.35.103.31',
+                 'localhost',
+                 '127.0.0.1'
+                 ]
 
 
 # Application definition
@@ -92,9 +112,9 @@ WSGI_APPLICATION = 'RealEstate.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'realestate',
-        'USER': 'ardeshir',
-        'PASSWORD': '@rdeshiRdat@baS#',
+        'NAME': secrets_dict['DATABASE_NAME'],
+        'USER': secrets_dict['DATABASE_USERNAME'],
+        'PASSWORD': secrets_dict['DATABASE_PASSWORD'],
         'HOST': 'localhost',
         'PORT': '',
     }
