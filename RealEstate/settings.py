@@ -40,7 +40,9 @@ TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
 SECRET_KEY = secrets_dict['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = secrets_dict['DEBUG']
+# The DEBUG value in 'RealEstateKEYS.txt' is an empty string ''
+# I used bool() to return False
+DEBUG = bool(secrets_dict['DEBUG'])
 
 ALLOWED_HOSTS = ['161.35.103.31',
                  'localhost',
@@ -119,18 +121,6 @@ DATABASES = {
         'PORT': '',
     }
 }
-
-# My local PC database
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'RealEstate',
-#         'USER': 'postgres',
-#         'PASSWORD': '@rdeshir@md',
-#         'HOST': 'localhost',
-#         'PORT': '',
-#     }
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
