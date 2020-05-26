@@ -47,11 +47,16 @@
               <div class="col-12 col-lg-8">
                 <div class="page-wrapper">
                     <div class="blog-list clearfix">
+                      <!-- Result Count and Sort Button -->
+                      <div class="col-sm mb-50">
+                          <h3 style="text-align: center;">{{resultCount}} Posts Found</h3>
+                      </div>
+
                       {% for post in allPosts %}
                         <div class="blog-box row">
                             <div class="col-md-4">
                                 <div class="post-media">
-                                    <a href="{% url 'blogApp:post_detail' slug=post.slug %}" title="">
+                                    <a href="{% url 'blogApp:post_detail' slug=post.slug %}">
                                         <img src="{{post.image.url}}" alt="{{post.slug}}" class="img-fluid">
                                         <div class="hovereffect"></div>
                                     </a>
@@ -59,7 +64,7 @@
                             </div><!-- end col -->
                             <div class="blog-meta big-meta col-md-8">
                                 <h4><a href="{% url 'blogApp:post_detail' slug=post.slug %}" title="">{{post.title}}</a></h4>
-                                <p>{{post.shortContent}}</p>
+                                <p>{{post.shortContent|slice:":200" }} ...</p>
                                 <small class="firstsmall"><a class="bg-orange" href="{% url 'blogApp:post_detail' slug=post.slug %}" title="">Read More</a></small>
                                 <small>{{post.created_on | date:"d M Y"}}</small>
                                 <small><a href="#" title="">{{post.author}}</a></small>
@@ -100,7 +105,7 @@
                       <div class="single-featured-property">
                           <!-- Property Thumbnail -->
                           <div class="property-thumb">
-                              <img src="{{property.image.url}}" alt="Property Picture">
+                              <a href="{% url 'baseApp:propertyView' property.id %}"><img src="{{property.image.url}}" alt="Property Picture"></a>
 
                               <!-- Tag -->
                               <div class="tag">

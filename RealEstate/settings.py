@@ -16,7 +16,7 @@ import os
 
 # This part of code is for keep secret variables secure and also it to change some parameters for Development/Production
 # It returns the secrets_dict which can be used in the main code
-# This file is diiferent in Server and my local PC
+# This file is different in Server and my local PC
 secret_file = 'RealEstateKEYS.txt'
 secrets = ['SECRET_KEY', 'DEBUG' , 'DATABASE_NAME', 'DATABASE_USERNAME', 'DATABASE_PASSWORD']
 SECRETS_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

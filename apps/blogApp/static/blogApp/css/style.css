@@ -9,7 +9,7 @@
 
 /**************************************
     Table of Content
-    
+
     1. BASIC
     2. HEADER
     3. SECTION
@@ -19,7 +19,7 @@
     7. WIDGETS
 **************************************/
 
-/* BASIC 
+/* BASIC
 **************************************/
 
 body {
@@ -130,7 +130,7 @@ a {
 }
 
 
-/* HEADER 
+/* HEADER
 **************************************/
 
 .header {
@@ -139,6 +139,9 @@ a {
     background-color: #ffffff;
 }
 
+.mb-50 h3{
+  margin-bottom: 60px;
+}
 .navbar-inverse .navbar-nav .nav-link,
 .navbar-nav .nav-link {
     font-size: 15px;
@@ -699,7 +702,7 @@ div.tab button:hover {
 }
 
 
-/* PAGES 
+/* PAGES
 **************************************/
 
 .notfound h2 {
@@ -833,7 +836,7 @@ div.tab button:hover {
 }
 
 
-/* BLOG 
+/* BLOG
 **************************************/
 
 .carousel-indicators li {
@@ -1320,7 +1323,7 @@ hr.invis3 {
 }
 
 
-/* WIDGETS 
+/* WIDGETS
 **************************************/
 
 .sidebar .widget {

@@ -281,7 +281,7 @@
                       <div class="single-featured-property mb-50">
                           <!-- Property Thumbnail -->
                           <div class="property-thumb">
-                              <img src="{{property.image.url}}" alt="property image">
+                              <a href="{% url 'baseApp:propertyView' property.id %}"><img src="{{property.image.url}}" alt="property image"></a>
 
                               <!-- TAG **************************CHANGE COLOR***************************-->
                               {% if property.tag == "FR" %}

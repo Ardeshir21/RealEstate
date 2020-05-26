@@ -49,6 +49,8 @@ class CategoryListView(generic.ListView):
             context['categories'] = models.PostCategories.objects.all()
             # This title is different with BLOG Page view
             context['PageTitle'] = models.PostCategories.objects.get(slug=self.kwargs['category']).category
+            # result counte
+            context['resultCount'] = len(self.get_queryset())
             return context
 
 
@@ -89,6 +91,12 @@ class PostSearch(generic.ListView):
         if not(keyword==None or keyword==''):
             # Content Search -- For filtering based on the Text Search
             result= result.filter(Q(title__icontains=keyword) | Q(content__icontains=keyword), status=True).order_by('-created_on')
+
+        # Return a message if nothing founds
+        if not(result==None):
+            print("I am TRUEEEEEEEEEEEE")
+        else: print("EMPTYYYYYYYYYYYYYY")
+
         return result
 
     def get_context_data(self, **kwargs):
@@ -101,4 +109,6 @@ class PostSearch(generic.ListView):
         context['categories'] = models.PostCategories.objects.all()
         # This title is different with BLOG Page view
         context['PageTitle'] = 'SEARCH'
+        # result counte
+        context['resultCount'] = len(self.get_queryset())
         return context

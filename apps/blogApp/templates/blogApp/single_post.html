@@ -29,7 +29,6 @@
               </div>
           </div>
           <!-- Side Bar -->
-          <!-- Side Bar -->
           <div class="col-12 col-lg-4">
             <div class="blog-sidebar-area">
               <!-- Search Widget -->
@@ -57,7 +56,7 @@
                   <div class="single-featured-property">
                       <!-- Property Thumbnail -->
                       <div class="property-thumb">
-                          <img src="{{property.image.url}}" alt="Property Picture">
+                          <a href="{% url 'baseApp:propertyView' property.id %}"><img src="{{property.image.url}}" alt="Property Picture"></a>
 
                           <!-- Tag -->
                           <div class="tag">

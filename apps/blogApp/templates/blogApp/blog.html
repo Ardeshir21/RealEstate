@@ -53,7 +53,7 @@
                             </div>
                             <!-- Headline -->
                             <a href="{% url 'blogApp:post_detail' slug=post.slug %}" class="headline">{{post.title}}</a>
-                            <p>{{post.shortContent}}</p>
+                            <p>{{post.shortContent|slice:":350" }} ...</p>
                             <!-- Read More btn -->
                             <a href="{% url 'blogApp:post_detail' slug=post.slug %}" class="btn south-btn">Read More</a>
                         </div>
@@ -89,7 +89,7 @@
                         <div class="single-featured-property">
                             <!-- Property Thumbnail -->
                             <div class="property-thumb">
-                                <img src="{{property.image.url}}" alt="Property Picture">
+                                <a href="{% url 'baseApp:propertyView' property.id %}"><img src="{{property.image.url}}" alt="Property Picture"></a>
 
                                 <!-- Tag -->
                                 <div class="tag">

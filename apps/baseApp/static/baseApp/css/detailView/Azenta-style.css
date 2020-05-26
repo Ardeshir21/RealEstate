@@ -31,7 +31,9 @@
 /*---------------------
   Helper CSS
 -----------------------*/
-
+body {
+  font-family: "Open Sans", sans-serif; }
+	
 .section-title {
 	text-align: center;
 	margin-bottom: 65px;
@@ -1189,6 +1191,12 @@
 }
 .property-sidebar .sidebar-search {
 	margin-bottom: 75px;
+}
+.property-sidebar small {
+	color: #a3a5a8;
+  font-weight: 600;
+  font-size: 12px;
+  font-family: 'Montserrat Alternates', sans-serif;
 }
 .property-sidebar .sidebar-search .nice-select {
 	width: 100%;

@@ -456,6 +456,9 @@ img {
   border-color: #947054 !important;
 }
 
+.form-group .btn-default {
+  margin: 2px !important;
+}
 
 /* :: 8.0 Header Area CSS */
 .dark .classynav ul li .dropdown,
