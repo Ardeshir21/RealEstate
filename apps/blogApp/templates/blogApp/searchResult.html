@@ -64,7 +64,7 @@
                             </div><!-- end col -->
                             <div class="blog-meta big-meta col-md-8">
                                 <h4><a href="{% url 'blogApp:post_detail' slug=post.slug %}" title="">{{post.title}}</a></h4>
-                                <p>{{post.shortContent|slice:":200" }} ...</p>
+                                <p>{{post.shortContent|slice:":370" }} ...</p>
                                 <small class="firstsmall"><a class="bg-orange" href="{% url 'blogApp:post_detail' slug=post.slug %}" title="">Read More</a></small>
                                 <small>{{post.created_on | date:"d M Y"}}</small>
                                 <small><a href="#" title="">{{post.author}}</a></small>

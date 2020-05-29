@@ -169,7 +169,7 @@
                                                     </tr>
                                                     <tr>
                                                         <td class="pt-name">Reference</td>
-                                                        <td class="p-value"># SET-000{{property.id}}</td>
+                                                        <td class="p-value"># SET-00{{property.id}}</td>
                                                     </tr>
                                                     <tr>
                                                         <td class="pt-name">Contract type</td>
@@ -194,6 +194,12 @@
                                                 </tbody>
                                             </table>
                                         </div>
+                                        <!-- Features -->
+                                        <ul class="listings-core-features d-flex align-items-center">
+                                          {% for feature in property.features.all %}
+                                            <li><i class="fa fa-check" aria-hidden="true"></i>{{feature}}</li>
+                                          {% endfor %}
+                                        </ul>
                                     </div>
                                     <!-- TAB 2 -->
                                     <div class="tab-pane fade" id="tab-2" role="tabpanel">
@@ -292,8 +298,12 @@
 
                             <!-- Open Search -->
                             <div class="form-group text-center">
-                              <small>Search by Reference No.</small>
-                              <input type="input" class="form-control" name="input" placeholder="# SET-00026">
+                              <p><small>Search by Reference No.</small></p>
+                              <select multiple="multiple" name="ref_select" placeholder="For Example: SET-0026" class="SlectBox-grp-src">
+                                {% for asset in assets_all %}
+                                  <option>SET-00{{asset.id}}</option>
+                                {% endfor %}
+                              </select>
                             </div>
 
                             <!-- Property Types -->
@@ -317,7 +327,7 @@
                             </div>
 
                             <!-- Space Range -->
-                            <div class="slider-range">
+                            <div class="slider-range text-center">
                                 <div data-min={{spaceRange.build_area__min}} data-max={{spaceRange.build_area__max}} data-unit=" sq. m" data-step="5" class="slider-range-price ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" data-value-min={{spaceRange.build_area__min}} data-value-max={{spaceRange.build_area__max}}>
                                     <div class="ui-slider-range ui-widget-header ui-corner-all"></div>
                                     <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
@@ -325,14 +335,12 @@
                                 </div>
                                 <div class="range pt-2">{{spaceRange.build_area__min}} sq. m - {{spaceRange.build_area__max}} sq. m</div>
                                 <!-- for space to read on GET request -->
-                                <p>
-                                  <input type="text" name="space_select" id="minval" readonly style= "background: transparent; border: none; width:0px; height:0px;">
-                                  <input type="text" name="space_select" id="maxval" readonly style= "background: transparent; border: none; width:0px; height:0px;">
-                                </p>
+                                <input type="hidden" name="space_select" id="minval" readonly style= "background: transparent; border: none; width:0px; height:0px;">
+                                <input type="hidden" name="space_select" id="maxval" readonly style= "background: transparent; border: none; width:0px; height:0px;">
                             </div>
 
                             <!-- Price Range -->
-                            <div class="slider-range">
+                            <div class="slider-range text-center">
 
                                 <div id='priceDiv' data-min={{priceRange.price__min}} data-max={{priceRange.price__max}} data-unit=" $" data-step="10000" class="slider-range-price ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" data-value-min={{priceRange.price__min}} data-value-max={{priceRange.price__max}}>
                                     <div class="ui-slider-range ui-widget-header ui-corner-all"></div>
@@ -350,10 +358,8 @@
                                 </div>
 
                                 <!-- for price to read on GET request-->
-                                <p>
-                                  <input type="text" name="price_select" id="minval" readonly style= "background: transparent; border: none; width:0px; height:0px;">
-                                  <input type="text" name="price_select" id="maxval" readonly style= "background: transparent; border: none; width:0px; height:0px;">
-                                </p>
+                                <input type="hiiden" name="price_select" id="minval" readonly style= "background: transparent; border: none; width:0px; height:0px;">
+                                <input type="hidden" name="price_select" id="maxval" readonly style= "background: transparent; border: none; width:0px; height:0px;">
 
                             </div>
 

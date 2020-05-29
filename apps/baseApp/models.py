@@ -14,6 +14,14 @@ ASSET_TYPES = [('FL', 'Flat'),
 
 TAG_CHOICES =[('FS', 'For Sale'),
                 ('FR', 'For Rent')]
+
+PAGE_CHOICES = [('HOME', 'Homepage'),
+                ('PROPERTY_SEARCH', 'Property Search'),
+                ('PROPERTY_PAGE', 'Property View'),
+                ('BLOG_HOME', 'Blog Homepage'),
+                ('BLOG_SEARCH', 'Blog Search'),
+                ('BLOG_CATEGORY', 'Blog Categories'),
+                ('BLOG_POST', 'Blog Post')]
 # Models
 class Country(models.Model):
 
@@ -114,7 +122,8 @@ class Asset(models.Model):
     featured = models.BooleanField(choices=YES_NO_CHOICES, default=False)
     active = models.BooleanField(choices=YES_NO_CHOICES, default=True)
     tag = models.CharField(max_length=50, choices=TAG_CHOICES, default='FS')
-    image = models.ImageField(upload_to='baseApp/property/', null=True)
+    image = models.ImageField(upload_to='baseApp/property/', null=True,
+                                help_text='Thumbnail Image 1600x1200')
     title = models.CharField(max_length=150, default='Comfortable Apartment')
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
@@ -123,22 +132,25 @@ class Asset(models.Model):
         return 'Reference: {}'.format(self.id)
 
     class Meta():
-        order_with_respect_to = 'created'
+        ordering  = ['-created']
 
     def get_absolute_url(self):
         return reverse_lazy('baseApp:propertyView', args=(self.id,))
 
 class AssetImages(models.Model):
     asset = models.ForeignKey(Asset, related_name='images', on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='baseApp/property/', null=True)
+    image = models.ImageField(upload_to='baseApp/property/', null=True,
+                                help_text='Slide Image 1600x1200')
 
     class Meta():
         verbose_name_plural = "Asset Images"
 
 
 class Slide(models.Model):
-    image = models.ImageField(upload_to='baseApp/slider/', blank=True, null=True)
-    title = models.CharField(max_length=150, default='Find Your Home')
+    image = models.ImageField(upload_to='baseApp/slider/', blank=True, null=True,
+                                help_text='Slider Image 1920x1280')
+    title = models.CharField(max_length=110, default='Find Your Home')
+    useFor = models.CharField(max_length=50, choices=PAGE_CHOICES, default='HOME')
     active = models.BooleanField(choices=YES_NO_CHOICES, default=False)
 
     def __str__(self):

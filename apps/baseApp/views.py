@@ -21,7 +21,7 @@ class IndexView(generic.ListView):
         context['propertyTypeNames'] = set([obj.get_type_display() for obj in models.Asset.objects.all()])
         context['tagType'] = set([obj.get_tag_display() for obj in models.Asset.objects.all()])
         context['bedroomNumbers'] = models.Bedroom.objects.order_by('number')
-        context['slideContent'] = models.Slide.objects.filter(active__exact=True)
+        context['slideContent'] = models.Slide.objects.filter(useFor__exact='HOME', active__exact=True)
         context['spaceRange'] = models.Asset.objects.aggregate(Min('build_area'), Max('build_area'))
         # ********for later expansion*********
         # context['priceRangeRent'] = models.Asset.objects.filter(tag__exact='FR').aggregate(Min('price'), Max('price'))
@@ -50,6 +50,7 @@ class AssetFilterView(generic.ListView):
         price_query = self.request.GET.getlist('price_select') # value=[minValue, MaxValue]
         space_query = self.request.GET.getlist('space_select') # value=[minValue, MaxValue]
         orderby_query = self.request.GET.get('sort')
+        reference_query = self.request.GET.getlist('ref_select')
 
         # CONVERT Queries
         # Convert the property type into model Format ('FL', 'Flat')
@@ -68,6 +69,12 @@ class AssetFilterView(generic.ListView):
             if tag_query == t[1]:
                 tag_query = t[0]
                 break
+
+        # Process the Reference Codes to match with database pk
+        edited_reference = []
+        for r in reference_query:
+            edited_reference.append(r[6:])
+        reference_query = edited_reference
 
         # FILTER based on queries
         # Regions
@@ -89,6 +96,15 @@ class AssetFilterView(generic.ListView):
             tempQuery = Q(type=propertyType_query[0])
             for propertytype in propertyType_query[1:]:
                 tempQuery |= Q(type=propertytype)
+            print(tempQuery)
+            result = result.filter(tempQuery)
+
+        # Reference Code
+        if not(reference_query==[] or reference_query=='' or reference_query==None):
+            tempQuery = Q(pk=int(reference_query[0]))
+            for ref in reference_query[1:]:
+                tempQuery |= Q(pk=int(ref))
+            # print(tempQuery)
             result = result.filter(tempQuery)
 
         # Bedrooms
@@ -138,6 +154,8 @@ class AssetFilterView(generic.ListView):
 
         ###### Note: NEED IMPROVEMENT, LESS CALLS ON DATABASE #####
         # Search box items ** This part also need to be copied to IndexView **
+        # All assets are gathered because the get_queryset() filtered them. You need assets_all for Reference Codes
+        context['assets_all'] = models.Asset.objects.all()
         context['regions'] = models.Region.objects.all()
         context['propertyTypeNames'] = set([obj.get_type_display() for obj in models.Asset.objects.all()])
         context['tagType'] = set([obj.get_tag_display() for obj in models.Asset.objects.all()])
@@ -150,7 +168,7 @@ class AssetFilterView(generic.ListView):
         context['resultCount'] = len(self.get_queryset())
 
         # An slide picture for Search Result page. This need just one slide >> id= ?
-        context['slideContent'] = models.Slide.objects.get(id=1)
+        context['slideContent'] = models.Slide.objects.get(useFor__exact='PROPERTY_SEARCH', active__exact=True)
 
         # Building a dictionary of GET request with nice words in order to present them in the search result page.
         # The reason for this line of code is to convert the [1,2,3,4,...] region_select to its real region names from Model
@@ -208,6 +226,7 @@ class AssetFilterView(generic.ListView):
         return context
 
 class AssetSingleView(generic.DetailView):
+    # Because this is a DetailView, it will use get() method on the model and return only the property with requested pk
     context_object_name = 'property'
     template_name = 'baseApp/propertyDetails.html'
     model = models.Asset
@@ -218,6 +237,8 @@ class AssetSingleView(generic.DetailView):
 
         ###### Note: NEED IMPROVEMENT, LESS CALLS ON DATABASE #####
         # Search box items ** This part also need to be changed in IndexView **
+        # All assets are gathered because the get_queryset() filtered them. You need assets_all for Reference Codes
+        context['assets_all'] = models.Asset.objects.all()
         context['regions'] = models.Region.objects.all()
         context['propertyTypeNames'] = set([obj.get_type_display() for obj in models.Asset.objects.all()])
         context['tagType'] = set([obj.get_tag_display() for obj in models.Asset.objects.all()])
@@ -230,7 +251,7 @@ class AssetSingleView(generic.DetailView):
         context['resultCount'] = len(self.get_queryset())
 
         # An slide picture for Search Result page. This need just one slide >> id= ?
-        context['slideContent'] = models.Slide.objects.get(id=1)
+        context['slideContent'] = models.Slide.objects.get(useFor__exact='PROPERTY_PAGE', active__exact=True)
 
 
         # context['test'] = models.Asset.objects.values_list('bedroom', flat=True).distinct().order_by('bedroom')

@@ -454,11 +454,13 @@ img {
 .form-group .btn-primary {
   background-color: #d5a253 !important;
   border-color: #947054 !important;
+  margin: 2px !important;
 }
 
 .form-group .btn-default {
   margin: 2px !important;
 }
+
 
 /* :: 8.0 Header Area CSS */
 .dark .classynav ul li .dropdown,
@@ -754,20 +756,24 @@ img {
 
 /* :: 10.0 Advanced Search Area */
 .form-control {
-  background-color: transparent;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  border-radius:4px;
+  margin:0;
   width: 100%;
   height: 34px;
-  border-radius: 4px;
   font-size: 14px;
-  color: #000000;
+  color: #8e8e8e;
+  bottom:2px;
   margin-bottom: 30px;
+  text-transform:uppercase;
   font-weight: 500;
   padding: 0 15px;
   border: 1px solid #e1dddd; }
   .form-control:hover, .form-control:focus {
     background-color: transparent;
-    box-shadow: none;
-    border: 1px solid #e1dddd; }
+    box-shadow: 0 0 2px #7799D0;
+    border-color: #7799D0; }
 
 .nice-select {
   line-height: 34px; }
@@ -812,7 +818,8 @@ img {
     .south-search-area .advanced-search-form .slider-range {
       flex: 0 0 50%;
       min-width: 50%;
-      margin-bottom: 30px; }
+      margin-bottom: 40px;
+      }
       @media only screen and (max-width: 767px) {
         .south-search-area .advanced-search-form .slider-range {
           margin-bottom: 50px; } }
@@ -1441,11 +1448,11 @@ img {
     @media only screen and (max-width: 767px) {
       .listings-content .property-meta-data img {
         margin-right: 0; } }
-  .listings-content .listings-core-features {
-    padding: 70px 0;
+  .listings-core-features {
+    padding: 20px;
     -ms-flex-wrap: wrap;
     flex-wrap: wrap; }
-    .listings-content .listings-core-features li {
+    .listings-core-features li {
       -webkit-box-flex: 0;
       -ms-flex: 0 0 33.3333333%;
       flex: 0 0 33.3333333%;
@@ -1459,7 +1466,7 @@ img {
           -ms-flex: 0 0 100%;
           flex: 0 0 100%;
           min-width: 100%; } }
-      .listings-content .listings-core-features li i {
+      .listings-core-features li i {
         width: 27px;
         height: 27px;
         background-color: #947054;

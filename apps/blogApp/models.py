@@ -32,11 +32,11 @@ class PostCategories(models.Model):
 class Post(models.Model):
     author = models.ForeignKey(User, on_delete= models.CASCADE, related_name='blog_posts')
     categories = models.ManyToManyField(PostCategories, related_name='categories', null=True)
-    title = models.CharField(max_length=100, unique=True)
-    content = RichTextUploadingField()
-    shortContent = models.TextField(max_length=400, blank=True)
+    title = models.CharField(max_length=110, unique=True)
+    content = RichTextUploadingField(help_text='Full images can be 730px wide')
+    shortContent = models.TextField(max_length=370, blank=True, help_text='Max Characters = 370')
     image = models.ImageField(upload_to='blogApp/post/', blank=True, null=True,
-                                help_text="The picture for thumbnail")
+                                help_text="Thumbnail Image  1600x1200")
     slug = models.SlugField(max_length=150, unique=True, blank=True, null=True,
                                 help_text="The name of the page as it will appear in URLs e.g http://domain.com/blog/[my-slug]/")
     created_on = models.DateTimeField(auto_now_add=True)

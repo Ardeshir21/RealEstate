@@ -10,3 +10,4 @@ staticfiles
 .env
 db.sqlite3
 RealEstateKEYS.txt
+Digital Ocean.txt

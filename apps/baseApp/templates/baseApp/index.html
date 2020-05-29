@@ -51,9 +51,19 @@
                                 <div class="col-12 col-md-4 col-lg-3 pb-5">
                                     <div class="form-group text-center">
                                       <p><small>Search by Reference No.</small></p>
-                                      <input type="input" class="form-control" name="input" placeholder="# SET-00026">
+                                      <select multiple="multiple" name="ref_select" placeholder="For Example: SET-0026" class="SlectBox-grp-src">
+                                        {% for asset in assets_all %}
+                                          <option>SET-00{{asset.id}}</option>
+                                        {% endfor %}
+                                      </select>
                                     </div>
                                 </div>
+                                <!-- <div class="col-12 col-md-4 col-lg-3 pb-5">
+                                    <div class="form-group text-center">
+                                      <p><small>Search by Reference No.</small></p>
+                                      <input type="input" class="form-control" name="input" placeholder="# SET-00026">
+                                    </div>
+                                </div> -->
 
                                 <!-- Property Types -->
                                 <div class="col-12 col-md-4 col-lg-3 pb-5">
@@ -128,10 +138,8 @@
                                         </div>
                                         <div class="range">{{spaceRange.build_area__min}} sq. m - {{spaceRange.build_area__max}} sq. m</div>
                                         <!-- for space to read on GET request -->
-                                        <p>
-                                          <input type="text" name="space_select" id="minval" readonly style= "background: transparent; border: none; width:0px; height:0px;">
-                                          <input type="text" name="space_select" id="maxval" readonly style= "background: transparent; border: none; width:0px; height:0px;">
-                                        </p>
+                                        <input type="hidden" name="space_select" id="minval" readonly style= "background: transparent; border: none; width:0px; height:0px;">
+                                        <input type="hidden" name="space_select" id="maxval" readonly style= "background: transparent; border: none; width:0px; height:0px;">
 
 
                                     </div>
@@ -155,10 +163,8 @@
                                         </div>
 
                                         <!-- for price to read on GET request-->
-                                        <p>
-                                          <input type="text" name="price_select" id="minval" readonly style= "background: transparent; border: none; width:0px; height:0px;">
-                                          <input type="text" name="price_select" id="maxval" readonly style= "background: transparent; border: none; width:0px; height:0px;">
-                                        </p>
+                                        <input type="hidden" name="price_select" id="minval" readonly style= "background: transparent; border: none; width:0px; height:0px;">
+                                        <input type="hidden" name="price_select" id="maxval" readonly style= "background: transparent; border: none; width:0px; height:0px;">
 
                                     </div>
                                 </div>

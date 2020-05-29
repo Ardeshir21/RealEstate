@@ -16,7 +16,7 @@ class PostList(generic.ListView):
         context = super().get_context_data(**kwargs)
 
         # Add other data  ** This part also need to be changed in PostDetail **
-        context['slideContent'] = baseAppModel.Slide.objects.get(id=2)
+        context['slideContent'] = baseAppModel.Slide.objects.get(useFor__exact='BLOG_HOME', active__exact=True)
         context['featuredProperties'] = baseAppModel.Asset.objects.filter(featured=True)
         context['categories'] = models.PostCategories.objects.all()
         # This title is different with Categories Page view
@@ -44,7 +44,7 @@ class CategoryListView(generic.ListView):
             context = super().get_context_data(**kwargs)
 
             # Add other data  ** This part also need to be changed in PostDetail **
-            context['slideContent'] = baseAppModel.Slide.objects.get(id=2)
+            context['slideContent'] = baseAppModel.Slide.objects.get(useFor__exact='BLOG_CATEGORY', active__exact=True)
             context['featuredProperties'] = baseAppModel.Asset.objects.filter(featured=True)
             context['categories'] = models.PostCategories.objects.all()
             # This title is different with BLOG Page view
@@ -71,7 +71,7 @@ class PostDetail(generic.DetailView):
         context = super().get_context_data(**kwargs)
 
         # Add other data  ** This part also need to be changed in PostDetail **
-        context['slideContent'] = baseAppModel.Slide.objects.get(id=3)
+        context['slideContent'] = baseAppModel.Slide.objects.get(useFor__exact='BLOG_POST', active__exact=True)
         context['featuredProperties'] = baseAppModel.Asset.objects.filter(featured=True)
         context['categories'] = models.PostCategories.objects.all()
 
@@ -92,11 +92,6 @@ class PostSearch(generic.ListView):
             # Content Search -- For filtering based on the Text Search
             result= result.filter(Q(title__icontains=keyword) | Q(content__icontains=keyword), status=True).order_by('-created_on')
 
-        # Return a message if nothing founds
-        if not(result==None):
-            print("I am TRUEEEEEEEEEEEE")
-        else: print("EMPTYYYYYYYYYYYYYY")
-
         return result
 
     def get_context_data(self, **kwargs):
@@ -104,7 +99,7 @@ class PostSearch(generic.ListView):
         context = super().get_context_data(**kwargs)
 
         # Add other data  ** This part also need to be changed in PostDetail **
-        context['slideContent'] = baseAppModel.Slide.objects.get(id=2)
+        context['slideContent'] = baseAppModel.Slide.objects.get(useFor__exact='BLOG_SEARCH', active__exact=True)
         context['featuredProperties'] = baseAppModel.Asset.objects.filter(featured=True)
         context['categories'] = models.PostCategories.objects.all()
         # This title is different with BLOG Page view
