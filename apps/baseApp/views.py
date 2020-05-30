@@ -30,6 +30,8 @@ class IndexView(generic.ListView):
         context['featuredProperties'] = models.Asset.objects.filter(featured=True)
         # Blog models
         context['blogPosts'] = blogAppModel.Post.objects.filter(status=True, featured=True)
+        # Apartments Unqiue names
+        context['apartments'] = models.Complex.objects.all()
         return context
 
 # Search Box - searchResult.html
@@ -51,6 +53,7 @@ class AssetFilterView(generic.ListView):
         space_query = self.request.GET.getlist('space_select') # value=[minValue, MaxValue]
         orderby_query = self.request.GET.get('sort')
         reference_query = self.request.GET.getlist('ref_select')
+        apartment_query = self.request.GET.getlist('apartment_select')
 
         # CONVERT Queries
         # Convert the property type into model Format ('FL', 'Flat')
@@ -96,7 +99,13 @@ class AssetFilterView(generic.ListView):
             tempQuery = Q(type=propertyType_query[0])
             for propertytype in propertyType_query[1:]:
                 tempQuery |= Q(type=propertytype)
-            print(tempQuery)
+            result = result.filter(tempQuery)
+
+        # Apartment Names
+        if not(apartment_query==[] or apartment_query=='' or apartment_query==None):
+            tempQuery = Q(complex__id=int(apartment_query[0]))
+            for apartment in apartment_query[1:]:
+                tempQuery |= Q(complex__id=int(apartment))
             result = result.filter(tempQuery)
 
         # Reference Code
@@ -166,9 +175,11 @@ class AssetFilterView(generic.ListView):
         context['priceRange'] = models.Asset.objects.aggregate(Min('price'), Max('price'))
         # result counte
         context['resultCount'] = len(self.get_queryset())
-
         # An slide picture for Search Result page. This need just one slide >> id= ?
         context['slideContent'] = models.Slide.objects.get(useFor__exact='PROPERTY_SEARCH', active__exact=True)
+        # Apartments Unqiue names
+        context['apartments'] = models.Complex.objects.all()
+
 
         # Building a dictionary of GET request with nice words in order to present them in the search result page.
         # The reason for this line of code is to convert the [1,2,3,4,...] region_select to its real region names from Model
@@ -249,9 +260,10 @@ class AssetSingleView(generic.DetailView):
         context['priceRange'] = models.Asset.objects.aggregate(Min('price'), Max('price'))
         # result counte
         context['resultCount'] = len(self.get_queryset())
-
         # An slide picture for Search Result page. This need just one slide >> id= ?
         context['slideContent'] = models.Slide.objects.get(useFor__exact='PROPERTY_PAGE', active__exact=True)
+        # Apartments Unqiue names
+        context['apartments'] = models.Complex.objects.all()
 
 
         # context['test'] = models.Asset.objects.values_list('bedroom', flat=True).distinct().order_by('bedroom')

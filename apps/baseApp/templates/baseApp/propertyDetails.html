@@ -306,6 +306,15 @@
                               </select>
                             </div>
 
+                            <div class="form-group text-center">
+                              <p><small>Apartment Name</small></p>
+                              <select multiple="multiple" name="apartment_select" placeholder="All Apartments" class="SlectBox-grp-src">
+                                {% for apartment in apartments %}
+                                  <option value="{{apartment.id}}">{{apartment.name}}</option>
+                                {% endfor %}
+                              </select>
+                            </div>
+                            
                             <!-- Property Types -->
                             <div class="form-group text-center">
                               <small>Property Type</small>

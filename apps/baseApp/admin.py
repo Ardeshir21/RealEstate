@@ -42,8 +42,7 @@ class SlideAdmin(admin.ModelAdmin):
     list_editable = ['title', 'useFor', 'active']
 
 class RegionAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'city', 'description']
-    list_editable = ['description']
+    list_display = ['id', 'name', 'city']
 
 class AssetImagesAdmin(admin.ModelAdmin):
     list_display = ['asset', 'image']

@@ -42,7 +42,7 @@
                           <form action="{% url 'baseApp:search' %}" method="GET" id="advanceSearch">
                               <div class="row">
                                   <!-- Open Search -->
-                                  <div class="col-12 col-md-4 col-lg-3 pb-5">
+                                  <div class="col-12 col-md-4 col-lg-4">
                                       <div class="form-group text-center">
                                         <p><small>Search by Reference No.</small></p>
                                         <select multiple="multiple" name="ref_select" placeholder="For Example: SET-0026" class="SlectBox-grp-src">
@@ -52,15 +52,9 @@
                                         </select>
                                       </div>
                                   </div>
-                                  <!-- <div class="col-12 col-md-4 col-lg-3 pb-5">
-                                      <div class="form-group text-center">
-                                        <p><small>Search by Reference No.</small></p>
-                                        <input type="input" class="form-control" name="input" placeholder="# SET-00026">
-                                      </div>
-                                  </div> -->
 
                                   <!-- Property Types -->
-                                  <div class="col-12 col-md-4 col-lg-3 pb-5">
+                                  <div class="col-12 col-md-4 col-lg-4">
                                       <div class="form-group text-center">
                                         <p><small>Property Type</small></p>
                                         <select multiple="multiple" name="propertyType_select" placeholder="All Types" class="SlectBox-grp-src">
@@ -71,21 +65,8 @@
                                       </div>
                                   </div>
 
-                                  <!-- BEDROOM -->
-                                  <div class="col-12 col-md-4 col-lg-3 pb-5">
-                                      <div class="form-group text-center">
-                                        <p><small>Number of Bedrooms</small></p>
-                                        <select multiple="multiple" name="bedroom_select" placeholder="Any Number" class="SlectBox-grp-src">
-                                             <!-- Studio type room and 1 bedroom -->
-                                          {% for num in bedroomNumbers %}
-                                            <option value={{num.number}}>{{num.description}}</option>
-                                          {% endfor %}
-                                        </select>
-                                      </div>
-                                  </div>
-
                                   <!-- Tag Type Toggle Button -->
-                                  <div class="col-12 col-md-4 col-lg-3 pb-5">
+                                  <div class="col-12 col-md-4 col-lg-4">
                                     <div class="form-group text-center">
                                         <p><small>Deal Type</small></p>
                                         <div class="sidebar-btn">
@@ -108,7 +89,6 @@
                                         </div> -->
                                     </div>
                                   </div>
-
                                   <!-- old Toggle Button -->
                                   <!-- <div class="col-12 col-md-4 col-lg-3">
                                       <div class="form-group">
@@ -119,7 +99,31 @@
                                         <input name='tag_select' value='FS' type="checkbox" id="toggle-event" checked data-toggle="toggle" data-on="Sale" data-off="Rent" data-style='slow' data-onstyle="success" data-offstyle="danger" data-height="70" data-width="200">
                                       </div>
                                   </div> -->
+                                  <!-- Bedrooms -->
 
+                                  <div class="col-12 col-md-4 col-lg-4">
+                                      <div class="form-group text-center">
+                                        <p><small>Number of Bedrooms</small></p>
+                                        <select multiple="multiple" name="bedroom_select" placeholder="Any Number" class="SlectBox-grp-src">
+                                             <!-- Studio type room and 1 bedroom -->
+                                          {% for num in bedroomNumbers %}
+                                            <option value={{num.number}}>{{num.description}}</option>
+                                          {% endfor %}
+                                        </select>
+                                      </div>
+                                  </div>
+
+                                  <!-- Apartment Name -->
+                                  <div class="col-12 col-md-4 col-lg-4 pb-5">
+                                      <div class="form-group text-center">
+                                        <p><small>Apartment Name</small></p>
+                                        <select multiple="multiple" name="apartment_select" placeholder="All Apartments" class="SlectBox-grp-src">
+                                          {% for apartment in apartments %}
+                                            <option value="{{apartment.id}}">{{apartment.name}}</option>
+                                          {% endfor %}
+                                        </select>
+                                      </div>
+                                  </div>
 
                                   <!-- Sliders -->
                                   <div class="col-12 col-md-12 col-lg-12 col-xl-12 d-flex">
