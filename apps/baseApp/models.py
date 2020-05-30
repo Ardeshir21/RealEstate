@@ -81,7 +81,7 @@ class Complex(models.Model):
 
     name = models.CharField(max_length=150, unique=True)
     region = models.ForeignKey(Region, related_name='regions', on_delete=models.CASCADE)
-    features = models.ManyToManyField(ComplexFeatures)
+    features = models.ManyToManyField(ComplexFeatures, blank=True, null=True)
     build_area = models.PositiveIntegerField(default=0)
     description = models.TextField(blank=True, null=True)
     # address = map_fields.AddressField(max_length=200)
@@ -118,7 +118,7 @@ class Asset(models.Model):
     bathroom = models.PositiveIntegerField(default=1)
     floors = models.PositiveIntegerField()
     build_area = models.PositiveIntegerField(default=0)
-    features = models.ManyToManyField(AssetFeatures)
+    features = models.ManyToManyField(AssetFeatures, blank=True, null=True)
     featured = models.BooleanField(choices=YES_NO_CHOICES, default=False)
     active = models.BooleanField(choices=YES_NO_CHOICES, default=True)
     tag = models.CharField(max_length=50, choices=TAG_CHOICES, default='FS')
