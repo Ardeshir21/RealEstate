@@ -12,7 +12,8 @@ from .models import (Country, City, Region,
 
 class AssetImagesInline(admin.TabularInline):
     model = AssetImages
-
+    list_display = ['asset', 'image', 'display_order']
+    list_editable = ['display_order']
     # Read more https://docs.djangoproject.com/en/3.0/ref/contrib/admin/#modeladmin-methods
     # You may upload multiple images with one upload process and save the seperatly in the backend.
     # formfield_overrides = {

@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse_lazy, reverse
+from ckeditor_uploader.fields import RichTextUploadingField
 # from django_google_maps import fields as map_fields
 
 
@@ -112,10 +113,12 @@ class Bedroom(models.Model):
 
 class Asset(models.Model):
     complex = models.ForeignKey(Complex, related_name='complexes', on_delete=models.CASCADE)
+    description = RichTextUploadingField(help_text='Full images can be 730px wide', null=True, blank=True)
     type = models.CharField(max_length=150, choices=ASSET_TYPES, default='FL')
     price = models.DecimalField(max_digits=15, decimal_places=0, default=0.0)
     bedroom = models.ForeignKey(Bedroom, related_name='bedrooms', on_delete=models.CASCADE)
     bathroom = models.PositiveIntegerField(default=1)
+    garage = models.PositiveIntegerField(default=1)
     floors = models.PositiveIntegerField()
     build_area = models.PositiveIntegerField(default=0)
     features = models.ManyToManyField(AssetFeatures, blank=True, null=True)
@@ -140,10 +143,13 @@ class Asset(models.Model):
 class AssetImages(models.Model):
     asset = models.ForeignKey(Asset, related_name='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='baseApp/property/', null=True,
-                                help_text='Slide Image 1600x1200')
+                                help_text='Slide Image 1600x1100')
+    display_order = models.PositiveIntegerField(null=True)
 
     class Meta():
         verbose_name_plural = "Asset Images"
+        ordering = ['display_order']
+        unique_together = ('asset', 'display_order')
 
 
 class Slide(models.Model):

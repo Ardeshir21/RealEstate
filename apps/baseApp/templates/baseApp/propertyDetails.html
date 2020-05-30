@@ -48,11 +48,11 @@
                             </li>
                             <li>
                                 <i class="fa fa-bath"></i>
-                                <p>{{property.bathroom}} Bathroom</p>
+                                <p>{{property.bathroom}} Bathroom(s)</p>
                             </li>
                             <li>
                                 <i class="fa fa-car"></i>
-                                <p>1 Garage</p>
+                                <p>{{property.garage}} Garage(s)</p>
                             </li>
                         </ul>
                     </div>
@@ -88,12 +88,7 @@
                         <!-- Property Text and Features -->
                         <div class="pd-desc">
                             <h4>Description</h4>
-                            <p>Learn how to improve your playing quality and even overall understanding of online gaming
-                                and how you perform while playing online. Gaming online is a huge business nowadays and
-                                that means that there are millions of people worldwide at online game sites all the
-                                time. Many are people just like you and me that like to play online and have fun doing
-                                it. Some of these people enjoy it so much, that they often do not even care about
-                                improving their skill and raising their chances of winning.</p>
+                            <p>{{property.description|safe}}</p>
                         </div>
                         <!-- TABS -->
                         <div class="pd-details-tab">
@@ -314,7 +309,7 @@
                                 {% endfor %}
                               </select>
                             </div>
-                            
+
                             <!-- Property Types -->
                             <div class="form-group text-center">
                               <small>Property Type</small>
