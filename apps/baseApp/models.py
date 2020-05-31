@@ -82,6 +82,8 @@ class Complex(models.Model):
 
     name = models.CharField(max_length=150, unique=True)
     region = models.ForeignKey(Region, related_name='regions', on_delete=models.CASCADE)
+    age = models.PositiveIntegerField(default=0)
+    completion_date = models.DateTimeField(blank=True, null=True)
     features = models.ManyToManyField(ComplexFeatures, blank=True, null=True)
     build_area = models.PositiveIntegerField(default=0)
     description = models.TextField(blank=True, null=True)
@@ -115,6 +117,7 @@ class Asset(models.Model):
     complex = models.ForeignKey(Complex, related_name='complexes', on_delete=models.CASCADE)
     description = RichTextUploadingField(help_text='Full images can be 730px wide', null=True, blank=True)
     type = models.CharField(max_length=150, choices=ASSET_TYPES, default='FL')
+    installment = models.BooleanField(choices=YES_NO_CHOICES, default=False)
     price = models.DecimalField(max_digits=15, decimal_places=0, default=0.0)
     bedroom = models.ForeignKey(Bedroom, related_name='bedrooms', on_delete=models.CASCADE)
     bathroom = models.PositiveIntegerField(default=1)
@@ -144,12 +147,11 @@ class AssetImages(models.Model):
     asset = models.ForeignKey(Asset, related_name='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='baseApp/property/', null=True,
                                 help_text='Slide Image 1600x1100')
-    display_order = models.PositiveIntegerField(null=True)
+    display_order = models.PositiveIntegerField(null=True, blank=True)
 
     class Meta():
         verbose_name_plural = "Asset Images"
         ordering = ['display_order']
-        unique_together = ('asset', 'display_order')
 
 
 class Slide(models.Model):

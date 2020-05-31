@@ -20,7 +20,7 @@ class PostList(generic.ListView):
         context['featuredProperties'] = baseAppModel.Asset.objects.filter(featured=True)
         context['categories'] = models.PostCategories.objects.all()
         # This title is different with Categories Page view
-        context['PageTitle'] = 'BLOG'
+        context['pageTitle'] = 'BLOG'
 
         return context
 
@@ -48,7 +48,7 @@ class CategoryListView(generic.ListView):
             context['featuredProperties'] = baseAppModel.Asset.objects.filter(featured=True)
             context['categories'] = models.PostCategories.objects.all()
             # This title is different with BLOG Page view
-            context['PageTitle'] = models.PostCategories.objects.get(slug=self.kwargs['category']).category
+            context['pageTitle'] = models.PostCategories.objects.get(slug=self.kwargs['category']).category
             # result counte
             context['resultCount'] = len(self.get_queryset())
             return context
@@ -74,6 +74,7 @@ class PostDetail(generic.DetailView):
         context['slideContent'] = baseAppModel.Slide.objects.get(useFor__exact='BLOG_POST', active__exact=True)
         context['featuredProperties'] = baseAppModel.Asset.objects.filter(featured=True)
         context['categories'] = models.PostCategories.objects.all()
+        context['pageTitle'] = 'POST'
 
         return context
 
@@ -103,7 +104,7 @@ class PostSearch(generic.ListView):
         context['featuredProperties'] = baseAppModel.Asset.objects.filter(featured=True)
         context['categories'] = models.PostCategories.objects.all()
         # This title is different with BLOG Page view
-        context['PageTitle'] = 'SEARCH'
+        context['pageTitle'] = 'SEARCH'
         # result counte
         context['resultCount'] = len(self.get_queryset())
         return context

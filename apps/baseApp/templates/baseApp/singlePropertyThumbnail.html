@@ -1,0 +1,62 @@
+{% load static %}
+{% load humanize %}
+<div class="single-featured-property mb-50 wow fadeInUp" data-wow-delay="100ms">
+  <!-- Property Thumbnail -->
+  <div class="property-thumb">
+    <a href="{% url "baseApp:propertyView" property.id %}"><img src="{{property.image.url}}" alt="Property Image"></a>
+    <!-- TAG -->
+    <div class="tag">
+      {% if property.tag == "FR" %}
+      <div class="tag rentTag">
+        <span>{{property.get_tag_display}}</span>
+      </div>
+      {% else %}
+      <div class="tag saleTag">
+        <span>{{property.get_tag_display}}</span>
+      </div>
+      {% endif %}
+    </div>
+    <!-- PRICE -->
+    <div class="list-price">
+      {% if property.tag == "FR" %}
+      <p>
+        {% filter floatformat:"0"|intcomma %}
+        {{property.price}}
+        {% endfilter %} $/Month
+      </p>
+      {% else %}
+      <p>
+        {% filter floatformat:"0"|intcomma %}
+        {{property.price}}
+        {% endfilter %} $
+      </p>
+      {% endif %}
+    </div>
+  </div>
+  <!-- Property Content -->
+  <div class="property-content">
+    <a href="{% url "baseApp:propertyView" property.id %}"><h5>{{property.title}}</h5></a>
+    <p class="location"><img src="{% static "baseApp/img/icons/location.png" %}" alt="location icon">{{property.complex.region.name}}</p>
+    <p class="thumbnailText">Complex: <em>{{property.complex.name}}</em></p>
+    <!-- <p class="thumbnailText">Created Date: <em>{{property.created |date:"M d, Y"}}</em></p> -->
+    <div class="property-meta-data d-flex align-items-end justify-content-between">
+
+      <!-- *********** add "NEW" tag based on the Custom Date attribute of an Asset ************  -->
+      <div class="new-tag">
+        <img src="{% static "baseApp/img/icons/new.png" %}" alt="new">
+      </div>
+      <div class="bathroom">
+        <img src="{% static "baseApp/img/icons/bathtub.png" %}" alt="bathroom">
+        <span>{{property.bathroom}}</span>
+      </div>
+      <div class="garage">
+        <img src="{% static "baseApp/img/icons/garage.png" %}" alt="garage">
+        <span>{{property.garage}}</span>
+      </div>
+      <div class="space">
+        <img src="{% static "baseApp/img/icons/space.png" %}" alt="area">
+        <span>{{property.build_area}} Sq. m</span>
+      </div>
+    </div>
+  </div>
+</div>

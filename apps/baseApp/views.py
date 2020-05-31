@@ -5,6 +5,26 @@ from apps.blogApp import models as blogAppModel
 from django.db.models import Max, Min, Q
 from django.urls import reverse_lazy, reverse
 
+
+# Here is the Extra Context ditionary which is used in different functions
+extraContext = {
+    'regions': models.Region.objects.all(),
+    'propertyTypeNames': set([obj.get_type_display() for obj in models.Asset.objects.all()]),
+    'tagType': set([obj.get_tag_display() for obj in models.Asset.objects.all()]),
+    'bedroomNumbers': models.Bedroom.objects.order_by('number'),
+    'spaceRange': models.Asset.objects.aggregate(Min('build_area'), Max('build_area')),
+    # ********for later expansion*********
+    # context['priceRangeRent'] = models.Asset.objects.filter(tag__exact='FR').aggregate(Min('price'), Max('price'))
+    'priceRange': models.Asset.objects.aggregate(Min('price'), Max('price')),
+    # Featured part of the page
+    'featuredProperties': models.Asset.objects.filter(featured=True),
+    # Blog models
+    'blogPosts': blogAppModel.Post.objects.filter(status=True, featured=True),
+    # Apartments Unqiue names
+    'apartments': models.Complex.objects.all()
+    }
+
+
 # Index View
 class IndexView(generic.ListView):
     context_object_name = 'assets_all'
@@ -14,24 +34,9 @@ class IndexView(generic.ListView):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
-
-        ###### Note: NEED IMPROVEMENT, LESS CALLS ON DATABASE #####
-        # Add other data  ** This part also need to be copied to AssetFilterView **
-        context['regions'] = models.Region.objects.all()
-        context['propertyTypeNames'] = set([obj.get_type_display() for obj in models.Asset.objects.all()])
-        context['tagType'] = set([obj.get_tag_display() for obj in models.Asset.objects.all()])
-        context['bedroomNumbers'] = models.Bedroom.objects.order_by('number')
+        # Append extraContext
+        context.update(extraContext)
         context['slideContent'] = models.Slide.objects.filter(useFor__exact='HOME', active__exact=True)
-        context['spaceRange'] = models.Asset.objects.aggregate(Min('build_area'), Max('build_area'))
-        # ********for later expansion*********
-        # context['priceRangeRent'] = models.Asset.objects.filter(tag__exact='FR').aggregate(Min('price'), Max('price'))
-        context['priceRange'] = models.Asset.objects.aggregate(Min('price'), Max('price'))
-        # Featured part of the page
-        context['featuredProperties'] = models.Asset.objects.filter(featured=True)
-        # Blog models
-        context['blogPosts'] = blogAppModel.Post.objects.filter(status=True, featured=True)
-        # Apartments Unqiue names
-        context['apartments'] = models.Complex.objects.all()
         return context
 
 # Search Box - searchResult.html
@@ -39,12 +44,12 @@ class AssetFilterView(generic.ListView):
     context_object_name = 'assets_filtered'
     model = models.Asset
     template_name = 'baseApp/searchResult.html'
-    paginate_by = 6
+    paginate_by = 9
 
     def get_queryset(self):
         result = super(AssetFilterView, self).get_queryset()
 
-        # Get Queries
+        # Get Requests
         region_query = self.request.GET.getlist('region_select') # value=[list of marked regions]
         propertyType_query = self.request.GET.getlist('propertyType_select')
         bedroom_query = self.request.GET.getlist('bedroom_select') # value=[0, 1, 3]
@@ -55,7 +60,7 @@ class AssetFilterView(generic.ListView):
         reference_query = self.request.GET.getlist('ref_select')
         apartment_query = self.request.GET.getlist('apartment_select')
 
-        # CONVERT Queries
+        # CONVERT some Queries
         # Convert the property type into model Format ('FL', 'Flat')
         # in queries you will use short formats i.e. 'FL'
         edited_propertyType = []
@@ -79,7 +84,7 @@ class AssetFilterView(generic.ListView):
             edited_reference.append(r[6:])
         reference_query = edited_reference
 
-        # FILTER based on queries
+        # FILTERs based on queries
         # Regions
         if not(region_query==None or region_query=='' or region_query==[]):
             # First build the list of all OR queries
@@ -160,26 +165,14 @@ class AssetFilterView(generic.ListView):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
+        # Append extraContext
+        context.update(extraContext)
 
-        ###### Note: NEED IMPROVEMENT, LESS CALLS ON DATABASE #####
-        # Search box items ** This part also need to be copied to IndexView **
-        # All assets are gathered because the get_queryset() filtered them. You need assets_all for Reference Codes
-        context['assets_all'] = models.Asset.objects.all()
-        context['regions'] = models.Region.objects.all()
-        context['propertyTypeNames'] = set([obj.get_type_display() for obj in models.Asset.objects.all()])
-        context['tagType'] = set([obj.get_tag_display() for obj in models.Asset.objects.all()])
-        context['bedroomNumbers'] = models.Bedroom.objects.order_by('number')
-        context['spaceRange'] = models.Asset.objects.aggregate(Min('build_area'), Max('build_area'))
-        # ********for later expansion*********
-        # context['priceRangeRent'] = models.Asset.objects.filter(tag__exact='FR').aggregate(Min('price'), Max('price'))
-        context['priceRange'] = models.Asset.objects.aggregate(Min('price'), Max('price'))
-        # result counte
+        # result count
         context['resultCount'] = len(self.get_queryset())
         # An slide picture for Search Result page. This need just one slide >> id= ?
         context['slideContent'] = models.Slide.objects.get(useFor__exact='PROPERTY_SEARCH', active__exact=True)
-        # Apartments Unqiue names
-        context['apartments'] = models.Complex.objects.all()
-
+        context['pageTitle'] = 'SEARCH'
 
         # Building a dictionary of GET request with nice words in order to present them in the search result page.
         # The reason for this line of code is to convert the [1,2,3,4,...] region_select to its real region names from Model
@@ -245,34 +238,14 @@ class AssetSingleView(generic.DetailView):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
-
-        ###### Note: NEED IMPROVEMENT, LESS CALLS ON DATABASE #####
-        # Search box items ** This part also need to be changed in IndexView **
-        # All assets are gathered because the get_queryset() filtered them. You need assets_all for Reference Codes
-        context['assets_all'] = models.Asset.objects.all()
-        context['regions'] = models.Region.objects.all()
-        context['propertyTypeNames'] = set([obj.get_type_display() for obj in models.Asset.objects.all()])
-        context['tagType'] = set([obj.get_tag_display() for obj in models.Asset.objects.all()])
-        context['bedroomNumbers'] = models.Bedroom.objects.order_by('number')
-        context['spaceRange'] = models.Asset.objects.aggregate(Min('build_area'), Max('build_area'))
-        # ********for later expansion*********
-        # context['priceRangeRent'] = models.Asset.objects.filter(tag__exact='FR').aggregate(Min('price'), Max('price'))
-        context['priceRange'] = models.Asset.objects.aggregate(Min('price'), Max('price'))
-        # result counte
-        context['resultCount'] = len(self.get_queryset())
-        # An slide picture for Search Result page. This need just one slide >> id= ?
-        context['slideContent'] = models.Slide.objects.get(useFor__exact='PROPERTY_PAGE', active__exact=True)
-        # Apartments Unqiue names
-        context['apartments'] = models.Complex.objects.all()
-
-
-        # context['test'] = models.Asset.objects.values_list('bedroom', flat=True).distinct().order_by('bedroom')
-
+        # Append extraContext
+        context.update(extraContext)
+        context['slideContent'] = models.Slide.objects.filter(useFor__exact='PROPERTY_PAGE', active__exact=True)
         return context
 
 
 # FORMS are here
-from . import forms
+# from . import forms
 
 # Not using this form, because the Admin page form is enough for property entry
 # class AssetCreateForm(generic.edit.CreateView):

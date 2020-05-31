@@ -25,8 +25,8 @@ class AssetAdmin(admin.ModelAdmin):
 
     # search_fields = ['complex']
     list_filter = ['complex']
-    list_display = ['id', 'created', 'bedroom', 'active', 'build_area', 'tag', 'featured', 'type', 'complex', 'price',]
-    list_editable = ['active', 'bedroom', 'featured', 'build_area', 'tag', 'price']
+    list_display = ['id', 'created', 'type', 'active', 'featured', 'tag', 'complex', 'build_area', 'bedroom', 'price',]
+    list_editable = ['active', 'featured']
 
     # other Inlines
     inlines = [
@@ -36,6 +36,7 @@ class AssetAdmin(admin.ModelAdmin):
     # Using Widgets
     formfield_overrides = {
         models.ManyToManyField: {'widget': forms.CheckboxSelectMultiple(attrs={'multiple': True})},
+        models.DateTimeField: {'widget': forms.SelectDateWidget()},
     }
 
 class SlideAdmin(admin.ModelAdmin):

@@ -10,19 +10,8 @@
 
 
 {% block body_content %}
-    <!-- ##### Breadcumb Area Start ##### -->
-    <section class="breadcumb-area bg-img" style="background-image: url({{slideContent.image.url}});">
-        <div class="container h-100">
-            <div class="row h-100 align-items-center">
-                <div class="col-12">
-                    <div class="breadcumb-content">
-                        <h3 class="breadcumb-title">{{PageTitle}}</h3>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- ##### Breadcumb Area End ##### -->
+    <!-- ##### wideImage Area Start ##### -->
+    {% include "baseApp/wideImage.html" %}
 
     <!-- ##### Blog Area Start ##### -->
     <section class="south-blog-area section-padding-100">
@@ -85,130 +74,16 @@
                     <div class="featured-properties-slides owl-carousel">
 
                       {% for property in featuredProperties %}
-                        <!-- Single Slide -->
-                        <div class="single-featured-property">
-                            <!-- Property Thumbnail -->
-                            <div class="property-thumb">
-                                <a href="{% url 'baseApp:propertyView' property.id %}"><img src="{{property.image.url}}" alt="Property Picture"></a>
-
-                                <!-- Tag -->
-                                <div class="tag">
-                                  {% if property.tag == "FR" %}
-                                  <div class="tag rentTag">
-                                      <span>{{property.get_tag_display}}</span>
-                                  </div>
-                                  {% else %}
-                                  <div class="tag saleTag">
-                                      <span>{{property.get_tag_display}}</span>
-                                  </div>
-                                  {% endif %}
-                                </div>
-
-                                <!-- Price -->
-                                <div class="list-price">
-                                  {% if property.tag == "FR" %}
-                                    <p>
-                                      {% filter floatformat:"0"|intcomma %}
-                                          {{property.price}}
-                                      {% endfilter %} $/Month
-                                    </p>
-                                  {% else %}
-                                    <p>
-                                      {% filter floatformat:"0"|intcomma %}
-                                          {{property.price}}
-                                      {% endfilter %} $
-                                    </p>
-                                  {% endif %}
-                                </div>
-                            </div>
-
-                            <!-- Property Content -->
-                            <div class="property-content">
-                                <a href="{% url 'baseApp:propertyView' property.id %}"><h5>{{property.title}}</h5></a>
-                                <p class="location"><img src="{% static "baseApp/img/icons/location.png" %}" alt="location icon">{{property.complex.region.name}}</p>
-                                <p class="thumbnailText">Complex: <em>{{property.complex.name}}</em></p>
-                                <div class="property-meta-data d-flex align-items-end justify-content-between">
-                                  <div class="new-tag">
-                                      <img src="{% static "baseApp/img/icons/new.png" %}" alt="new icon">
-                                  </div>
-                                  <div class="bathroom">
-                                      <img src="{% static "baseApp/img/icons/bathtub.png" %}" alt="icon ">
-                                      <span>{{property.bathroom}}</span>
-                                  </div>
-                                  <div class="garage">
-                                      <img src="{% static "baseApp/img/icons/garage.png" %}" alt="icon">
-                                      <span>{{property.bedroom.number}}</span>
-                                  </div>
-                                  <div class="space">
-                                      <img src="{% static "baseApp/img/icons/space.png" %}" alt="icon">
-                                      <span>{{property.build_area}} Sq. m</span>
-                                  </div>
-                                </div>
-                            </div>
-                        </div>
+                        <!-- Single Property Thumbnail -->
+                            {% include "baseApp/singlePropertyThumbnail.html" %}
                       {% endfor %}
                     </div>
                   </div>
                 </div>
             </div>
 
-            <!-- Paginate Buttons -->
-            <div class="row">
-                <div class="col-12">
-                    <div class="south-pagination d-flex justify-content-center">
-                      <nav aria-label="Page navigation">
-                          <!-- Using a custom Template Tag Function in main_app/templatetags folder -->
-                          <!-- param_replace function -->
-                          <ul class="pagination">
-                            {% if is_paginated %}
-
-                              <!-- Previose Button -->
-                                {% if page_obj.has_previous %}
-                                  <li class="page-item">
-                                    <a href="?{% param_replace page=page_obj.previous_page_number %}" class="page-link">
-                                      Previous
-                                    </a>
-                                  </li>
-                                {% else %}
-                                  <li class="page-item disabled">
-                                    <a href="#" class="page-link">
-                                      Previous
-                                    </a>
-                                  </li>
-                                {% endif %}
-
-
-                              <!-- Number Buttons -->
-                              {% for i in page_obj.paginator.page_range %}
-                                {% if page_obj.number == i %}
-                                  <li class="page-item active"><a href="?{% param_replace page=i %}" class="page-link">{{i}}</a></li>
-                                {% else %}
-                                  <li class="page-item"><a href="?{% param_replace page=i %}" class="page-link">{{i}}</a></li>
-                                {% endif %}
-                              {% endfor %}
-
-
-                              <!-- Next Button -->
-                              {% if page_obj.has_next %}
-                                <li class="page-item">
-                                  <a href="?{% param_replace page=page_obj.next_page_number %}" class="page-link">
-                                    Next
-                                  </a>
-                                </li>
-                              {% else %}
-                                <li class="page-item disabled">
-                                  <a href="#" class="page-link">
-                                    Next
-                                  </a>
-                                </li>
-                              {% endif %}
-                            {% endif %}
-                          </ul>
-                          <p style="text-align:center;">Posts {{ page_obj.start_index }}—{{ page_obj.end_index}}</p>
-                      </nav>
-                    </div>
-                </div>
-            </div>
+            <!-- Paginate  -->
+            {% include "baseApp/paginator.html" %}
         </div>
     </section>
     <!-- ##### Blog Area End ##### -->

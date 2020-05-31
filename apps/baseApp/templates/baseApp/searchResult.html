@@ -5,208 +5,16 @@
 
 
 
-{% block head %}
-  <!-- This for list menu with checkbox-->
-  <link href="{% static "baseApp/css/sumoselect.css" %}" rel="stylesheet" />
-{% endblock head %}
-
-
   <!-- The main content of the page -->
   {% block body_content %}
 
-      <!-- ##### Breadcumb Area Start ##### -->
-      <section class="breadcumb-area bg-img" style="background-image: url({{slideContent.image.url}});">
-          <div class="container h-100">
-              <div class="row h-100 align-items-center">
-                  <div class="col-12">
-                      <div class="breadcumb-content">
-                          <h3 class="breadcumb-title">SEARCH</h3>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </section>
-      <!-- ##### Breadcumb Area End ##### -->
+      <!-- ##### WideImage Area Start ##### -->
+      {% include "baseApp/wideImage.html" %}
 
       <!-- ##### Advance Search Area Start ##### -->
-      <div class="south-search-area">
-          <div class="container">
-              <div class="row">
-                  <div class="col-12">
-                      <div class="advanced-search-form">
-                          <!-- Search Title -->
-                          <div class="search-title">
-                              <p>Search for your home</p>
-                          </div>
-                          <!-- Search Form -->
-                          <form action="{% url 'baseApp:search' %}" method="GET" id="advanceSearch">
-                              <div class="row">
-                                  <!-- Open Search -->
-                                  <div class="col-12 col-md-4 col-lg-4">
-                                      <div class="form-group text-center">
-                                        <p><small>Search by Reference No.</small></p>
-                                        <select multiple="multiple" name="ref_select" placeholder="For Example: SET-0026" class="SlectBox-grp-src">
-                                          {% for asset in assets_all %}
-                                            <option>SET-00{{asset.id}}</option>
-                                          {% endfor %}
-                                        </select>
-                                      </div>
-                                  </div>
+      {% include "baseApp/advancedSearch.html" %}
 
-                                  <!-- Property Types -->
-                                  <div class="col-12 col-md-4 col-lg-4">
-                                      <div class="form-group text-center">
-                                        <p><small>Property Type</small></p>
-                                        <select multiple="multiple" name="propertyType_select" placeholder="All Types" class="SlectBox-grp-src">
-                                          {% for type in propertyTypeNames %}
-                                            <option>{{type}}</option>
-                                          {% endfor %}
-                                        </select>
-                                      </div>
-                                  </div>
-
-                                  <!-- Tag Type Toggle Button -->
-                                  <div class="col-12 col-md-4 col-lg-4">
-                                    <div class="form-group text-center">
-                                        <p><small>Deal Type</small></p>
-                                        <div class="sidebar-btn">
-                                            <div class="bt-item">
-                                                <input type="radio" name="tag_select" value='sale' id="st-buy" checked>
-                                                <label for="st-buy">Sale</label>
-                                            </div>
-                                            <div class="bt-item">
-                                                <input type="radio" name="tag_select"  value='rent' id="st-rent">
-                                                <label for="st-rent">Rent</label>
-                                            </div>
-                                        </div>
-                                        <!-- <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                          <label class="btn btn-outline-success btn-lg dealType active">
-                                            <input type="radio" name="tag_select" value='sale' autocomplete="off" checked> Sale
-                                          </label>
-                                          <label class="btn btn-outline-danger btn-lg dealType">
-                                            <input type="radio" name="tag_select" value='rent' autocomplete="off"> Rent
-                                          </label>
-                                        </div> -->
-                                    </div>
-                                  </div>
-                                  <!-- old Toggle Button -->
-                                  <!-- <div class="col-12 col-md-4 col-lg-3">
-                                      <div class="form-group">
-                                        <small>Sale or Rent</small>
-                                        <style>
-                                          .slow .toggle-group { transition: left 1.0s; -webkit-transition: left 1.0s; }
-                                        </style>
-                                        <input name='tag_select' value='FS' type="checkbox" id="toggle-event" checked data-toggle="toggle" data-on="Sale" data-off="Rent" data-style='slow' data-onstyle="success" data-offstyle="danger" data-height="70" data-width="200">
-                                      </div>
-                                  </div> -->
-                                  <!-- Bedrooms -->
-
-                                  <div class="col-12 col-md-4 col-lg-4">
-                                      <div class="form-group text-center">
-                                        <p><small>Number of Bedrooms</small></p>
-                                        <select multiple="multiple" name="bedroom_select" placeholder="Any Number" class="SlectBox-grp-src">
-                                             <!-- Studio type room and 1 bedroom -->
-                                          {% for num in bedroomNumbers %}
-                                            <option value={{num.number}}>{{num.description}}</option>
-                                          {% endfor %}
-                                        </select>
-                                      </div>
-                                  </div>
-
-                                  <!-- Apartment Name -->
-                                  <div class="col-12 col-md-4 col-lg-4 pb-5">
-                                      <div class="form-group text-center">
-                                        <p><small>Apartment Name</small></p>
-                                        <select multiple="multiple" name="apartment_select" placeholder="All Apartments" class="SlectBox-grp-src">
-                                          {% for apartment in apartments %}
-                                            <option value="{{apartment.id}}">{{apartment.name}}</option>
-                                          {% endfor %}
-                                        </select>
-                                      </div>
-                                  </div>
-
-                                  <!-- Sliders -->
-                                  <div class="col-12 col-md-12 col-lg-12 col-xl-12 d-flex">
-                                      <!-- Space Range -->
-                                      <div class="slider-range ">
-                                          <div data-min={{spaceRange.build_area__min}} data-max={{spaceRange.build_area__max}} data-unit=" sq. m" data-step="5" class="slider-range-price ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" data-value-min={{spaceRange.build_area__min}} data-value-max={{spaceRange.build_area__max}}>
-                                              <div class="ui-slider-range ui-widget-header ui-corner-all"></div>
-                                              <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
-                                              <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
-                                          </div>
-                                          <div class="range">{{spaceRange.build_area__min}} sq. m - {{spaceRange.build_area__max}} sq. m</div>
-                                          <!-- for space to read on GET request -->
-                                          <input type="hidden" name="space_select" id="minval" readonly style= "background: transparent; border: none; width:0px; height:0px;">
-                                          <input type="hidden" name="space_select" id="maxval" readonly style= "background: transparent; border: none; width:0px; height:0px;">
-
-
-                                      </div>
-
-                                      <!-- Price Range -->
-                                      <div class="slider-range">
-
-                                          <div id='priceDiv' data-min={{priceRange.price__min}} data-max={{priceRange.price__max}} data-unit=" $" data-step="10000" class="slider-range-price ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" data-value-min={{priceRange.price__min}} data-value-max={{priceRange.price__max}}>
-                                              <div class="ui-slider-range ui-widget-header ui-corner-all"></div>
-                                              <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
-                                              <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
-                                          </div>
-                                          <div class="range" id='priceHTMLtext'>
-                                            {% filter floatformat:"0"|intcomma %}
-                                              {{priceRange.price__min}}
-                                            {% endfilter %} $ -
-                                            {% filter floatformat:"0"|intcomma %}
-                                              {{priceRange.price__max}}
-                                            {% endfilter %} $
-
-                                          </div>
-
-                                          <!-- for price to read on GET request-->
-                                          <input type="hidden" name="price_select" id="minval" readonly style= "background: transparent; border: none; width:0px; height:0px;">
-                                          <input type="hidden" name="price_select" id="maxval" readonly style= "background: transparent; border: none; width:0px; height:0px;">
-
-                                      </div>
-                                  </div>
-
-                                  <!-- More Filters Part -->
-                                  <div class="col-12 search-form-second-steps">
-                                      <div class="row">
-                                          <!-- Regions -->
-                                          <div class="col-12 col-md-10">
-                                              <div class="form-group">
-                                                {% for region in regions %}
-                                                    <span class="button-checkbox">
-                                                            <button type="button" class="btn" data-color="primary">{{region.name}}</button>
-                                                            <input type="checkbox" name='region_select' class="hidden" value='{{region.id}}'/>
-                                                    </span>
-                                                {% endfor %}
-                                              </div>
-                                          </div>
-
-                                      </div>
-                                  </div>
-
-                                  <!-- More Filter and Search buttons -->
-                                  <div class="col-12 d-flex justify-content-between align-items-end">
-                                      <!-- More Filter -->
-                                      <div class="more-filter">
-                                          <a href="#" id="moreFilter">+ Region Select</a>
-                                      </div>
-                                      <!-- Submit -->
-                                      <div class="form-group mb-0">
-                                          <button type="submit" id="advancedButton" class="btn south-btn">Search</button>
-                                      </div>
-                                  </div>
-
-                              </div>
-                          </form>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
-      <!-- ##### Advance Search Area End ##### -->
-
-      <!-- ##### Filtered Area Start ##### -->
+      <!-- ##### Filter Details Area Start ##### -->
       <section class="listings-content-wrapper section-padding-50">
           <div class="container">
               <div class="col-12 col-lg-12">
@@ -256,12 +64,12 @@
               </div>
           </div>
       </section>
-      <!-- ##### Filtered Area End ##### -->
+      <!-- ##### Filter Details Area End ##### -->
 
       <!-- ##### Listing Content Wrapper Area Start ##### -->
       <section class="listings-content-wrapper section-padding-50">
           <div class="container">
-
+              <!-- Search Count and OrderBy button -->
               <div class="row">
                 <!-- empty div -->
                 <div class="col-sm"></div>
@@ -269,7 +77,7 @@
                 <div class="col-sm">
                     <h3 style="text-align: center;">{{resultCount}} Properties Found</h3>
                 </div>
-
+                <!-- ORDERING BUTTON -->
                 <div class="col-sm" style="text-align: center;">
                   <button id="btnGroupDrop1" type="button" class="btn south-btn btn-2 p-1 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       Order By
@@ -286,131 +94,15 @@
               <!-- Property Image and Details -->
               <div class="row section-padding-50">
                 {% for property in assets_filtered %}
-                  <!-- Single Featured Property -->
                   <div class="col-12 col-md-6 col-xl-4">
-                      <div class="single-featured-property mb-50">
-                          <!-- Property Thumbnail -->
-                          <div class="property-thumb">
-                              <a href="{% url 'baseApp:propertyView' property.id %}"><img src="{{property.image.url}}" alt="property image"></a>
-
-                              <!-- TAG **************************CHANGE COLOR***************************-->
-                              {% if property.tag == "FR" %}
-                              <div class="tag rentTag">
-                                  <span>{{property.get_tag_display}}</span>
-                              </div>
-                              {% else %}
-                              <div class="tag saleTag">
-                                  <span>{{property.get_tag_display}}</span>
-                              </div>
-                              {% endif %}
-
-                              <!-- Price -->
-                              <div class="list-price">
-                                {% if property.tag == "FR" %}
-                                  <p>
-                                    {% filter floatformat:"0"|intcomma %}
-                                        {{property.price}}
-                                    {% endfilter %} $/Month
-                                  </p>
-                                {% else %}
-                                  <p>
-                                    {% filter floatformat:"0"|intcomma %}
-                                        {{property.price}}
-                                    {% endfilter %} $
-                                  </p>
-                                {% endif %}
-                              </div>
-                          </div>
-
-                          <!-- Property Content -->
-                          <div class="property-content">
-                              <a href="{% url 'baseApp:propertyView' property.id %}"><h5>{{property.title}}</h5></a>
-                              <p class="location"><img src="{% static "baseApp/img/icons/location.png" %}" alt="location icon">{{property.complex.region.name}}</p>
-                              <p class="thumbnailText">Complex: <em>{{property.complex.name}}</em></p>
-                              <p class="thumbnailText">Created Date: <em>{{property.created |date:"M d, Y"}}</em></p>
-                              <div class="property-meta-data d-flex align-items-end justify-content-between">
-
-                                <!-- *********** add "NEW" tag based on the Custom Date attribute of an Asset ************  -->
-                                  <div class="new-tag">
-                                      <img src="{% static "baseApp/img/icons/new.png" %}" alt="new icon">
-                                  </div>
-                                  <div class="bathroom">
-                                      <img src="{% static "baseApp/img/icons/bathtub.png" %}" alt="icon ">
-                                      <span>{{property.bathroom}}</span>
-                                  </div>
-                                  <div class="garage">
-                                      <img src="{% static "baseApp/img/icons/garage.png" %}" alt="icon">
-                                      <span>{{property.bedroom.number}}</span>
-                                  </div>
-                                  <div class="space">
-                                      <img src="{% static "baseApp/img/icons/space.png" %}" alt="icon">
-                                      <span>{{property.build_area}} Sq. m</span>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
+                      <!-- Single Property Thumbnail -->
+                      {% include "baseApp/singlePropertyThumbnail.html" %}
                   </div>
                 {% endfor %}
               </div>
 
-              <!-- Paginate Buttons -->
-              <div class="row">
-                  <div class="col-12">
-                      <div class="south-pagination d-flex justify-content-center">
-                        <nav aria-label="Page navigation">
-                            <!-- Using a custom Template Tag Function in main_app/templatetags folder -->
-                            <!-- param_replace function -->
-                            <ul class="pagination">
-                              {% if is_paginated %}
-
-                                <!-- Previose Button -->
-                                  {% if page_obj.has_previous %}
-                                    <li class="page-item">
-                                      <a href="?{% param_replace page=page_obj.previous_page_number %}" class="page-link">
-                                        Previous
-                                      </a>
-                                    </li>
-                                  {% else %}
-                                    <li class="page-item disabled">
-                                      <a href="#" class="page-link">
-                                        Previous
-                                      </a>
-                                    </li>
-                                  {% endif %}
-
-
-                                <!-- Number Buttons -->
-                                {% for i in page_obj.paginator.page_range %}
-                                  {% if page_obj.number == i %}
-                                    <li class="page-item active"><a href="?{% param_replace page=i %}" class="page-link">{{i}}</a></li>
-                                  {% else %}
-                                    <li class="page-item"><a href="?{% param_replace page=i %}" class="page-link">{{i}}</a></li>
-                                  {% endif %}
-                                {% endfor %}
-
-
-                                <!-- Next Button -->
-                                {% if page_obj.has_next %}
-                                  <li class="page-item">
-                                    <a href="?{% param_replace page=page_obj.next_page_number %}" class="page-link">
-                                      Next
-                                    </a>
-                                  </li>
-                                {% else %}
-                                  <li class="page-item disabled">
-                                    <a href="#" class="page-link">
-                                      Next
-                                    </a>
-                                  </li>
-                                {% endif %}
-                              {% endif %}
-                            </ul>
-                            <p style="text-align:center;">Properties {{ page_obj.start_index }}—{{ page_obj.end_index}}</p>
-                        </nav>
-                      </div>
-                  </div>
-              </div>
-
+              <!-- Paginate  -->
+              {% include "baseApp/paginator.html" %}
 
           </div>
       </section>
