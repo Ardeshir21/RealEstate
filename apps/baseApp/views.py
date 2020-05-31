@@ -6,23 +6,26 @@ from django.db.models import Max, Min, Q
 from django.urls import reverse_lazy, reverse
 
 
-# Here is the Extra Context ditionary which is used in different functions
-extraContext = {
-    'regions': models.Region.objects.all(),
-    'propertyTypeNames': set([obj.get_type_display() for obj in models.Asset.objects.all()]),
-    'tagType': set([obj.get_tag_display() for obj in models.Asset.objects.all()]),
-    'bedroomNumbers': models.Bedroom.objects.order_by('number'),
-    'spaceRange': models.Asset.objects.aggregate(Min('build_area'), Max('build_area')),
-    # ********for later expansion*********
-    # context['priceRangeRent'] = models.Asset.objects.filter(tag__exact='FR').aggregate(Min('price'), Max('price'))
-    'priceRange': models.Asset.objects.aggregate(Min('price'), Max('price')),
-    # Featured part of the page
-    'featuredProperties': models.Asset.objects.filter(featured=True),
-    # Blog models
-    'blogPosts': blogAppModel.Post.objects.filter(status=True, featured=True),
-    # Apartments Unqiue names
-    'apartments': models.Complex.objects.all()
-    }
+# Here is the Extra Context ditionary which is used in get_context_data of Views classes
+def get_extra_context():
+    extraContext = {
+        'regions': models.Region.objects.all(),
+        'propertyTypeNames': set([obj.get_type_display() for obj in models.Asset.objects.all()]),
+        'tagType': set([obj.get_tag_display() for obj in models.Asset.objects.all()]),
+        'bedroomNumbers': models.Bedroom.objects.order_by('number'),
+        'spaceRange': models.Asset.objects.aggregate(Min('build_area'), Max('build_area')),
+        # ********for later expansion*********
+        # context['priceRangeRent'] = models.Asset.objects.filter(tag__exact='FR').aggregate(Min('price'), Max('price'))
+        'priceRange': models.Asset.objects.aggregate(Min('price'), Max('price')),
+        # Featured part of the page
+        'featuredProperties': models.Asset.objects.filter(featured=True),
+        # Blog models
+        'blogPosts': blogAppModel.Post.objects.filter(status=True, featured=True),
+        # Apartments Unqiue names
+        'apartments': models.Complex.objects.all()
+        }
+    return extraContext
+
 
 
 # Index View
@@ -35,7 +38,7 @@ class IndexView(generic.ListView):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         # Append extraContext
-        context.update(extraContext)
+        context.update(get_extra_context())
         context['slideContent'] = models.Slide.objects.filter(useFor__exact='HOME', active__exact=True)
         return context
 
@@ -166,7 +169,7 @@ class AssetFilterView(generic.ListView):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         # Append extraContext
-        context.update(extraContext)
+        context.update(get_extra_context())
 
         # result count
         context['resultCount'] = len(self.get_queryset())
@@ -239,7 +242,7 @@ class AssetSingleView(generic.DetailView):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         # Append extraContext
-        context.update(extraContext)
+        context.update(get_extra_context())
         context['slideContent'] = models.Slide.objects.filter(useFor__exact='PROPERTY_PAGE', active__exact=True)
         return context
 

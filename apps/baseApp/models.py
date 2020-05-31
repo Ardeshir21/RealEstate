@@ -119,6 +119,7 @@ class Asset(models.Model):
     type = models.CharField(max_length=150, choices=ASSET_TYPES, default='FL')
     installment = models.BooleanField(choices=YES_NO_CHOICES, default=False)
     price = models.DecimalField(max_digits=15, decimal_places=0, default=0.0)
+    furnished = models.BooleanField(choices=YES_NO_CHOICES, default=False)
     bedroom = models.ForeignKey(Bedroom, related_name='bedrooms', on_delete=models.CASCADE)
     bathroom = models.PositiveIntegerField(default=1)
     garage = models.PositiveIntegerField(default=1)
