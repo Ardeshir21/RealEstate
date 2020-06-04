@@ -1,0 +1,61 @@
+{% load static %}
+{% load my_tags %}
+
+<section>
+  <div class="row">
+      <div class="col-12">
+          <div class="south-pagination d-flex justify-content-center">
+            <nav aria-label="Page navigation">
+                <!-- Using a custom Template Tag Function in main_app/templatetags folder -->
+                <!-- param_replace function -->
+                <ul class="pagination">
+                  {% if is_paginated %}
+
+                    <!-- Previose Button -->
+                      {% if page_obj.has_previous %}
+                        <li class="page-item">
+                          <a href="?{% param_replace page=page_obj.previous_page_number %}" class="page-link">
+                            Previous
+                          </a>
+                        </li>
+                      {% else %}
+                        <li class="page-item disabled">
+                          <a href="#" class="page-link">
+                            Previous
+                          </a>
+                        </li>
+                      {% endif %}
+
+
+                    <!-- Number Buttons -->
+                    {% for i in page_obj.paginator.page_range %}
+                      {% if page_obj.number == i %}
+                        <li class="page-item active"><a href="?{% param_replace page=i %}" class="page-link">{{i}}</a></li>
+                      {% else %}
+                        <li class="page-item"><a href="?{% param_replace page=i %}" class="page-link">{{i}}</a></li>
+                      {% endif %}
+                    {% endfor %}
+
+
+                    <!-- Next Button -->
+                    {% if page_obj.has_next %}
+                      <li class="page-item">
+                        <a href="?{% param_replace page=page_obj.next_page_number %}" class="page-link">
+                          Next
+                        </a>
+                      </li>
+                    {% else %}
+                      <li class="page-item disabled">
+                        <a href="#" class="page-link">
+                          Next
+                        </a>
+                      </li>
+                    {% endif %}
+                  {% endif %}
+                </ul>
+                <p style="text-align:center;">Items {{ page_obj.start_index }}—{{ page_obj.end_index}}</p>
+            </nav>
+          </div>
+      </div>
+  </div>
+</section>

@@ -23,6 +23,8 @@ urlpatterns = [
     # Nothing after domain name will direct you to BaseApp
     path('', include('apps.baseApp.urls')),
     path('blog/', include('apps.blogApp.urls')),
+    path('fa/', include('apps.FAbaseApp.urls')),
+    # path('fa/blog/', include('apps.FAblogApp.urls')),
 
     # This is for Blog Editor in blogApp.models.py
     path('ckeditor/', include('ckeditor_uploader.urls')),

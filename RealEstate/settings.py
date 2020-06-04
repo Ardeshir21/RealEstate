@@ -46,7 +46,9 @@ DEBUG = bool(secrets_dict['DEBUG'])
 
 ALLOWED_HOSTS = ['161.35.103.31',
                  'localhost',
-                 '127.0.0.1'
+                 '127.0.0.1',
+                 'www.gammaturkey.com',
+                 'gammaturkey.com',
                  ]
 
 
@@ -63,6 +65,8 @@ INSTALLED_APPS = [
     # My webApps
     'apps.baseApp',
     'apps.blogApp',
+    'apps.FAbaseApp',
+    # 'apps.FAblogApp',
 
     # for templates to sperate digits
     'django.contrib.humanize',

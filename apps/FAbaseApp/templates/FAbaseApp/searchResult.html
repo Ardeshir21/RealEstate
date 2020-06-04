@@ -1,0 +1,111 @@
+{% extends "baseApp/base.html" %}
+{% load static %}
+{% load humanize %}
+{% load my_tags %}
+
+
+
+  <!-- The main content of the page -->
+  {% block body_content %}
+
+      <!-- ##### WideImage Area Start ##### -->
+      {% include "baseApp/wideImage.html" %}
+
+      <!-- ##### Advance Search Area Start ##### -->
+      {% include "baseApp/advancedSearch.html" %}
+
+      <!-- ##### Filter Details Area Start ##### -->
+      <section class="listings-content-wrapper section-padding-50">
+          <div class="container">
+              <div class="col-12 col-lg-12">
+                  <div class="accordions mb-20" id="accordion" role="tablist" aria-multiselectable="true">
+                      <!-- single accordian area -->
+                      <div class="panel single-accordion">
+                          <!-- Title -->
+                          <h6><a role="button" class="" aria-expanded="true" aria-controls="collapseOne" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">Search Details
+                                  <span class="accor-open"><i class="fa fa-plus" aria-hidden="true"></i></span>
+                                  <span class="accor-close"><i class="fa fa-minus" aria-hidden="true"></i></span>
+                              </a>
+                          </h6>
+                          <!-- Content -->
+                          <div id="collapseOne" class="accordion-content collapse show">
+                              <p>
+                                <div class="col-12 col-lg-12">
+                                  <!-- These IFs are for not showing the empty requests -->
+                                  {% if Qdetail.QdealType == "no filter" %}{% else %}
+                                    <h6 class="searchDetails">Deal Type: <small>{{Qdetail.QdealType}}</small></h6>
+                                  {% endif %}
+
+                                  {% if Qdetail.Qregions == "no filter" %}{% else %}
+                                    <h6 class="searchDetails">Regions: {% for r in Qdetail.Qregions %} <small>{{r}}</small> {% endfor %}</h6>
+                                  {% endif %}
+
+                                  {% if Qdetail.QpropertyTypes == "no filter" %}{% else %}
+                                    <h6 class="searchDetails">Property Type: {% for p in Qdetail.QpropertyTypes %}<small>{{p}}</small>{% endfor %}</h6>
+                                  {% endif %}
+
+                                  {% if Qdetail.Qprices == "no filter" %}{% else %}
+                                    <h6 class="searchDetails">Price Range ($):<small>{% filter floatformat:"0"|intcomma %} {{Qdetail.Qprices.min}} {% endfilter %} &nbsp to  &nbsp {% filter floatformat:"0"|intcomma %} {{Qdetail.Qprices.max}} {% endfilter %}</small></h6>
+                                  {% endif %}
+
+                                  {% if Qdetail.Qspace == "no filter" %}{% else %}
+                                    <h6 class="searchDetails">Built Area (sq. m):<small>{{Qdetail.Qspace.min}} &nbsp to &nbsp {{Qdetail.Qspace.max}} </small></h6>
+                                  {% endif %}
+
+                                  {% if Qdetail.Qroom == "no filter" %}{% else %}
+                                    <h6 class="searchDetails">Number of Bedrooms: {% for r in Qdetail.Qroom %} <small>{{r}}</small> {% endfor %}</h6>
+                                  {% endif %}
+
+                                </div>
+                              </p>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </section>
+      <!-- ##### Filter Details Area End ##### -->
+
+      <!-- ##### Listing Content Wrapper Area Start ##### -->
+      <section class="listings-content-wrapper section-padding-50">
+          <div class="container">
+              <!-- Search Count and OrderBy button -->
+              <div class="row">
+                <!-- empty div -->
+                <div class="col-sm"></div>
+                <!-- Result Count and Sort Button -->
+                <div class="col-sm">
+                    <h3 style="text-align: center;">{{resultCount}} Properties Found</h3>
+                </div>
+                <!-- ORDERING BUTTON -->
+                <div class="col-sm" style="text-align: center;">
+                  <button id="btnGroupDrop1" type="button" class="btn south-btn btn-2 p-1 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Order By
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                      <a class="dropdown-item" href="?{% param_replace sort='date-newest' page=1 %}">Newest</a>
+                      <a class="dropdown-item" href="?{% param_replace sort='date-oldest' page=1 %}">Oldest</a>
+                      <a class="dropdown-item" href="?{% param_replace sort='price-ascending' page=1 %}">Price: Low to High</a>
+                      <a class="dropdown-item" href="?{% param_replace sort='price-descending' page=1 %}">Price: High to Low</a>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Property Image and Details -->
+              <div class="row section-padding-50">
+                {% for property in assets_filtered %}
+                  <div class="col-12 col-md-6 col-xl-4">
+                      <!-- Single Property Thumbnail -->
+                      {% include "baseApp/singlePropertyThumbnail.html" %}
+                  </div>
+                {% endfor %}
+              </div>
+
+              <!-- Paginate  -->
+              {% include "baseApp/paginator.html" %}
+
+          </div>
+      </section>
+      <!-- ##### Listing Content Wrapper Area End ##### -->
+
+  {% endblock body_content %}

@@ -1,0 +1,364 @@
+{% extends "baseApp/base.html" %}
+{% load static %}
+{% load humanize %}
+{% load my_tags %}
+
+{% block head %}
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <link href="{% static "baseApp/css/bootstrap-toggle.css" %}" rel="stylesheet">
+{% endblock head %}
+
+
+{% block body_content %}
+
+    <!-- ##### Breadcumb Area Start ##### -->
+    <section class="breadcumb-area bg-img" style="background-image: url({{slideContent.image.url}});">
+        <div class="container h-100">
+            <div class="row h-100 align-items-center">
+                <div class="col-12">
+                    <div class="breadcumb-content">
+                        <h3 class="breadcumb-title">{{property.title}}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ##### Breadcumb Area End ##### -->
+
+    <!-- ##### Advance Search Area Start ##### -->
+    <div class="south-search-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="advanced-search-form">
+                        <!-- Search Title -->
+                        <div class="search-title">
+                            <p>Search for your home</p>
+                        </div>
+                        <!-- Search Form -->
+                        <form action="{% url 'baseApp:search' %}" method="GET" id="advanceSearch">
+                            <div class="row">
+
+                                <!-- Open Search -->
+                                <div class="col-12 col-md-4 col-lg-3">
+                                    <div class="form-group">
+                                        <input type="input" class="form-control" name="input" placeholder="Keyword">
+                                    </div>
+                                </div>
+
+                                <!-- LIST -->
+                                <!-- <div class="col-12 col-md-4 col-lg-3">
+                                    <div class="form-group">
+                                        <select class="form-control" id="cities">
+                                          <option>All Regions</option>
+                                          {% for region in regions %}
+                                              <option>{{region.name}}</option>
+                                          {% endfor %}
+                                        </select>
+                                    </div>
+                                </div> -->
+
+                                <!-- Property Types -->
+                                <div class="col-12 col-md-4 col-lg-3">
+                                    <div class="form-group">
+                                        <select class="form-control" id="catagories" name="propertyType_select">
+                                            <option value="Any">All Types</option>
+                                            {% for type in propertyTypeNames %}
+                                                <option>{{type}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Tag Type Toggle Button -->
+                                <div class="col-12 col-md-4 col-lg-3">
+                                    <div class="form-group">
+                                      <style>
+                                        .slow .toggle-group { transition: left 1.0s; -webkit-transition: left 1.0s; }
+                                      </style>
+                                      <input name='tag_select' value='FS' type="checkbox" id="toggle-event" checked data-toggle="toggle" data-on="Sale" data-off="Rent" data-style='slow' data-onstyle="success" data-offstyle="danger" data-height="70" data-width="200">
+                                    </div>
+                                </div>
+
+                                <!-- LIST -->
+                                <!-- <div class="col-12 col-md-4 col-xl-3">
+                                    <div class="form-group">
+                                        <select class="form-control" id="listings">
+                                            <option>All Listings</option>
+                                            <option>Listings 1</option>
+                                            <option>Listings 2</option>
+                                            <option>Listings 3</option>
+                                            <option>Listings 4</option>
+                                            <option>Listings 5</option>
+                                        </select>
+                                    </div>
+                                </div> -->
+
+                                <!-- Bedrooms -->
+                                <div class="col-12 col-md-4 col-xl-2">
+                                    <div class="form-group">
+                                        <select class="form-control" name="bedroom_select">
+                                          <option>Any</option>
+                                          {% for num in bedroomNumbers %}
+                                              <option>{{num.bedroom}}</option>
+                                          {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- LIST -->
+                                <div class="col-12 col-md-4 col-xl-2">
+                                    <div class="form-group">
+                                        <select class="form-control" name="">
+                                          <option value="Any">Any</option>
+                                          {% for tag in tagType %}
+                                              <option>{{tag}}</option>
+                                          {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Sliders -->
+                                <div class="col-12 col-md-8 col-lg-12 col-xl-5 d-flex">
+                                    <!-- Space Range -->
+                                    <div class="slider-range">
+                                        <div data-min={{spaceRange.build_area__min}} data-max={{spaceRange.build_area__max}} data-unit=" sq. m" class="slider-range-price ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" data-value-min={{spaceRange.build_area__min}} data-value-max={{spaceRange.build_area__max}}>
+                                            <div class="ui-slider-range ui-widget-header ui-corner-all"></div>
+                                            <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
+                                            <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
+                                        </div>
+                                        <div class="range">{{spaceRange.build_area__min}} sq. m - {{spaceRange.build_area__max}} sq. m</div>
+                                        <!-- for space to read on GET request -->
+                                        <p>
+                                          <input type="text" name="space_select" id="minval" readonly style= "background: transparent; border: none; width:0px; height:0px;">
+                                          <input type="text" name="space_select" id="maxval" readonly style= "background: transparent; border: none; width:0px; height:0px;">
+                                        </p>
+
+
+                                    </div>
+
+                                    <!-- Price Range -->
+                                    <div class="slider-range">
+
+                                        <div id='priceDiv' data-min={{priceRange.price__min}} data-max={{priceRange.price__max}} data-unit=" $" class="slider-range-price ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" data-value-min={{priceRange.price__min}} data-value-max={{priceRange.price__max}}>
+                                            <div class="ui-slider-range ui-widget-header ui-corner-all"></div>
+                                            <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
+                                            <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
+                                        </div>
+                                        <div class="range" id='priceHTMLtext'>
+                                          {% filter floatformat:"0"|intcomma %}
+                                            {{priceRange.price__min}}
+                                          {% endfilter %} $ -
+                                          {% filter floatformat:"0"|intcomma %}
+                                            {{priceRange.price__max}}
+                                          {% endfilter %} $
+
+                                        </div>
+
+                                        <!-- for price to read on GET request-->
+                                        <p>
+                                          <input type="text" name="price_select" id="minval" readonly style= "background: transparent; border: none; width:0px; height:0px;">
+                                          <input type="text" name="price_select" id="maxval" readonly style= "background: transparent; border: none; width:0px; height:0px;">
+                                        </p>
+
+                                    </div>
+                                </div>
+
+                                <!-- More Filters Part -->
+                                <div class="col-12 search-form-second-steps">
+                                    <div class="row">
+                                        <!-- LIST -->
+                                        <!-- <div class="col-12 col-md-4 col-lg-3">
+                                            <div class="form-group">
+                                                <select class="form-control" id="types">
+                                                    <option>All Types</option>
+                                                    <option>Apartment <span>(30)</span></option>
+                                                    <option>Land <span>(69)</span></option>
+                                                    <option>Villas <span>(103)</span></option>
+                                                </select>
+                                            </div>
+                                        </div> -->
+                                        <!-- LIST -->
+                                        <!-- <div class="col-12 col-md-4 col-lg-3">
+                                            <div class="form-group">
+                                                <select class="form-control" id="catagories2">
+                                                    <option>All Catagories</option>
+                                                    <option>Apartment</option>
+                                                    <option>Bar</option>
+                                                    <option>Farm</option>
+                                                    <option>House</option>
+                                                    <option>Store</option>
+                                                </select>
+                                            </div>
+                                        </div> -->
+                                        <!-- LIST -->
+                                        <!-- <div class="col-12 col-md-4 col-lg-3">
+                                            <div class="form-group">
+                                                <select class="form-control" id="Actions">
+                                                    <option>All Actions</option>
+                                                    <option>Sales</option>
+                                                    <option>Booking</option>
+                                                </select>
+                                            </div>
+                                        </div> -->
+                                        <!-- LIST -->
+                                        <!-- <div class="col-12 col-md-4 col-lg-3">
+                                            <div class="form-group">
+                                                <select class="form-control" id="city2">
+                                                    <option>All City</option>
+                                                    <option>City 1</option>
+                                                    <option>City 2</option>
+                                                    <option>City 3</option>
+                                                </select>
+                                            </div>
+                                        </div> -->
+                                        <!-- Regions -->
+                                        <div class="col-12 col-md-10">
+                                            <div class="form-group">
+                                              {% for region in regions %}
+                                                  <span class="button-checkbox">
+                                                          <button type="button" class="btn" data-color="primary">{{region.name}}</button>
+                                                          <input type="checkbox" name='region_select' class="hidden" value='{{region.id}}'/>
+                                                  </span>
+                                              {% endfor %}
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <!-- More Filter and Search buttons -->
+                                <div class="col-12 d-flex justify-content-between align-items-end">
+                                    <!-- More Filter -->
+                                    <div class="more-filter">
+                                        <a href="#" id="moreFilter">+ More filters</a>
+                                    </div>
+                                    <!-- Submit -->
+                                    <div class="form-group mb-0">
+                                        <button type="submit" class="btn south-btn">Search</button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ##### Advance Search Area End ##### -->
+
+
+    <!-- ##### Listings Content Area Start ##### -->
+    <section class="listings-content-wrapper section-padding-100">
+        <div class="container">
+            <!-- Property Picture Slider -->
+            <div class="row">
+                <div class="col-12">
+                    <!-- Single Listings Slides -->
+                    <div class="single-listings-sliders owl-carousel" data-ride="carousel">
+                      {% for picture in property.images.all %}
+                        <!-- Single Slide -->
+                        <img src="{{picture.image.url}}" alt="Property Pictures">
+                      {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <!-- Property Text and Features -->
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-8">
+                    <div class="listings-content">
+                        <!-- Price -->
+                        <div class="list-price">
+                          {% if property.tag == "FR" %}
+                            <p>
+                              {% filter floatformat:"0"|intcomma %}
+                                  {{property.price}}
+                              {% endfilter %} $/Month
+                            </p>
+                          {% else %}
+                            <p>
+                              {% filter floatformat:"0"|intcomma %}
+                                  {{property.price}}
+                              {% endfilter %} $
+                            </p>
+                          {% endif %}
+                        </div>
+                        <h5>{{property.title}}</h5>
+                        <p class="location"><img src="{% static "baseApp/img/icons/location.png" %}" alt="location icon">{{property.complex.region.name}}</p>
+                        <p>Etiam nec odio vestibulum est mattis effic iturut magna. Pellentesque sit amet tellus blandit. Etiam nec odiomattis effic iturut magna. Pellentesque sit am et tellus blandit. Etiam nec odio vestibul. Etiam nec odio vestibulum est mat tis effic iturut magna. Curabitur rhoncus auctor eleifend. Fusce venenatis diam urna, eu pharetra arcu varius ac. Etiam cursus turpis lectus, id iaculis risus tempor id. Phasellus fringilla nisl sed sem scelerisque, eget aliquam magna vehicula.</p>
+                        <!-- Meta -->
+                        <div class="property-meta-data d-flex align-items-end">
+                          <div class="new-tag">
+                              <img src="{% static "baseApp/img/icons/new.png" %}" alt="new icon">
+                          </div>
+                          <div class="bathroom">
+                              <img src="{% static "baseApp/img/icons/bathtub.png" %}" alt="icon ">
+                              <span>{{property.bathroom}}</span>
+                          </div>
+                          <div class="garage">
+                              <img src="{% static "baseApp/img/icons/garage.png" %}" alt="icon">
+                              <span>{{property.bedroom}}</span>
+                          </div>
+                          <div class="space">
+                              <img src="{% static "baseApp/img/icons/space.png" %}" alt="icon">
+                              <span>{{property.build_area}} Sq. m</span>
+                          </div>
+                        </div>
+                        <!-- Features -->
+                        <ul class="listings-core-features d-flex align-items-center">
+                          {% for feature in property.features.all %}
+                            <li><i class="fa fa-check" aria-hidden="true"></i>{{feature}}</li>
+                          {% endfor %}
+                        </ul>
+                        <!-- Listings Btn Groups -->
+                        <div class="listings-btn-groups">
+                            <a href="#" class="btn south-btn">See Floor plans</a>
+                            <a href="#" class="btn south-btn active">calculate mortgage</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="contact-realtor-wrapper">
+                        <div class="realtor-info">
+                            <img src="img/bg-img/listing.jpg" alt="">
+                            <div class="realtor---info">
+                                <h2>Jeremy Scott</h2>
+                                <p>Realtor</p>
+                                <h6><img src="img/icons/phone-call.png" alt=""> +45 677 8993000 223</h6>
+                                <h6><img src="img/icons/envelope.png" alt=""> office@template.com</h6>
+                            </div>
+                            <div class="realtor--contact-form">
+                                <form action="#" method="post">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" id="realtor-name" placeholder="Your Name">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="number" class="form-control" id="realtor-number" placeholder="Your Number">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="enumber" class="form-control" id="realtor-email" placeholder="Your Mail">
+                                    </div>
+                                    <div class="form-group">
+                                        <textarea name="message" class="form-control" id="realtor-message" cols="30" rows="10" placeholder="Your Message"></textarea>
+                                    </div>
+                                    <button type="submit" class="btn south-btn">Send Message</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Map -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="listings-maps mt-100">
+                        <div id="googleMap"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ##### Listings Content Area End ##### -->
+
+{% endblock body_content %}
