@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 {% load static %}
-<html lang="en">
+{% load my_tags %}
+
+<html lang='fa'>
 
   <head>
     <meta charset="UTF-8">
@@ -75,66 +77,16 @@
                         <div class="classynav">
                             <ul>
                                 <li><a href="{% url "FAbaseApp:index" %}">خانه</a></li>
-                                <!-- <li><a href="#">Pages</a>
-                                    <ul class="dropdown">
-                                        <li><a href="index.html">Home</a></li>
-                                        <li><a href="about-us.html">About Us</a></li>
-                                        <li><a href="#">Listings</a>
-                                            <ul class="dropdown">
-                                                <li><a href="listings.html">Listings</a></li>
-                                                <li><a href="single-listings.html">Single Listings</a></li>
-                                            </ul>
-                                        </li>
-                                        <li><a href="#">Blog</a>
-                                            <ul class="dropdown">
-                                                <li><a href="blog.html">Blog</a></li>
-                                                <li><a href="single-blog.html">Single Blog</a></li>
-                                            </ul>
-                                        </li>
-                                        <li><a href="contact.html">Contact</a></li>
-                                        <li><a href="elements.html">Elements</a></li>
-                                    </ul>
-                                </li> -->
                                 <li><a href="about-us.html">درباره ما</a></li>
                                 <li><a href="{% url "FAbaseApp:search" %}">املاک</a></li>
                                 <li><a href="{% url "blogApp:all_posts" %}">مقالات</a></li>
-                                <!-- <li><a href="#">Mega Menu</a>
-                                    <div class="megamenu">
-                                        <ul class="single-mega cn-col-4">
-                                            <li class="title">Headline 1</li>
-                                            <li><a href="#">Mega Menu Item 1</a></li>
-                                            <li><a href="#">Mega Menu Item 2</a></li>
-                                            <li><a href="#">Mega Menu Item 3</a></li>
-                                            <li><a href="#">Mega Menu Item 4</a></li>
-                                            <li><a href="#">Mega Menu Item 5</a></li>
-                                        </ul>
-                                        <ul class="single-mega cn-col-4">
-                                            <li class="title">Headline 2</li>
-                                            <li><a href="#">Mega Menu Item 1</a></li>
-                                            <li><a href="#">Mega Menu Item 2</a></li>
-                                            <li><a href="#">Mega Menu Item 3</a></li>
-                                            <li><a href="#">Mega Menu Item 4</a></li>
-                                            <li><a href="#">Mega Menu Item 5</a></li>
-                                        </ul>
-                                        <ul class="single-mega cn-col-4">
-                                            <li class="title">Headline 3</li>
-                                            <li><a href="#">Mega Menu Item 1</a></li>
-                                            <li><a href="#">Mega Menu Item 2</a></li>
-                                            <li><a href="#">Mega Menu Item 3</a></li>
-                                            <li><a href="#">Mega Menu Item 4</a></li>
-                                            <li><a href="#">Mega Menu Item 5</a></li>
-                                        </ul>
-                                        <ul class="single-mega cn-col-4">
-                                            <li class="title">Headline 4</li>
-                                            <li><a href="#">Mega Menu Item 1</a></li>
-                                            <li><a href="#">Mega Menu Item 2</a></li>
-                                            <li><a href="#">Mega Menu Item 3</a></li>
-                                            <li><a href="#">Mega Menu Item 4</a></li>
-                                            <li><a href="#">Mega Menu Item 5</a></li>
-                                        </ul>
-                                    </div>
-                                </li> -->
                                 <li><a href="contact.html">ارتباط با ما</a></li>
+                                <li><a href="#">زبان</a>
+                                    <ul class="dropdown">
+                                        <li><a href="index.html">English</a></li>
+                                        <li><a href="contact.html">فارسی</a></li>
+                                    </ul>
+                                </li>
                             </ul>
 
                             <!-- Search Form -->
@@ -155,7 +107,6 @@
         </div>
     </header>
     <!-- ##### Header Area End ##### -->
-
 
     {% block body_content %}
 
@@ -280,17 +231,17 @@
 
     <!-- All JS files -->
     <!-- jQuery (Necessary for All JavaScript Plugins) -->
-    <script src="{% static "baseApp/js/jquery-2.2.4.min.js" %}"></script>
+    <script src="{% static "FAbaseApp/js/jquery-2.2.4.min.js" %}"></script>
     <!-- Popper js -->
-    <script src="{% static "baseApp/js/popper.min.js" %}"></script>
+    <script src="{% static "FAbaseApp/js/popper.min.js" %}"></script>
     <!-- Bootstrap js -->
-    <script src="{% static "baseApp/js/bootstrap.min.js" %}"></script>
+    <script src="{% static "FAbaseApp/js/bootstrap.min.js" %}"></script>
     <!-- Plugins js -->
-    <script src="{% static "baseApp/js/plugins.js" %}"></script>
-    <script src="{% static "baseApp/js/classy-nav.min.js" %}"></script>
-    <script src="{% static "baseApp/js/jquery-ui.min.js" %}"></script>
+    <script src="{% static "FAbaseApp/js/plugins.js" %}"></script>
+    <script src="{% static "FAbaseApp/js/classy-nav.min.js" %}"></script>
+    <script src="{% static "FAbaseApp/js/jquery-ui.min.js" %}"></script>
     <!-- Active js -->
-    <script src="{% static "baseApp/js/active.js" %}"></script>
+    <script src="{% static "FAbaseApp/js/active.js" %}"></script>
     <!-- Region selection buttons for Search area -->
     <script type="text/javascript">
 
@@ -361,7 +312,7 @@
           });
     // </script>
     <!-- Menu with checkbox for Search area -->
-    <script src="{% static "baseApp/js/jquery.sumoselect.js" %}"></script>
+    <script src="{% static "FAbaseApp/js/jquery.sumoselect.js" %}"></script>
     <script type="text/javascript">
         $(document).ready(function () {
             window.asd = $('.SlectBox').SumoSelect({ csvDispCount: 3, selectAll:true, captionFormatAllSelected: "Yeah, OK, so everything." });
@@ -373,7 +324,7 @@
 
             window.testSelAlld = $('.SlectBox-grp').SumoSelect({okCancelInMulti:true, selectAll:true, isClickAwayOk:true });
 
-            window.sb = $('.SlectBox-grp-src').SumoSelect({ csvDispCount: 3, search: true, searchText:'Enter here.', selectAll:true });
+            window.sb = $('.SlectBox-grp-src').SumoSelect({ csvDispCount: 3, search: true, searchText:'اینجا وارد کنید', selectAll:true });
             window.searchSelAll = $('.search-box-sel-all').SumoSelect({ csvDispCount: 3, selectAll:true, search: true, searchText:'Enter here.', okCancelInMulti:true });
             window.searchSelAll = $('.search-box-open-up').SumoSelect({ csvDispCount: 3, selectAll:true, search: false, searchText:'Enter here.', up:true });
             window.Search = $('.search-box-custom-fn').SumoSelect({ csvDispCount: 3, search: true, searchText:'Enter here.', searchFn: function(haystack, needle) {

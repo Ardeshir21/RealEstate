@@ -2,7 +2,7 @@
 {% load humanize %}
 
 <!-- This for list menu with checkbox-->
-<link href="{% static "baseApp/css/sumoselect.css" %}" rel="stylesheet" />
+<link href="{% static "FAbaseApp/css/sumoselect.css" %}" rel="stylesheet" />
 
 <!-- This template use "extraContext" dictionary as the Context data -->
 <div class="south-search-area">
@@ -12,7 +12,7 @@
                 <div class="advanced-search-form">
                     <!-- Search Title -->
                     <div class="search-title">
-                        <p>Search for your home</p>
+                        <p>خانه خود را پیدا کن</p>
                     </div>
                     <!-- Search Form -->
                     <form action="{% url 'baseApp:search' %}" method="GET" id="advanceSearch">
@@ -20,8 +20,8 @@
                             <!-- Open Search -->
                             <div class="col-12 col-md-4 col-lg-4">
                                 <div class="form-group text-center">
-                                  <p><small>Search by Reference No.</small></p>
-                                  <select multiple="multiple" name="ref_select" placeholder="For Example: SET-0026" class="SlectBox-grp-src">
+                                  <p><small>جستجو از طریق کد ملک</small></p>
+                                  <select multiple="multiple" name="ref_select" placeholder="به عنوان نمونه: SET-0026" class="SlectBox-grp-src">
                                     {% for asset in assets_all %}
                                       <option>SET-00{{asset.id}}</option>
                                     {% endfor %}
@@ -32,8 +32,8 @@
                             <!-- Property Types -->
                             <div class="col-12 col-md-4 col-lg-4">
                                 <div class="form-group text-center">
-                                  <p><small>Property Type</small></p>
-                                  <select multiple="multiple" name="propertyType_select" placeholder="All Types" class="SlectBox-grp-src">
+                                  <p><small>نوع ملک</small></p>
+                                  <select multiple="multiple" name="propertyType_select" placeholder="همه انواع ملک" class="SlectBox-grp-src">
                                     {% for type in propertyTypeNames %}
                                       <option>{{type}}</option>
                                     {% endfor %}

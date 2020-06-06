@@ -32,7 +32,7 @@
     {% include "FAbaseApp/advancedSearch.html" %}
 
     <!-- ##### Featured Properties Area Start ##### -->
-    <section class="featured-properties-area section-padding-100-50">
+    <section dir='rtl' class="featured-properties-area section-padding-100-50">
         <div class="container">
             <div class="row">
                 <div class="col-12">
@@ -47,7 +47,7 @@
               {% for property in featuredProperties %}
                 <div class="col-12 col-md-6 col-xl-4">
                     <!-- Single Property Thumbnail -->
-                    {% include "baseApp/singlePropertyThumbnail.html" %}
+                    {% include "FAbaseApp/singlePropertyThumbnail.html" %}
                 </div>
               {% endfor %}
             </div>

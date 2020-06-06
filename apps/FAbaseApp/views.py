@@ -1,7 +1,8 @@
+# Import models from baseApp
+from apps.baseApp import models
 from django.shortcuts import render
 from django.views import generic
-# Using the same model in baseAPP. This app doesn't have a model itself.
-from apps.baseApp import models
+# This app has its own blog model
 from apps.blogApp import models as blogAppModel
 from django.db.models import Max, Min, Q
 from django.urls import reverse_lazy, reverse
@@ -32,6 +33,7 @@ def get_extra_context():
 # Index View
 class IndexView(generic.ListView):
     context_object_name = 'assets_all'
+    # This is the only different parameter for this FA app
     template_name = 'FAbaseApp/index.html'
     model = models.Asset
 
@@ -47,7 +49,8 @@ class IndexView(generic.ListView):
 class AssetFilterView(generic.ListView):
     context_object_name = 'assets_filtered'
     model = models.Asset
-    template_name = 'baseApp/searchResult.html'
+    # This is the only different parameter for this FA app
+    template_name = 'FAbaseApp/searchResult.html'
     paginate_by = 9
 
     def get_queryset(self):
@@ -63,6 +66,7 @@ class AssetFilterView(generic.ListView):
         orderby_query = self.request.GET.get('sort')
         reference_query = self.request.GET.getlist('ref_select')
         apartment_query = self.request.GET.getlist('apartment_select')
+        installment_query = self.request.GET.get('installment_select')
 
         # CONVERT some Queries
         # Convert the property type into model Format ('FL', 'Flat')
@@ -124,6 +128,11 @@ class AssetFilterView(generic.ListView):
                 tempQuery |= Q(pk=int(ref))
             # print(tempQuery)
             result = result.filter(tempQuery)
+
+        # Installment
+        if not(installment_query=='' or installment_query==None):
+            if (installment_query=='1'):
+                result = result.filter(installment__exact=True)
 
         # Bedrooms
         if not(bedroom_query=='' or bedroom_query==None or bedroom_query==[]):
@@ -236,7 +245,8 @@ class AssetFilterView(generic.ListView):
 class AssetSingleView(generic.DetailView):
     # Because this is a DetailView, it will use get() method on the model and return only the property with requested pk
     context_object_name = 'property'
-    template_name = 'baseApp/propertyDetails.html'
+    # This is the only different parameter for this FA app
+    template_name = 'FAbaseApp/propertyDetails.html'
     model = models.Asset
 
     def get_context_data(self, **kwargs):

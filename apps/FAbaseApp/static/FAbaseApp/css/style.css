@@ -37,6 +37,12 @@
 ##### Index of Stylesheet ##### /*
 
 
+
+/* :: 1.0 Import Fonts */
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat+Alternates:wght@600&display=swap");
+@import url(FAfonts.css);
+
 /* :: 2.0 Import All CSS */
 @import url(bootstrap.min.css);
 @import url(animate.css);
@@ -48,20 +54,20 @@
 @import url(nice-select.css);
 @import url(jquery-ui.min.css);
 
-
-/* :: 1.0 Import Fonts */
-@import url("https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700");
-@import url("https://fonts.googleapis.com/css2?family=Montserrat+Alternates:wght@600&display=swap");
-@import url("https://db.onlinewebfonts.com/c/3671adca6f650c92b83f906e49656986?family=B+Nazanin");
-
-
 /* :: 3.0 Base CSS */
+/* This Part is for setting the main color theme for whole project */
+:root {
+  --main-color: #947054;
+  --forSale-tag-color: #d5a253;
+  --forRent-tag-color: #bd2130;
+}
+
 * {
   margin: 0;
   padding: 0; }
 
 body {
-  font-family: "B Nazanin", sans-serif; }
+  font-family: "IranSans-Bold", sans-serif; }
 
 h1,
 h2,
@@ -221,7 +227,7 @@ img {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #947054;
+    background-color: var(--main-color);
     opacity: 0.7;
     content: ''; }
 
@@ -299,9 +305,9 @@ img {
   animation: 1500ms linear 0s normal none infinite running south-load;
   background: transparent;
   border-color: #ffffff;
-  border-top-color: #947054;
-  border-left-color: #947054;
-  border-right-color: #947054;
+  border-top-color: var(--main-color);
+  border-left-color: var(--main-color);
+  border-right-color: var(--main-color);
   border-radius: 50%;
   border-style: solid;
   border-width: 2px;
@@ -328,7 +334,7 @@ img {
     transform: rotate(360deg); } }
 /* :: 5.0 Scroll Up Area CSS */
 #scrollUp {
-  background-color: #947054;
+  background-color: var(--main-color);
   border-radius: 50%;
   bottom: 40px;
   right: 40px;
@@ -377,7 +383,7 @@ img {
       .section-heading h2 {
         font-size: 24px; } }
   .section-heading p {
-    color: #947054;
+    color: var(--main-color);
     font-size: 14px;
     margin-bottom: 0;
     font-style: italic; }
@@ -392,7 +398,7 @@ img {
   color: #ffffff;
   font-size: 14px;
   font-weight: 600;
-  background-color: #947054;
+  background-color: var(--main-color);
   border-radius: 0;
   line-height: 50px;
   padding: 0 30px;
@@ -401,13 +407,13 @@ img {
     color: #ffffff;
     background-color: #000000; }
   .south-btn.btn-2 {
-    border: 2px solid #947054;
+    border: 2px solid var(--main-color);
     background-color: transparent;
-    color: #947054;
+    color: var(--main-color);
     line-height: 0px; }
     .south-btn.btn-2:hover, .south-btn.btn-2:focus {
       color: #ffffff;
-      background-color: #947054; }
+      background-color: var(--main-color); }
   .south-btn.btn-3 {
     border: 2px solid #000000;
     background-color: transparent;
@@ -434,7 +440,7 @@ img {
 	display: none;
 }
 .form-group .sidebar-btn .bt-item input[type=radio]:checked+label {
-	background: #947054;
+	background: var(--main-color);
 	color: #ffffff;
 }
 .form-group .sidebar-btn label {
@@ -444,7 +450,7 @@ img {
 	font-weight: 600;
 	text-transform: uppercase;
 	background: #EBEBEB;
-	color: #947054;
+	color: var(--main-color);
 	text-align: center;
 	cursor: pointer;
 	padding: 14px 0 12px;
@@ -456,8 +462,8 @@ img {
 }
 
 .form-group .btn-primary {
-  background-color: #d5a253 !important;
-  border-color: #947054 !important;
+  background-color: var(--forSale-tag-color) !important;
+  border-color: var(--main-color) !important;
   margin: 2px !important;
 }
 
@@ -506,7 +512,7 @@ img {
         color: #ffffff; }
   .top-header-area .phone-number {
     line-height: 1;
-    background-color: #947054;
+    background-color: var(--main-color);
     height: 45px;
     margin-bottom: 0; }
     .top-header-area .phone-number .icon {
@@ -579,7 +585,7 @@ img {
         width: 100%;
         margin-top: 15px;
         line-height: 50px;
-        background-color: #947054; } }
+        background-color: var(--main-color); } }
     @media only screen and (max-width: 767px) {
       .main-header-area .searchbtn {
         margin-left: 0;
@@ -587,9 +593,9 @@ img {
         width: 100%;
         margin-top: 15px;
         line-height: 50px;
-        background-color: #947054; } }
+        background-color: var(--main-color); } }
     .main-header-area .searchbtn:hover {
-      background-color: #947054; }
+      background-color: var(--main-color); }
   .main-header-area .south-search-form {
     position: relative;
     z-index: 1;
@@ -633,7 +639,7 @@ img {
         color: #ffffff; }
 
 .search-close .searchbtn {
-  background-color: #947054; }
+  background-color: var(--main-color); }
 .search-close .classynav ul {
   display: none; }
 .search-close .south-search-form {
@@ -703,7 +709,7 @@ img {
   opacity: 0;
   -webkit-transition-duration: 500ms;
   transition-duration: 500ms;
-  background-color: #947054;
+  background-color: var(--main-color);
   font-size: 16px; }
   @media only screen and (max-width: 767px) {
     .hero-area .owl-prev,
@@ -750,7 +756,7 @@ img {
   display: block;
   width: 20px;
   height: 20px;
-  background-color: #947054;
+  background-color: var(--main-color);
   font-size: 12px;
   color: #ffffff;
   text-align: center;
@@ -802,7 +808,7 @@ img {
       position: absolute;
       width: 260px;
       height: 45px;
-      background-color: #947054;
+      background-color: var(--main-color);
       top: -46px;
       left: 50%;
       -webkit-transform: translateX(-50%);
@@ -818,6 +824,7 @@ img {
         color: #ffffff;
         text-transform: uppercase;
         line-height: 45px;
+        font-size: 18px;
         font-weight: 600; }
     .south-search-area .advanced-search-form .slider-range {
       flex: 0 0 50%;
@@ -835,10 +842,10 @@ img {
       border: none;
       height: 4px; }
     .south-search-area .advanced-search-form .ui-widget-content {
-      background: #947054; }
+      background: var(--main-color); }
     .south-search-area .advanced-search-form .ui-slider-horizontal {
       height: 4px;
-      background: #947054; }
+      background: var(--main-color); }
     .south-search-area .advanced-search-form .ui-corner-all,
     .south-search-area .advanced-search-form .ui-corner-bottom,
     .south-search-area .advanced-search-form .ui-corner-right,
@@ -866,7 +873,7 @@ img {
     .south-search-area .advanced-search-form html .ui-button.ui-state-disabled:hover,
     .south-search-area .advanced-search-form html .ui-button.ui-state-disabled:active {
       border: none;
-      background: #947054;
+      background: var(--main-color);
       margin-top: -3px; }
     .south-search-area .advanced-search-form .range {
       font-size: 12px;
@@ -880,7 +887,7 @@ img {
       font-size: 12px;
       color: #323232; }
       .south-search-area .advanced-search-form .more-filter a:hover {
-        color: #947054; }
+        color: var(--main-color); }
     .south-search-area .advanced-search-form .search-form-second-steps {
       display: none; }
 
@@ -899,7 +906,7 @@ img {
     .single-featured-property .property-thumb .rentTag span {
       height: 35px;
       padding: 0 20px;
-      background-color: #bd2130;
+      background-color: var(--forRent-tag-color);
       color: #ffffff;
       text-transform: uppercase;
       font-size: 12px;
@@ -916,7 +923,7 @@ img {
     .single-featured-property .property-thumb .saleTag span {
       height: 35px;
       padding: 0 20px;
-      background-color: #d5a253;
+      background-color: var(--forSale-tag-color);
       color: #ffffff;
       text-transform: uppercase;
       font-size: 12px;
@@ -932,7 +939,7 @@ img {
     .single-featured-property .property-thumb .list-price p {
       background-color: #ffffff;
       padding: 10px 20px;
-      color: #947054;
+      color: var(--main-color);
       font-size: 24px;
       font-weight: 600;
       display: inline-block;
@@ -949,7 +956,7 @@ img {
     border: 1px solid #e1dddd; }
     .single-featured-property .property-content a {
       font-size: 18px;
-     color: #947054;
+     color: var(--main-color);
       }
     .single-featured-property .property-content h5 {
       font-size: 18px;
@@ -960,7 +967,7 @@ img {
       line-height: 0.1px;
     }
     .single-featured-property .property-content .location {
-      color: #947054;
+      color: var(--main-color);
       margin-bottom: 25px;
       font-size: 14px;
       font-weight: 600; }
@@ -986,7 +993,7 @@ img {
       background-color: #000000;
       color: #ffffff; }
     .single-featured-property:hover .list-price p, .single-featured-property:focus .list-price p {
-      background-color: #d5a253;
+      background-color: var(--forSale-tag-color);
       color: #ffffff; }
 
 /* :: 12.0 Testimonials Area CSS */
@@ -1012,7 +1019,7 @@ img {
         margin-bottom: 0;
         color: #323232; }
         .testimonials-slides .single-testimonial-slide .testimonial-author-info p span {
-          color: #947054; }
+          color: var(--main-color); }
   .testimonials-slides .center .single-testimonial-slide {
     -webkit-transform: scale(1);
     transform: scale(1); }
@@ -1035,7 +1042,7 @@ img {
     font-size: 12px; }
     .testimonials-slides .owl-prev:hover,
     .testimonials-slides .owl-next:hover {
-      background-color: #947054; }
+      background-color: var(--main-color); }
     @media only screen and (max-width: 767px) {
       .testimonials-slides .owl-prev,
       .testimonials-slides .owl-next {
@@ -1164,7 +1171,7 @@ img {
     margin-bottom: 0;
     text-transform: uppercase;
     border-bottom: 2px solid;
-    border-color: #947054;
+    border-color: var(--main-color);
     line-height: 1.8;
     display: inline-block; }
 .footer-widget-area p {
@@ -1214,7 +1221,7 @@ img {
       .footer-widget-area .useful-links-nav li a:first-child, .footer-widget-area .useful-links-nav li a:nth-child(2) {
         padding-top: 0; }
       .footer-widget-area .useful-links-nav li a:hover, .footer-widget-area .useful-links-nav li a:focus {
-        color: #947054; }
+        color: var(--main-color); }
 .footer-widget-area .featured-properties-slides {
   position: relative;
   z-index: 1; }
@@ -1233,7 +1240,7 @@ img {
     margin-top: -19px;
     -webkit-transition-duration: 500ms;
     transition-duration: 500ms;
-    background-color: #947054;
+    background-color: var(--main-color);
     font-size: 13px;
     box-shadow: 0 0 5px rgba(255, 255, 255, 0.15); }
     .footer-widget-area .featured-properties-slides .owl-prev:hover,
@@ -1304,7 +1311,7 @@ img {
       margin-top: -19px;
       -webkit-transition-duration: 500ms;
       transition-duration: 500ms;
-      background-color: #947054;
+      background-color: var(--main-color);
       font-size: 13px;
       box-shadow: 0 0 5px rgba(255, 255, 255, 0.15); }
       .about-content-wrapper .featured-properties-slides .owl-prev:hover,
@@ -1369,13 +1376,13 @@ img {
     line-height: 1;
     font-size: 18px; }
     .listings-top-meta .grid_view a.active {
-      color: #947054; }
+      color: var(--main-color); }
   .listings-top-meta .list_view a {
     color: #323232;
     line-height: 1;
     font-size: 18px; }
     .listings-top-meta .list_view a.active {
-      color: #947054; }
+      color: var(--main-color); }
 
 .single-listings-sliders {
   position: relative;
@@ -1395,7 +1402,7 @@ img {
     margin-top: -19px;
     -webkit-transition-duration: 500ms;
     transition-duration: 500ms;
-    background-color: #947054;
+    background-color: var(--main-color);
     font-size: 13px;
     box-shadow: 0 0 5px rgba(255, 255, 255, 0.15); }
     .single-listings-sliders .owl-prev:hover,
@@ -1416,7 +1423,7 @@ img {
   color: #a3a5a8;
   font-weight: 600;
   font-size: 12px;
-  font-family: 'Montserrat Alternates', sans-serif;
+  font-family: 'IranSans-Medium', sans-serif;
 }
 
 .listings-content {
@@ -1425,7 +1432,7 @@ img {
     margin-bottom: 0;
     font-size: 24px;
     font-weight: 600;
-    color: #947054; }
+    color: var(--main-color); }
   .listings-content h5 {
     font-size: 30px;
     margin-bottom: 10px; }
@@ -1473,7 +1480,7 @@ img {
       .listings-core-features li i {
         width: 27px;
         height: 27px;
-        background-color: #947054;
+        background-color: var(--main-color);
         color: #ffffff;
         border-radius: 50%;
         text-align: center;
@@ -1507,7 +1514,7 @@ img {
       text-transform: uppercase; }
     .contact-realtor-wrapper .realtor---info p {
       font-style: italic;
-      color: #947054; }
+      color: var(--main-color); }
     .contact-realtor-wrapper .realtor---info h6 {
       font-size: 14px; }
       .contact-realtor-wrapper .realtor---info h6 img {
@@ -1554,7 +1561,7 @@ img {
     padding: 15px 0; }
     .single-blog-area .post-content .post-date a {
       font-size: 14px;
-      color: #947054;
+      color: var(--main-color);
       margin-bottom: 10px;
       display: block; }
     .single-blog-area .post-content .headline {
@@ -1610,7 +1617,7 @@ img {
   font-size: 14px;
   font-weight: 400; }
   .south-catagories-card ul li a:hover, .south-catagories-card ul li a:focus {
-    color: #947054; }
+    color: var(--main-color); }
 
 .south-blog-area {
   position: relative;
@@ -1635,7 +1642,7 @@ img {
     margin-top: -19px;
     -webkit-transition-duration: 500ms;
     transition-duration: 500ms;
-    background-color: #947054;
+    background-color: var(--main-color);
     font-size: 13px;
     box-shadow: 0 0 5px rgba(255, 255, 255, 0.15); }
     .blog-sidebar-area .featured-properties-slides .owl-prev:hover,
@@ -1672,7 +1679,7 @@ img {
   border: none;
   width: 20px;
   height: 20px;
-  background-color: #947054;
+  background-color: var(--main-color);
   font-size: 12px;
   color: #ffffff;
   text-align: center;
@@ -1707,7 +1714,7 @@ img {
     margin-bottom: 15px;
     text-transform: uppercase; }
     .single_comment_area .comment-wrapper .comment-content .comment-meta a:hover {
-      color: #947054; }
+      color: var(--main-color); }
   .single_comment_area .comment-wrapper .comment-content p {
     font-size: 13px;
     margin-bottom: 0; }
@@ -1767,7 +1774,7 @@ img {
 .contact-heading {
   margin-bottom: 90px; }
   .contact-heading h6 {
-    border-bottom: 2px solid #947054;
+    border-bottom: 2px solid var(--main-color);
     display: inline-block;
     padding: 5px 0;
     text-transform: uppercase; }
@@ -1822,7 +1829,7 @@ img {
   margin-bottom: 0;
   text-transform: uppercase; }
   .single-accordion h6 a {
-    background-color: #947054;
+    background-color: var(--main-color);
     border-radius: 0;
     color: #ffffff;
     display: block;
@@ -1844,7 +1851,7 @@ img {
         -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
         filter: alpha(opacity=0); }
     .single-accordion h6 a.collapsed {
-      border: 2px solid #947054;
+      border: 2px solid var(--main-color);
       background-color: transparent;
       color: #000000; }
       .single-accordion h6 a.collapsed span.accor-close {
@@ -1864,7 +1871,7 @@ img {
 
     .single-accordion .accordion-content .searchDetails small{
       margin-left: 10px;
-      color: #947054;
+      color: var(--main-color);
       font-weight: 600;
       text-align: center;
       text-decoration: underline;
@@ -1878,7 +1885,7 @@ img {
     border-bottom: none;
     margin-bottom: 50px; }
     .south-tabs-content .nav-tabs .nav-link {
-      border: 2px solid #947054;
+      border: 2px solid var(--main-color);
       padding: 0 30px;
       height: 45px;
       line-height: 41px;
@@ -1889,7 +1896,7 @@ img {
         .south-tabs-content .nav-tabs .nav-link {
           padding: 0 10px; } }
       .south-tabs-content .nav-tabs .nav-link.active {
-        background-color: #947054;
+        background-color: var(--main-color);
         color: #ffffff; }
   .south-tabs-content .tab-content h6 {
     font-size: 18px; }
@@ -1907,7 +1914,7 @@ img {
 .single-cool-fact-area h2 {
   font-size: 60px;
   margin: 15px 0;
-  color: #947054; }
+  color: var(--main-color); }
 .single-cool-fact-area h6 {
   margin-bottom: 0;
   color: #7d7d7d; }

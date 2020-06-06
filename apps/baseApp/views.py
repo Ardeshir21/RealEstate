@@ -62,6 +62,7 @@ class AssetFilterView(generic.ListView):
         orderby_query = self.request.GET.get('sort')
         reference_query = self.request.GET.getlist('ref_select')
         apartment_query = self.request.GET.getlist('apartment_select')
+        installment_query = self.request.GET.get('installment_select')
 
         # CONVERT some Queries
         # Convert the property type into model Format ('FL', 'Flat')
@@ -123,6 +124,11 @@ class AssetFilterView(generic.ListView):
                 tempQuery |= Q(pk=int(ref))
             # print(tempQuery)
             result = result.filter(tempQuery)
+
+        # Installment
+        if not(installment_query=='' or installment_query==None):
+            if (installment_query=='1'):
+                result = result.filter(installment__exact=True)
 
         # Bedrooms
         if not(bedroom_query=='' or bedroom_query==None or bedroom_query==[]):

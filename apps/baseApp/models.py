@@ -64,7 +64,7 @@ class Region(models.Model):
 
     city = models.ForeignKey(City, related_name='cities', on_delete=models.CASCADE)
     name = models.CharField(max_length=150, unique=True)
-    description = models.TextField(blank=True, null=True)
+    description = RichTextUploadingField(null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -86,7 +86,7 @@ class Complex(models.Model):
     completion_date = models.DateTimeField(blank=True, null=True)
     features = models.ManyToManyField(ComplexFeatures, blank=True, null=True)
     build_area = models.PositiveIntegerField(default=0)
-    description = models.TextField(blank=True, null=True)
+    description = RichTextUploadingField(null=True, blank=True)
     # address = map_fields.AddressField(max_length=200)
     # geolocation = map_fields.GeoLocationField(max_length=100)
 
