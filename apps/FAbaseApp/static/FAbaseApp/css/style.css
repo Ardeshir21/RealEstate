@@ -58,6 +58,7 @@
 /* This Part is for setting the main color theme for whole project */
 :root {
   --main-color: #947054;
+  /* for: sale-tag, menu-hover, region-select-buttons */
   --forSale-tag-color: #d5a253;
   --forRent-tag-color: #bd2130;
 }
@@ -559,6 +560,9 @@ img {
     color: #ffffff;
     text-transform: uppercase;
     font-weight: 600; }
+    .main-header-area .classynav ul li a:hover{
+      color: var(--forSale-tag-color);
+    }
   .main-header-area .nav-brand {
     line-height: 1; }
     @media only screen and (min-width: 992px) and (max-width: 1199px) {
