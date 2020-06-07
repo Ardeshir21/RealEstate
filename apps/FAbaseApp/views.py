@@ -1,3 +1,7 @@
+## This views.py is excatly the same as baseApp/views.property
+## The differences are in import modules part and the Template html files.
+
+
 # Import models from baseApp
 from apps.baseApp import models
 from django.shortcuts import render
@@ -33,7 +37,6 @@ def get_extra_context():
 # Index View
 class IndexView(generic.ListView):
     context_object_name = 'assets_all'
-    # This is the only different parameter for this FA app
     template_name = 'FAbaseApp/index.html'
     model = models.Asset
 
@@ -47,10 +50,10 @@ class IndexView(generic.ListView):
 
 # Search Box - searchResult.html
 class AssetFilterView(generic.ListView):
-    context_object_name = 'assets_filtered'
+    # This not all the assets actually. It is filtered_assets. But for consistency in template codes, I named it assets_all.
+    context_object_name = 'assets_all'
     model = models.Asset
-    # This is the only different parameter for this FA app
-    template_name = 'FAbaseApp/searchResult.html'
+    template_name = 'FAbaseApp/property_list.html'
     paginate_by = 9
 
     def get_queryset(self):
@@ -242,11 +245,11 @@ class AssetFilterView(generic.ListView):
 
         return context
 
+# The Single Property View
 class AssetSingleView(generic.DetailView):
     # Because this is a DetailView, it will use get() method on the model and return only the property with requested pk
     context_object_name = 'property'
-    # This is the only different parameter for this FA app
-    template_name = 'FAbaseApp/propertyDetails.html'
+    template_name = 'FAbaseApp/property_detail.html'
     model = models.Asset
 
     def get_context_data(self, **kwargs):
@@ -255,34 +258,5 @@ class AssetSingleView(generic.DetailView):
         # Append extraContext
         context.update(get_extra_context())
         context['slideContent'] = models.Slide.objects.get(useFor__exact='PROPERTY_PAGE', active__exact=True)
+        context['assets_all'] = models.Asset.objects.all()
         return context
-
-
-# FORMS are here
-# from . import forms
-
-# Not using this form, because the Admin page form is enough for property entry
-# class AssetCreateForm(generic.edit.CreateView):
-#     template_name = 'baseApp/createAsset.html'
-#     form_class = forms.createAssetForm
-#     # success_url = reverse_lazy('baseApp:index')
-#
-#     def form_valid(self, form):
-#         # This method is called when valid form data has been POSTed.
-#         # It should return an HttpResponse.
-#         form.save()
-#         return super().form_valid(form)
-
-
-
-# for handling multiple files
-    # def post(self, request, *args, **kwargs):
-    #     form_class = self.get_form_class()
-    #     form = self.get_form(form_class)
-    #     files = request.FILES.getlist('file_field')
-    #     if form.is_valid():
-    #         for f in files:
-    #             ...  # Do something with each file.
-    #         return self.form_valid(form)
-    #     else:
-    #         return self.form_invalid(form)

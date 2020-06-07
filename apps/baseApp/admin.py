@@ -4,7 +4,8 @@ from django.db import models
 from django_google_maps import widgets as map_widgets
 from django_google_maps import fields as map_fields
 from .models import (Country, City, Region,
-                    Complex, ComplexFeatures,
+                    Complex,
+                    ComplexFeatures,
                     Bedroom,
                     Asset, AssetImages, AssetFeatures,
                     Slide)

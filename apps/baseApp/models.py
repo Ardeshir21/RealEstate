@@ -16,6 +16,12 @@ ASSET_TYPES = [('FL', 'Flat'),
 TAG_CHOICES =[('FS', 'For Sale'),
                 ('FR', 'For Rent')]
 
+COMPLEX_FEATURES_CATEGORY = [('GENERAL', 'General'),
+                            ('TECHNICAL', 'Technical'),
+                            ('SPORT', 'Sport'),
+                            ('TOP', 'Top'),
+                            ('LOCATION', 'Location')]
+
 PAGE_CHOICES = [('HOME', 'Homepage'),
                 ('PROPERTY_SEARCH', 'Property Search'),
                 ('PROPERTY_PAGE', 'Property View'),
@@ -69,14 +75,17 @@ class Region(models.Model):
     def __str__(self):
         return self.name
 
+
 class ComplexFeatures(models.Model):
+    category = models.CharField(max_length=150, choices=COMPLEX_FEATURES_CATEGORY, default='GENERAL')
     features = models.CharField(max_length=150, unique=True)
 
     class Meta():
         verbose_name_plural = "Complex Features"
+        ordering = ['category', 'features']
 
     def __str__(self):
-        return self.features
+        return '{}: {}'.format(self.category, self.features)
 
 class Complex(models.Model):
 
@@ -84,7 +93,7 @@ class Complex(models.Model):
     region = models.ForeignKey(Region, related_name='regions', on_delete=models.CASCADE)
     age = models.PositiveIntegerField(default=0)
     completion_date = models.DateTimeField(blank=True, null=True)
-    features = models.ManyToManyField(ComplexFeatures, blank=True, null=True)
+    generalFeatures = models.ManyToManyField(ComplexFeatures, blank=True, null=True)
     build_area = models.PositiveIntegerField(default=0)
     description = RichTextUploadingField(null=True, blank=True)
     # address = map_fields.AddressField(max_length=200)

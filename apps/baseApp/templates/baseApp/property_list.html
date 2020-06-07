@@ -9,10 +9,10 @@
   {% block body_content %}
 
       <!-- ##### WideImage Area Start ##### -->
-      {% include "baseApp/wideImage.html" %}
+      {% include "baseApp/includes/wideImage.html" %}
 
       <!-- ##### Advance Search Area Start ##### -->
-      {% include "baseApp/advancedSearch.html" %}
+      {% include "baseApp/includes/advancedSearch.html" %}
 
       <!-- ##### Filter Details Area Start ##### -->
       <section class="listings-content-wrapper section-padding-50">
@@ -93,16 +93,16 @@
 
               <!-- Property Image and Details -->
               <div class="row section-padding-50">
-                {% for property in assets_filtered %}
+                {% for property in assets_all %}
                   <div class="col-12 col-md-6 col-xl-4">
                       <!-- Single Property Thumbnail -->
-                      {% include "baseApp/singlePropertyThumbnail.html" %}
+                      {% include "baseApp/includes/singlePropertyThumbnail.html" %}
                   </div>
                 {% endfor %}
               </div>
 
               <!-- Paginate  -->
-              {% include "baseApp/paginator.html" %}
+              {% include "baseApp/includes/paginator.html" %}
 
           </div>
       </section>

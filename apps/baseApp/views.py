@@ -44,9 +44,10 @@ class IndexView(generic.ListView):
 
 # Search Box - searchResult.html
 class AssetFilterView(generic.ListView):
-    context_object_name = 'assets_filtered'
+    # This not all the assets actually. It is filtered_assets. But for consistency in template codes, I named it assets_all.
+    context_object_name = 'assets_all'
     model = models.Asset
-    template_name = 'baseApp/searchResult.html'
+    template_name = 'baseApp/property_list.html'
     paginate_by = 9
 
     def get_queryset(self):
@@ -238,10 +239,11 @@ class AssetFilterView(generic.ListView):
 
         return context
 
+# The Single Property View
 class AssetSingleView(generic.DetailView):
     # Because this is a DetailView, it will use get() method on the model and return only the property with requested pk
     context_object_name = 'property'
-    template_name = 'baseApp/propertyDetails.html'
+    template_name = 'baseApp/property_detail.html'
     model = models.Asset
 
     def get_context_data(self, **kwargs):
@@ -250,6 +252,7 @@ class AssetSingleView(generic.DetailView):
         # Append extraContext
         context.update(get_extra_context())
         context['slideContent'] = models.Slide.objects.get(useFor__exact='PROPERTY_PAGE', active__exact=True)
+        context['assets_all'] = models.Asset.objects.all()
         return context
 
 
