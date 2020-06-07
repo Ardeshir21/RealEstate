@@ -93,7 +93,7 @@ class Complex(models.Model):
     region = models.ForeignKey(Region, related_name='regions', on_delete=models.CASCADE)
     age = models.PositiveIntegerField(default=0)
     completion_date = models.DateTimeField(blank=True, null=True)
-    generalFeatures = models.ManyToManyField(ComplexFeatures, blank=True, null=True)
+    features = models.ManyToManyField(ComplexFeatures, blank=True, null=True)
     build_area = models.PositiveIntegerField(default=0)
     description = RichTextUploadingField(null=True, blank=True)
     # address = map_fields.AddressField(max_length=200)
