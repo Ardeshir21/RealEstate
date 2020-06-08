@@ -163,12 +163,20 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# This for local environment which tells Django where and what folders contains static files.
 # STATICFILES_DIRS = [
 #     os.path.join(BASE_DIR, "static"),
 # ]
 
 # The root for collecting all static files
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
+# This is for production use only.
+# https://docs.djangoproject.com/en/1.10/ref/contrib/staticfiles/#manifeststaticfilesstorage
+if DEBUG == False:
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
+
 
 # The root for uploaded files
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

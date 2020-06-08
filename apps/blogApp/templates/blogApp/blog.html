@@ -11,7 +11,7 @@
 
 {% block body_content %}
     <!-- ##### wideImage Area Start ##### -->
-    {% include "baseApp/wideImage.html" %}
+    {% include "baseApp/includes/wideImage.html" %}
 
     <!-- ##### Blog Area Start ##### -->
     <section class="south-blog-area section-padding-100">
@@ -75,7 +75,7 @@
 
                       {% for property in featuredProperties %}
                         <!-- Single Property Thumbnail -->
-                            {% include "baseApp/singlePropertyThumbnail.html" %}
+                            {% include "baseApp/includes/singlePropertyThumbnail.html" %}
                       {% endfor %}
                     </div>
                   </div>
@@ -83,7 +83,7 @@
             </div>
 
             <!-- Paginate  -->
-            {% include "baseApp/paginator.html" %}
+            {% include "baseApp/includes/paginator.html" %}
         </div>
     </section>
     <!-- ##### Blog Area End ##### -->
