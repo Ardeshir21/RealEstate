@@ -6,7 +6,7 @@
   <div class="property-thumb">
     <a href="{% url "FAbaseApp:propertyView" property.id %}"><img src="{{property.image.url}}" alt="Property Image"></a>
     <!-- TAG -->
-    <div class="tag">
+    <div dir="rtl" class="tag">
       {% if property.tag == "FR" %}
       <div class="tag rentTag">
         <span>{{property.get_tag_display}}</span>
@@ -18,18 +18,18 @@
       {% endif %}
     </div>
     <!-- PRICE -->
-    <div class="list-price">
+    <div dir="rtl" class="list-price">
       {% if property.tag == "FR" %}
       <p>
         {% filter floatformat:"0"|intcomma %}
         {{property.price}}
-        {% endfilter %} $/Month
+        {% endfilter %} دلار/ماه
       </p>
       {% else %}
       <p>
         {% filter floatformat:"0"|intcomma %}
         {{property.price}}
-        {% endfilter %} $
+        {% endfilter %} دلار
       </p>
       {% endif %}
     </div>
@@ -56,7 +56,7 @@
       </div>
       <div class="space">
         <img src="{% static "FAbaseApp/img/icons/space.png" %}" alt="area">
-        <span>{{property.build_area}} Sq. m</span>
+        <span>{{property.build_area}} متر مربع</span>
       </div>
     </div>
   </div>

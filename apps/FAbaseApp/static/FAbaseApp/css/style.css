@@ -68,7 +68,7 @@
   padding: 0; }
 
 body {
-  font-family: "IranSans-Bold", sans-serif; }
+  font-family: "IranSans-Medium", sans-serif;}
 
 h1,
 h2,
@@ -398,7 +398,7 @@ img {
   height: 50px;
   color: #ffffff;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 300;
   background-color: var(--main-color);
   border-radius: 0;
   line-height: 50px;
@@ -443,6 +443,7 @@ img {
 .form-group .sidebar-btn .bt-item input[type=radio]:checked+label {
 	background: var(--main-color);
 	color: #ffffff;
+  font-weight: 300;
 }
 .form-group .sidebar-btn label {
 	display: block;
@@ -559,7 +560,7 @@ img {
   .main-header-area .classynav ul li a {
     color: #ffffff;
     text-transform: uppercase;
-    font-weight: 600; }
+    font-weight: 400; }
     .main-header-area .classynav ul li a:hover{
       color: var(--forSale-tag-color);
     }
@@ -829,7 +830,7 @@ img {
         text-transform: uppercase;
         line-height: 45px;
         font-size: 18px;
-        font-weight: 600; }
+        font-weight: 400; }
     .south-search-area .advanced-search-form .slider-range {
       flex: 0 0 50%;
       min-width: 50%;
@@ -964,7 +965,9 @@ img {
       }
     .single-featured-property .property-content h5 {
       font-size: 18px;
-      font-weight: 600;}
+      font-weight: 600;
+      text-align: -webkit-right;
+      text-align: right;}
     .single-featured-property .property-content p {
       margin-bottom: 30px; }
     p.thumbnailText {
@@ -1425,7 +1428,7 @@ img {
 }
 .form-group p small {
   color: #a3a5a8;
-  font-weight: 600;
+  font-weight: 100;
   font-size: 12px;
   font-family: 'IranSans-Medium', sans-serif;
 }

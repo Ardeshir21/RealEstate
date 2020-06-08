@@ -44,15 +44,15 @@
                             <!-- Tag Type Toggle Button -->
                             <div class="col-12 col-md-4 col-lg-4">
                               <div class="form-group text-center">
-                                  <p><small>Deal Type</small></p>
+                                  <p><small>نوع معامله</small></p>
                                   <div class="sidebar-btn">
                                       <div class="bt-item">
                                           <input type="radio" name="tag_select" value='sale' id="st-buy" checked>
-                                          <label for="st-buy">Sale</label>
+                                          <label for="st-buy">خرید</label>
                                       </div>
                                       <div class="bt-item">
                                           <input type="radio" name="tag_select"  value='rent' id="st-rent">
-                                          <label for="st-rent">Rent</label>
+                                          <label for="st-rent">اجاره</label>
                                       </div>
                                   </div>
                                   <!-- <div class="btn-group btn-group-toggle" data-toggle="buttons">
@@ -79,8 +79,8 @@
                             <!-- Bedrooms -->
                             <div class="col-12 col-md-4 col-lg-4 mb-30">
                                 <div class="form-group text-center">
-                                  <p><small>Number of Bedrooms</small></p>
-                                  <select multiple="multiple" name="bedroom_select" placeholder="Any Number" class="SlectBox-grp-src">
+                                  <p><small>تعداد اتاق خواب</small></p>
+                                  <select multiple="multiple" name="bedroom_select" placeholder="همه" class="SlectBox-grp-src">
                                        <!-- Studio type room and 1 bedroom -->
                                     {% for num in bedroomNumbers %}
                                       <option value={{num.number}}>{{num.description}}</option>
@@ -92,8 +92,8 @@
                             <!-- Apartment Name -->
                             <div class="col-12 col-md-4 col-lg-4 mb-30">
                                 <div class="form-group text-center">
-                                  <p><small>Apartment Name</small></p>
-                                  <select multiple="multiple" name="apartment_select" placeholder="All Apartments" class="SlectBox-grp-src">
+                                  <p><small>نام آپارتمان</small></p>
+                                  <select multiple="multiple" name="apartment_select" placeholder="همه آپارتمان ها" class="SlectBox-grp-src">
                                     {% for apartment in apartments %}
                                       <option value="{{apartment.id}}">{{apartment.name}}</option>
                                     {% endfor %}
@@ -104,9 +104,9 @@
                             <!-- Installment -->
                             <div class="col-12 col-md-4 col-lg-4">
                                 <div class="form-group text-center">
-                                  <p><small>Payment Option</small></p>
+                                  <p><small>نحوه پرداخت</small></p>
                                   <span class="button-checkbox">
-                                      <button type="button" class="btn" data-color="primary">With Installment</button>
+                                      <button type="button" class="btn" data-color="primary">امکان پرداخت اقساطی</button>
                                       <input type="checkbox" name='installment_select' class="hidden" value='1'/>
                                   </span>
                                 </div>
@@ -116,12 +116,12 @@
                             <div class="col-12 col-md-12 col-lg-12 col-xl-12 d-flex">
                                 <!-- Space Range -->
                                 <div class="slider-range ">
-                                    <div data-min={{spaceRange.build_area__min}} data-max={{spaceRange.build_area__max}} data-unit=" sq. m" data-step="5" class="slider-range-price ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" data-value-min={{spaceRange.build_area__min}} data-value-max={{spaceRange.build_area__max}}>
+                                    <div data-min={{spaceRange.build_area__min}} data-max={{spaceRange.build_area__max}} data-unit=" متر مربع" data-step="5" class="slider-range-price ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" data-value-min={{spaceRange.build_area__min}} data-value-max={{spaceRange.build_area__max}}>
                                         <div class="ui-slider-range ui-widget-header ui-corner-all"></div>
                                         <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
                                         <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
                                     </div>
-                                    <div class="range">{{spaceRange.build_area__min}} sq. m - {{spaceRange.build_area__max}} sq. m</div>
+                                    <div dir="rtl" class="range">{{spaceRange.build_area__min}} متر مربع - {{spaceRange.build_area__max}} متر مربع</div>
                                     <!-- for space to read on GET request -->
                                     <input type="hidden" name="space_select" id="minval" readonly style= "background: transparent; border: none; width:0px; height:0px;">
                                     <input type="hidden" name="space_select" id="maxval" readonly style= "background: transparent; border: none; width:0px; height:0px;">
@@ -132,18 +132,18 @@
                                 <!-- Price Range -->
                                 <div class="slider-range">
 
-                                    <div id='priceDiv' data-min={{priceRange.price__min}} data-max={{priceRange.price__max}} data-unit=" $" data-step="10000" class="slider-range-price ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" data-value-min={{priceRange.price__min}} data-value-max={{priceRange.price__max}}>
+                                    <div id='priceDiv' data-min={{priceRange.price__min}} data-max={{priceRange.price__max}} data-unit=" دلار" data-step="10000" class="slider-range-price ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" data-value-min={{priceRange.price__min}} data-value-max={{priceRange.price__max}}>
                                         <div class="ui-slider-range ui-widget-header ui-corner-all"></div>
                                         <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
                                         <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
                                     </div>
-                                    <div class="range" id='priceHTMLtext'>
+                                    <div dir="rtl" class="range" id='priceHTMLtext'>
                                       {% filter floatformat:"0"|intcomma %}
                                         {{priceRange.price__min}}
-                                      {% endfilter %} $ -
+                                      {% endfilter %} دلار -
                                       {% filter floatformat:"0"|intcomma %}
                                         {{priceRange.price__max}}
-                                      {% endfilter %} $
+                                      {% endfilter %} دلار
 
                                     </div>
 
@@ -176,11 +176,11 @@
                             <div class="col-12 d-flex justify-content-between align-items-end">
                                 <!-- More Filter -->
                                 <div class="more-filter">
-                                    <a href="#" id="moreFilter">+ Region Select</a>
+                                    <a href="#" id="moreFilter">+ انتخاب محله</a>
                                 </div>
                                 <!-- Submit -->
                                 <div class="form-group mb-0">
-                                    <button type="submit" id="advancedButton" class="btn south-btn">Search</button>
+                                    <button type="submit" id="advancedButton" class="btn south-btn">جستجو</button>
                                 </div>
                             </div>
 
