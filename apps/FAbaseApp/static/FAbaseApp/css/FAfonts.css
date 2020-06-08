@@ -19,6 +19,7 @@
       src: url("../fonts/IRAN-Sans-Web-Medium.eot?#iefix") format("embedded-opentype"),
            url("../fonts/IRAN-Sans-Web-Medium.woff") format("woff"),
            url("../fonts/IRAN-Sans-Web-Medium.ttf") format("truetype"),
+           url("../fonts/IRAN-Sans-Web-Medium.woff2") format("woff2"),
            url("../fonts/IRAN-Sans-Web-Medium.svg#IranSans-Medium") format("svg");
    font-weight: normal;
    font-style: normal;
