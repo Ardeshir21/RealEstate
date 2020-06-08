@@ -682,7 +682,6 @@ div.tab button:hover {
 
 .dmtop {
     background-color: #111111;
-    /* background-image: url(images/arrow.png); */
     background-position: 50% 50%;
     background-repeat: no-repeat;
     z-index: 9999;
@@ -1252,7 +1251,6 @@ hr.invis3 {
     position: absolute;
     height: 90px;
     display: block;
-    /* content: url(images/hover.png); */
     -webkit-transition: all .3s ease-in-out;
     -moz-transition: all .3s ease-in-out;
     -ms-transition: all .3s ease-in-out;
@@ -1269,7 +1267,6 @@ hr.invis3 {
 }
 
 .hovereffect span.videohover::before {
-    /* content: url(images/videohover.png); */
 }
 
 .blog-list .blog-meta.big-meta h4 {
