@@ -115,6 +115,13 @@ WSGI_APPLICATION = 'RealEstate.wsgi.application'
 
 SITE_ID = 1
 
+# Robots.txt setup
+ROBOTS_SITEMAP_URLS = [
+    'https://www.gammaturkey.com/RealSiteMap.xml',
+]
+ROBOTS_USE_SCHEME_IN_HOST = True
+ROBOTS_USE_HOST = False
+
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
