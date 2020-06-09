@@ -75,7 +75,7 @@
                 <div class="col-sm"></div>
                 <!-- Result Count and Sort Button -->
                 <div class="col-sm">
-                    <h3 style="text-align: center;">{{resultCount}} Properties Found</h3>
+                    <h3 style="text-align: center;">{{resultCount}} مورد یافت شد</h3>
                 </div>
                 <!-- ORDERING BUTTON -->
                 <div class="col-sm" style="text-align: center;">
@@ -83,10 +83,10 @@
                       Order By
                   </button>
                   <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                      <a class="dropdown-item" href="?{% param_replace sort='date-newest' page=1 %}">Newest</a>
-                      <a class="dropdown-item" href="?{% param_replace sort='date-oldest' page=1 %}">Oldest</a>
-                      <a class="dropdown-item" href="?{% param_replace sort='price-ascending' page=1 %}">Price: Low to High</a>
-                      <a class="dropdown-item" href="?{% param_replace sort='price-descending' page=1 %}">Price: High to Low</a>
+                      <a class="dropdown-item" href="?{% param_replace sort='date-newest' page=1 %}">جدید ترین</a>
+                      <a class="dropdown-item" href="?{% param_replace sort='date-oldest' page=1 %}">قدیمی ترین</a>
+                      <a class="dropdown-item" href="?{% param_replace sort='price-ascending' page=1 %}">قیمت از کم به زیاد</a>
+                      <a class="dropdown-item" href="?{% param_replace sort='price-descending' page=1 %}">قیمت از زیاد به کم</a>
                   </div>
                 </div>
               </div>

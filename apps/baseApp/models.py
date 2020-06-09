@@ -47,6 +47,7 @@ class Country(models.Model):
                             default=TURKEY,
                             )
 
+
     # flag = models.ImageField(upload_to='flag/', blank=True, null=True)
 
     def __str__(self):
@@ -58,7 +59,8 @@ class Country(models.Model):
 class City(models.Model):
 
     country = models.ForeignKey(Country, related_name='countries', on_delete=models.CASCADE)
-    name = models.CharField(max_length=150)
+    name = models.CharField(max_length=150, unique=True)
+    name_FA = models.CharField(max_length=150, unique=True, null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -71,6 +73,7 @@ class Region(models.Model):
     city = models.ForeignKey(City, related_name='cities', on_delete=models.CASCADE)
     name = models.CharField(max_length=150, unique=True)
     description = RichTextUploadingField(null=True, blank=True)
+    description_FA = RichTextUploadingField(null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -79,6 +82,7 @@ class Region(models.Model):
 class ComplexFeatures(models.Model):
     category = models.CharField(max_length=150, choices=COMPLEX_FEATURES_CATEGORY, default='GENERAL')
     features = models.CharField(max_length=150, unique=True)
+    features_FA = models.CharField(max_length=150, unique=True, null=True, blank=True)
 
     class Meta():
         verbose_name_plural = "Complex Features"
@@ -96,6 +100,7 @@ class Complex(models.Model):
     features = models.ManyToManyField(ComplexFeatures, blank=True, null=True)
     build_area = models.PositiveIntegerField(default=0)
     description = RichTextUploadingField(null=True, blank=True)
+    description_FA = RichTextUploadingField(null=True, blank=True)
     # address = map_fields.AddressField(max_length=200)
     # geolocation = map_fields.GeoLocationField(max_length=100)
 
@@ -107,6 +112,7 @@ class Complex(models.Model):
 
 class AssetFeatures(models.Model):
     features = models.CharField(max_length=150, unique=True)
+    features_FA = models.CharField(max_length=150, unique=True, null=True, blank=True)
 
     class Meta():
         verbose_name_plural = "Asset Features"
@@ -117,6 +123,7 @@ class AssetFeatures(models.Model):
 class Bedroom(models.Model):
     number = models.PositiveIntegerField(unique=True)
     description = models.CharField(max_length=150, unique=True)
+    description_FA = models.CharField(max_length=150, unique=True, null=True, blank=True)
 
     def __str__(self):
         return self.description
@@ -125,6 +132,7 @@ class Bedroom(models.Model):
 class Asset(models.Model):
     complex = models.ForeignKey(Complex, related_name='complexes', on_delete=models.CASCADE)
     description = RichTextUploadingField(help_text='Full images can be 730px wide', null=True, blank=True)
+    description_FA = RichTextUploadingField(help_text='Full images can be 730px wide', null=True, blank=True)
     type = models.CharField(max_length=150, choices=ASSET_TYPES, default='FL')
     installment = models.BooleanField(choices=YES_NO_CHOICES, default=False)
     price = models.DecimalField(max_digits=15, decimal_places=0, default=0.0)
@@ -141,6 +149,7 @@ class Asset(models.Model):
     image = models.ImageField(upload_to='baseApp/property/', null=True,
                                 help_text='Thumbnail Image 1600x1200')
     title = models.CharField(max_length=150, default='Comfortable Apartment')
+    title_FA = models.CharField(max_length=150, default='آپارتمانی راحت', blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
@@ -151,7 +160,7 @@ class Asset(models.Model):
         ordering  = ['-created']
 
     def get_absolute_url(self):
-        return reverse_lazy('baseApp:propertyView', args=(self.id,))
+        return reverse('baseApp:propertyView', args=(self.id,))
 
 class AssetImages(models.Model):
     asset = models.ForeignKey(Asset, related_name='images', on_delete=models.CASCADE)
@@ -168,6 +177,7 @@ class Slide(models.Model):
     image = models.ImageField(upload_to='baseApp/slider/', blank=True, null=True,
                                 help_text='Slider Image 1920x1280')
     title = models.CharField(max_length=110, default='Find Your Home')
+    title_FA = models.CharField(max_length=110, default='خانه خود را پیدا کن', null=True, blank=True)
     useFor = models.CharField(max_length=50, choices=PAGE_CHOICES, default='HOME')
     active = models.BooleanField(choices=YES_NO_CHOICES, default=False)
 

@@ -20,20 +20,20 @@
                 <div class="col-lg-8 offset-lg-2">
                     <div class="pd-hero-text">
                         <p class="room-location"><i class="fa fa-map-marker">  </i> {{property.complex.region.name}}</p>
-                        <h2>{{property.title}}</h2>
+                        <h2>{{property.title_FA}}</h2>
                         <div class="room-price">
-                            <span>Price:</span>
+                            <span>قیمت: </span>
                             {% if property.tag == "FR" %}
                               <p>
                                 {% filter floatformat:"0"|intcomma %}
                                     {{property.price}}
-                                {% endfilter %} $/Month
+                                {% endfilter %} دلار/ماه
                               </p>
                             {% else %}
                               <p>
                                 {% filter floatformat:"0"|intcomma %}
                                     {{property.price}}
-                                {% endfilter %} $
+                                {% endfilter %} دلار
                               </p>
                             {% endif %}
                         </div>
@@ -265,7 +265,7 @@
                     <div class="property-sidebar">
                         <h4>SEARCH PROPERTY</h4>
                         <!-- SEARCH FORM -->
-                        <form action="{% url 'baseApp:search' %}" method="GET" id="advanceSearch" class="sidebar-search">
+                        <form action="{% url 'baseApp:properties' %}" method="GET" id="advanceSearch" class="sidebar-search">
 
                             <!-- SALE/RENT Button -->
                             <div class="sidebar-btn">

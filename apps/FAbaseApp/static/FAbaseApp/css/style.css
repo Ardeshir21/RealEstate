@@ -920,7 +920,7 @@ img {
       line-height: 35px;
       position: absolute;
       top: 20px;
-      left: 20px;
+      right: 20px;
       z-index: 10;
       -webkit-transition-duration: 500ms;
       transition-duration: 500ms; }
@@ -937,7 +937,7 @@ img {
       line-height: 35px;
       position: absolute;
       top: 20px;
-      left: 20px;
+      right: 20px;
       z-index: 10;
       -webkit-transition-duration: 500ms;
       transition-duration: 500ms; }
@@ -969,7 +969,9 @@ img {
       text-align: -webkit-right;
       text-align: right;}
     .single-featured-property .property-content p {
-      margin-bottom: 30px; }
+      margin-bottom: 30px;
+    text-align: right;
+    direction: rtl;}
     p.thumbnailText {
       line-height: 0.1px;
     }
@@ -979,7 +981,7 @@ img {
       font-size: 14px;
       font-weight: 600; }
       .single-featured-property .property-content .location img {
-        margin-right: 10px;
+        margin-left: 10px;
         display: inline-block !important;
         width: auto !important; }
     .single-featured-property .property-content .property-meta-data span {

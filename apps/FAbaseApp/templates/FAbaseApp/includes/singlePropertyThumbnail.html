@@ -9,11 +9,11 @@
     <div dir="rtl" class="tag">
       {% if property.tag == "FR" %}
       <div class="tag rentTag">
-        <span>{{property.get_tag_display}}</span>
+        <span>اجاره</span>
       </div>
       {% else %}
       <div class="tag saleTag">
-        <span>{{property.get_tag_display}}</span>
+        <span>فروش</span>
       </div>
       {% endif %}
     </div>
@@ -36,9 +36,9 @@
   </div>
   <!-- Property Content -->
   <div class="property-content">
-    <a href="{% url "FAbaseApp:propertyView" property.id %}"><h5>{{property.title}}</h5></a>
+    <a href="{% url "FAbaseApp:propertyView" property.id %}"><h5>{{property.title_FA}}</h5></a>
     <p class="location"><img src="{% static "FAbaseApp/img/icons/location.png" %}" alt="location icon">{{property.complex.region.name}}</p>
-    <p class="thumbnailText">Complex: <em>{{property.complex.name}}</em></p>
+    <p class="thumbnailText">نام آپارتمان: <em>{{property.complex.name}}</em></p>
     <!-- <p class="thumbnailText">Created Date: <em>{{property.created |date:"M d, Y"}}</em></p> -->
     <div class="property-meta-data d-flex align-items-end justify-content-between">
 
