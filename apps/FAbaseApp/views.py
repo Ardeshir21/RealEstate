@@ -1,6 +1,6 @@
 ## This views.py is excatly the same as baseApp/views.property
 ## The differences are in import modules part and the Template html files.
-
+## The extraContent part is also has some customized changes for FA language
 
 # Import models from baseApp
 from apps.baseApp import models
@@ -12,11 +12,21 @@ from django.db.models import Max, Min, Q
 from django.urls import reverse_lazy, reverse
 
 
+# These lists are required for converting the GET request into model recognizable format
+# This is the only GET request that written in FA language
+ASSET_TYPES = [('FL', 'واحد مسکونی'),
+                ('VI', 'ویلا'),
+                ('OF', 'دفتر تجاری'),
+                ('ST', 'مغازه')]
+
+
+
+
 # Here is the Extra Context ditionary which is used in get_context_data of Views classes
 def get_extra_context():
     extraContext = {
         'regions': models.Region.objects.all(),
-        'propertyTypeNames': set([obj.get_type_display() for obj in models.Asset.objects.all()]),
+        'propertyTypeNames': [obj[1] for obj in ASSET_TYPES],
         'tagType': set([obj.get_tag_display() for obj in models.Asset.objects.all()]),
         'bedroomNumbers': models.Bedroom.objects.order_by('number'),
         'spaceRange': models.Asset.objects.aggregate(Min('build_area'), Max('build_area')),
@@ -51,7 +61,7 @@ class IndexView(generic.ListView):
 # Search Box - searchResult.html
 class AssetFilterView(generic.ListView):
     # This not all the assets actually. It is filtered_assets. But for consistency in template codes, I named it assets_all.
-    context_object_name = 'assets_all'
+    context_object_name = 'assets_filtered'
     model = models.Asset
     template_name = 'FAbaseApp/property_list.html'
     paginate_by = 9
@@ -76,18 +86,11 @@ class AssetFilterView(generic.ListView):
         # in queries you will use short formats i.e. 'FL'
         edited_propertyType = []
         for type in propertyType_query:
-            for t in models.ASSET_TYPES:
+            for t in ASSET_TYPES:
                 if type == t[1]:
                     edited_propertyType.append(t[0])
                     break
         propertyType_query = edited_propertyType
-
-        # Convert the Tag Type into model Format ('FS', 'For Sale')
-        # in queries you will use short formats i.e. 'FS'
-        for t in models.TAG_CHOICES:
-            if tag_query == t[1]:
-                tag_query = t[0]
-                break
 
         # Process the Reference Codes to match with database pk
         edited_reference = []
@@ -188,8 +191,10 @@ class AssetFilterView(generic.ListView):
         context['resultCount'] = len(self.get_queryset())
         # An slide picture for Search Result page. This need just one slide >> id= ?
         context['slideContent'] = models.Slide.objects.get(useFor__exact='PROPERTY_SEARCH', active__exact=True)
-        context['pageTitle'] = 'SEARCH'
+        context['pageTitle'] = 'املاک'
+        context['assets_all'] = models.Asset.objects.all()
 
+    ####### Filtered Items Part #######
         # Building a dictionary of GET request with nice words in order to present them in the search result page.
         # The reason for this line of code is to convert the [1,2,3,4,...] region_select to its real region names from Model
         if not(self.request.GET.getlist('region_select')==[] or self.request.GET.getlist('region_select')==None):
@@ -204,7 +209,7 @@ class AssetFilterView(generic.ListView):
             bedroom_codes = self.request.GET.getlist('bedroom_select')
             bedroomRequest = []
             for num in bedroom_codes:
-                bedroomRequest.append(models.Bedroom.objects.get(number=num).description)
+                bedroomRequest.append(models.Bedroom.objects.get(number=num).description_FA)
         else: bedroomRequest = 'no filter'
 
         # check if the Price slider is empty
@@ -221,7 +226,10 @@ class AssetFilterView(generic.ListView):
 
         # Just to check if the request is empty, returns 'no filter'
         if not(self.request.GET.get('tag_select')==[] or self.request.GET.get('tag_select')==None):
-            dealRequest = self.request.GET.get('tag_select')
+            deal_codes = self.request.GET.get('tag_select')
+            if deal_codes == 'Sale':
+                dealRequest = 'خرید'
+            else: dealRequest = 'اجاره'
         else: dealRequest = 'no filter'
 
         # Just to check if the request is empty, returns 'no filter'

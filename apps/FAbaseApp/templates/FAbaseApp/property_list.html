@@ -1,4 +1,4 @@
-{% extends "baseApp/base.html" %}
+{% extends "FAbaseApp/base.html" %}
 {% load static %}
 {% load humanize %}
 {% load my_tags %}
@@ -22,38 +22,38 @@
                       <!-- single accordian area -->
                       <div class="panel single-accordion">
                           <!-- Title -->
-                          <h6><a role="button" class="" aria-expanded="true" aria-controls="collapseOne" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">Search Details
+                          <h6><a role="button" class="" aria-expanded="true" aria-controls="collapseOne" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">جزئیات جستجو
                                   <span class="accor-open"><i class="fa fa-plus" aria-hidden="true"></i></span>
                                   <span class="accor-close"><i class="fa fa-minus" aria-hidden="true"></i></span>
                               </a>
                           </h6>
                           <!-- Content -->
-                          <div id="collapseOne" class="accordion-content collapse show">
+                          <div id="collapseOne" dir="rtl" class="accordion-content collapse show">
                               <p>
                                 <div class="col-12 col-lg-12">
                                   <!-- These IFs are for not showing the empty requests -->
                                   {% if Qdetail.QdealType == "no filter" %}{% else %}
-                                    <h6 class="searchDetails">Deal Type: <small>{{Qdetail.QdealType}}</small></h6>
+                                    <h6 class="searchDetails font-line-height">نوع معامله: <small>{{Qdetail.QdealType}}</small></h6>
                                   {% endif %}
 
                                   {% if Qdetail.Qregions == "no filter" %}{% else %}
-                                    <h6 class="searchDetails">Regions: {% for r in Qdetail.Qregions %} <small>{{r}}</small> {% endfor %}</h6>
+                                    <h6 class="searchDetails font-line-height">مناطق: {% for r in Qdetail.Qregions %} <small>{{r}}</small> {% endfor %}</h6>
                                   {% endif %}
 
                                   {% if Qdetail.QpropertyTypes == "no filter" %}{% else %}
-                                    <h6 class="searchDetails">Property Type: {% for p in Qdetail.QpropertyTypes %}<small>{{p}}</small>{% endfor %}</h6>
+                                    <h6 class="searchDetails font-line-height">نوع ملک: {% for p in Qdetail.QpropertyTypes %}<small>{{p}}</small>&nbsp{% endfor %}</h6>
                                   {% endif %}
 
                                   {% if Qdetail.Qprices == "no filter" %}{% else %}
-                                    <h6 class="searchDetails">Price Range ($):<small>{% filter floatformat:"0"|intcomma %} {{Qdetail.Qprices.min}} {% endfilter %} &nbsp to  &nbsp {% filter floatformat:"0"|intcomma %} {{Qdetail.Qprices.max}} {% endfilter %}</small></h6>
+                                    <h6 class="searchDetails font-line-height">بازه قیمت (دلار): <small>{% filter floatformat:"0"|intcomma %} {{Qdetail.Qprices.min}} {% endfilter %} &nbsp الی  &nbsp {% filter floatformat:"0"|intcomma %} {{Qdetail.Qprices.max}} {% endfilter %}</small></h6>
                                   {% endif %}
 
                                   {% if Qdetail.Qspace == "no filter" %}{% else %}
-                                    <h6 class="searchDetails">Built Area (sq. m):<small>{{Qdetail.Qspace.min}} &nbsp to &nbsp {{Qdetail.Qspace.max}} </small></h6>
+                                    <h6 class="searchDetails font-line-height">مساحت (متر مربع): <small>{{Qdetail.Qspace.min}} &nbsp الی &nbsp {{Qdetail.Qspace.max}} </small></h6>
                                   {% endif %}
 
                                   {% if Qdetail.Qroom == "no filter" %}{% else %}
-                                    <h6 class="searchDetails">Number of Bedrooms: {% for r in Qdetail.Qroom %} <small>{{r}}</small> {% endfor %}</h6>
+                                    <h6 class="searchDetails font-line-height">تعداد اتاق خواب: {% for r in Qdetail.Qroom %} <small>{{r}}</small> {% endfor %}</h6>
                                   {% endif %}
 
                                 </div>
@@ -75,12 +75,12 @@
                 <div class="col-sm"></div>
                 <!-- Result Count and Sort Button -->
                 <div class="col-sm">
-                    <h3 style="text-align: center;">{{resultCount}} مورد یافت شد</h3>
+                    <h3 dir="rtl" style="text-align: center;">{{resultCount}} مورد یافت شد</h3>
                 </div>
                 <!-- ORDERING BUTTON -->
                 <div class="col-sm" style="text-align: center;">
                   <button id="btnGroupDrop1" type="button" class="btn south-btn btn-2 p-1 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      Order By
+                      مرتب سازی
                   </button>
                   <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
                       <a class="dropdown-item" href="?{% param_replace sort='date-newest' page=1 %}">جدید ترین</a>
@@ -93,7 +93,7 @@
 
               <!-- Property Image and Details -->
               <div class="row section-padding-50">
-                {% for property in assets_all %}
+                {% for property in assets_filtered %}
                   <div class="col-12 col-md-6 col-xl-4">
                       <!-- Single Property Thumbnail -->
                       {% include "FAbaseApp/includes/singlePropertyThumbnail.html" %}

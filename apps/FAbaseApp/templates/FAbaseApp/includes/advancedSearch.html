@@ -15,7 +15,7 @@
                         <p>خانه خود را پیدا کن</p>
                     </div>
                     <!-- Search Form -->
-                    <form action="{% url 'baseApp:properties' %}" method="GET" id="advanceSearch">
+                    <form action="{% url 'FAbaseApp:properties' %}" method="GET" id="advanceSearch">
                         <div class="row">
                             <!-- Open Search -->
                             <div class="col-12 col-md-4 col-lg-4">
@@ -80,7 +80,7 @@
                             <div class="col-12 col-md-4 col-lg-4 mb-30">
                                 <div class="form-group text-center">
                                   <p><small>تعداد اتاق خواب</small></p>
-                                  <select multiple="multiple" name="bedroom_select" placeholder="همه" class="SlectBox-grp-src">
+                                  <select multiple="multiple" name="bedroom_select" placeholder="تمام موارد" class="SlectBox-grp-src">
                                        <!-- Studio type room and 1 bedroom -->
                                     {% for num in bedroomNumbers %}
                                       <option dir="rtl" value={{num.number}}>{{num.description_FA}}</option>
@@ -102,7 +102,7 @@
                             </div>
 
                             <!-- Installment -->
-                            <div class="col-12 col-md-4 col-lg-4">
+                            <div class="col-12 col-md-4 col-lg-4 mb-50">
                                 <div class="form-group text-center">
                                   <p><small>نحوه پرداخت</small></p>
                                   <span class="button-checkbox">

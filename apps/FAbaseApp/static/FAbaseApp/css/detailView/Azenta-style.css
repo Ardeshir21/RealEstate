@@ -31,8 +31,6 @@
 /*---------------------
   Helper CSS
 -----------------------*/
-body {
-  font-family: "Open Sans", sans-serif; }
 
 .section-title {
 	text-align: center;
@@ -1176,12 +1174,13 @@ body {
 .property-sidebar .sidebar-btn .bt-item input[type=radio]:checked+label {
 	background: #947054;
 	color: #ffffff;
+	font-weight: 300;
 }
 .property-sidebar .sidebar-btn label {
 	display: block;
 	font-size: 18px;
 	margin-bottom: 0;
-	font-weight: 600;
+	font-weight: 300;
 	text-transform: uppercase;
 	background: #EBEBEB;
 	color: #947054;
@@ -1192,12 +1191,7 @@ body {
 .property-sidebar .sidebar-search {
 	margin-bottom: 75px;
 }
-.property-sidebar small {
-	color: #a3a5a8;
-  font-weight: 600;
-  font-size: 12px;
-  font-family: 'Montserrat Alternates', sans-serif;
-}
+
 
 .property-sidebar .sidebar-search .slider-range{
   flex: 0 0 50%;
@@ -1450,6 +1444,7 @@ body {
 }
 .pd-hero-text .room-location {
 	font-size: 14px;
+  font-weight: 400;
 	color: #aaaab3;
 }
 .pd-hero-text .room-location i {
@@ -1463,9 +1458,12 @@ body {
 }
 .pd-hero-text .room-price {
 	margin-bottom: 34px;
+  direction: rtl;
 }
 .pd-hero-text .room-price span {
-	font-size: 14px;
+	font-size: 18px;
+  direction: rtl;
+  font-weight: 400;
 	color: #aaaab3;
 	display: inline-block;
 	margin-right: 10px;
@@ -1491,10 +1489,12 @@ body {
 	color: #d5a253;
 }
 .pd-hero-text .room-features li p {
-	font-size: 14px;
+	font-size: 16px;
+  font-weight: 300;
 	color: #ffffff;
 	margin-bottom: 0;
 	margin-top: 5px;
+  direction: rtl;
 }
 /*--------------------------
   Property Details Section
@@ -1551,7 +1551,9 @@ body {
 }
 .pd-details-text .pd-desc {
 	margin-bottom: 54px;
-	padding-top: 25px;
+	padding-top: 35px;
+	direction: rtl;
+	text-align: right;
 }
 .pd-details-text .pd-desc h4 {
 	font-size: 22px;
@@ -1564,6 +1566,7 @@ body {
 }
 .pd-details-text .pd-details-tab {
 	margin-bottom: 55px;
+  direction: rtl;
 }
 .pd-details-text .pd-details-tab .tab-item ul {
 	background: #F2F4F5;
@@ -1571,6 +1574,7 @@ body {
 }
 .pd-details-text .pd-details-tab .tab-item ul li a {
 	font-size: 16px;
+	font-family: IranSans-Bold;
 	color: #707079;
 	display: inline-block;
 	padding: 12px 23px;
@@ -1578,9 +1582,12 @@ body {
 .pd-details-text .pd-details-tab .tab-item ul li a.active {
 	color: #ffffff;
 	background: #d5a253;
+	direction: rtl;
+	font-family: IranSans-Bold;
+
 }
 .pd-details-text .pd-details-tab .tab-content .property-more-table {
-	padding-left: 30px;
+	padding-right: 30px;
 	border: 1px solid #ebebeb;
 	border-top: none;
 	padding-bottom: 6px;
@@ -1598,6 +1605,7 @@ body {
 }
 .pd-details-text .pd-details-tab .tab-content .property-more-table table tbody tr td.pt-name {
 	width: 36%;
+  text-align: right;
 }
 .pd-details-text .pd-details-tab .tab-content .property-more-table table tbody tr td.p-value {
 	color: #19191a;
@@ -1614,11 +1622,15 @@ body {
 	border: 1px solid #ebebeb;
 	border-top: none;
 	padding: 25px;
+	direction: rtl;
+	text-align: right;
 }
 .pd-details-text .pd-details-tab .tab-content .pd-table-amenities {
 	border: 1px solid #ebebeb;
 	border-top: none;
 	padding: 25px;
+	direction: rtl;
+	text-align: right;
 }
 .pd-details-text .property-map {
 	margin-bottom: 55px;
@@ -1628,6 +1640,8 @@ body {
 	color: #19191a;
 	font-weight: 600;
 	margin-bottom: 30px;
+	direction: rtl;
+	text-align: right;
 }
 .pd-details-text .property-map .map-inside {
 	height: 320px;
@@ -2429,13 +2443,14 @@ body {
 		margin: 0 10px;
 	}
 	.pd-details-text .pd-details-tab .tab-content .property-more-table .left-table {
-		margin-right: 28px;
+		margin-right: 20px;
 	}
 	.pd-details-text .pd-details-tab .tab-content .property-more-table .right-table {
 		width: 48%;
 	}
 	.pd-details-text .pd-details-tab .tab-content .property-more-table table tbody tr td.p-value {
 		padding-left: 20px;
+    text-align: right;
 	}
 }
 @media only screen and (max-width: 991px) {

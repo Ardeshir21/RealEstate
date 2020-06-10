@@ -45,7 +45,7 @@ class IndexView(generic.ListView):
 # Search Box - searchResult.html
 class AssetFilterView(generic.ListView):
     # This not all the assets actually. It is filtered_assets. But for consistency in template codes, I named it assets_all.
-    context_object_name = 'assets_all'
+    context_object_name = 'assets_filtered'
     model = models.Asset
     template_name = 'baseApp/property_list.html'
     paginate_by = 9
@@ -75,13 +75,6 @@ class AssetFilterView(generic.ListView):
                     edited_propertyType.append(t[0])
                     break
         propertyType_query = edited_propertyType
-
-        # Convert the Tag Type into model Format ('FS', 'For Sale')
-        # in queries you will use short formats i.e. 'FS'
-        for t in models.TAG_CHOICES:
-            if tag_query == t[1]:
-                tag_query = t[0]
-                break
 
         # Process the Reference Codes to match with database pk
         edited_reference = []
@@ -182,7 +175,8 @@ class AssetFilterView(generic.ListView):
         context['resultCount'] = len(self.get_queryset())
         # An slide picture for Search Result page. This need just one slide >> id= ?
         context['slideContent'] = models.Slide.objects.get(useFor__exact='PROPERTY_SEARCH', active__exact=True)
-        context['pageTitle'] = 'SEARCH'
+        context['pageTitle'] = 'PROPERTIES'
+        context['assets_all'] = models.Asset.objects.all()
 
         # Building a dictionary of GET request with nice words in order to present them in the search result page.
         # The reason for this line of code is to convert the [1,2,3,4,...] region_select to its real region names from Model

@@ -94,7 +94,9 @@ a {
   font-weight: 600; }
 
 a.dropdown-item {
-    font-size: 18px;
+    font-size: 17px;
+    direction: rtl;
+    text-align: right;
   }
   /* a:hover, a:focus {
     -webkit-transition-duration: 500ms;
@@ -175,7 +177,10 @@ img {
   font-weight: 700; }
 
 .font-light {
-  font-weight: 300; }
+  font-weight: 100; }
+
+.font-line-height {
+  line-height: 1.8; }
 
 .height-500 {
   height: 500px !important; }
@@ -342,6 +347,7 @@ img {
   box-shadow: 0 0 5px 0 rgba(255, 255, 255, 0.1);
   color: #ffffff;
   font-size: 24px;
+  font-family: FontAwesome, sans-serif;
   height: 50px;
   text-align: center;
   width: 50px;
@@ -397,8 +403,9 @@ img {
   min-width: 170px;
   height: 50px;
   color: #ffffff;
-  font-size: 14px;
-  font-weight: 300;
+  font-size: 18px;
+  font-weight: 100;
+  font-family: IranSans-Bold;
   background-color: var(--main-color);
   border-radius: 0;
   line-height: 50px;
@@ -560,7 +567,8 @@ img {
   .main-header-area .classynav ul li a {
     color: #ffffff;
     text-transform: uppercase;
-    font-weight: 400; }
+    font-weight: 400;
+    direction: rtl;}
     .main-header-area .classynav ul li a:hover{
       color: var(--forSale-tag-color);
     }
@@ -715,7 +723,8 @@ img {
   -webkit-transition-duration: 500ms;
   transition-duration: 500ms;
   background-color: var(--main-color);
-  font-size: 16px; }
+  font-size: 16px;
+  font-family: FontAwesome, sans-serif;}
   @media only screen and (max-width: 767px) {
     .hero-area .owl-prev,
     .hero-area .owl-next {
@@ -910,12 +919,13 @@ img {
 
     .single-featured-property .property-thumb .rentTag span {
       height: 35px;
+      width: 95px;
       padding: 0 20px;
       background-color: var(--forRent-tag-color);
       color: #ffffff;
-      text-transform: uppercase;
-      font-size: 12px;
-      font-weight: 600;
+      font-size: 22px;
+      font-weight: 400;
+      text-align: center;
       display: inline-block;
       line-height: 35px;
       position: absolute;
@@ -927,12 +937,14 @@ img {
 
     .single-featured-property .property-thumb .saleTag span {
       height: 35px;
+      width: 95px;
       padding: 0 20px;
       background-color: var(--forSale-tag-color);
       color: #ffffff;
       text-transform: uppercase;
-      font-size: 12px;
-      font-weight: 600;
+      font-size: 22px;
+      font-weight: 400;
+      text-align: center;
       display: inline-block;
       line-height: 35px;
       position: absolute;
@@ -1404,6 +1416,7 @@ img {
     top: 50%;
     line-height: 40px;
     text-align: center;
+    font-family: FontAwesome, sans-serif;
     color: #ffffff;
     left: -19px;
     opacity: 0;
@@ -1479,7 +1492,9 @@ img {
       min-width: 33.3333333%;
       color: #323232;
       font-size: 15px;
-      margin-bottom: 25px; }
+      margin-bottom: 25px;
+      text-align: right;
+      direction: rtl;}
       @media only screen and (max-width: 767px) {
         .listings-content .listings-core-features li {
           -webkit-box-flex: 0;
@@ -1668,13 +1683,13 @@ img {
   margin-left: 0;
   margin-right: 20px;
   width: 90px;
-  height: 20px;
+  height: 30px;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0; }
 .pagination .page-item:last-child .page-link {
   margin-left: 20px;
   width: 90px;
-  height: 20px;
+  height: 30px;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0; }
 .pagination .page-item.active .page-link {
@@ -1682,14 +1697,15 @@ img {
   background-color: #323232; }
 .pagination .page-link {
   padding: 0;
-  margin-left: 3px;
-  line-height: 20px;
+  margin-left: 4px;
+  line-height: 30px;
   color: #323232;
   border: none;
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
   background-color: var(--main-color);
-  font-size: 12px;
+  font-size: 14px;
+  font-weight: 100;
   color: #ffffff;
   text-align: center;
   margin-bottom: 5px; }
@@ -1836,14 +1852,16 @@ img {
   margin-bottom: 0; }
 .single-accordion h6 {
   margin-bottom: 0;
-  text-transform: uppercase; }
+  text-transform: uppercase;
+  text-align: right;
+  direction: rtl;}
   .single-accordion h6 a {
     background-color: var(--main-color);
     border-radius: 0;
     color: #ffffff;
     display: block;
     margin: 0;
-    padding: 15px 60px 15px 15px;
+    padding: 15px 15px 15px 15px;
     position: relative;
     font-size: 14px;
     text-transform: uppercase;
@@ -1852,7 +1870,7 @@ img {
     .single-accordion h6 a span {
       font-size: 10px;
       position: absolute;
-      right: 20px;
+      left: 20px;
       text-align: center;
       top: 18px; }
       .single-accordion h6 a span.accor-open {
@@ -1873,7 +1891,8 @@ img {
         filter: alpha(opacity=100); }
 .single-accordion .accordion-content {
   border-top: 0 solid transparent;
-  box-shadow: none; }
+  box-shadow: none;
+  text-align: right;}
   .single-accordion .accordion-content p {
     padding: 20px 15px 5px;
     margin-bottom: 0; }

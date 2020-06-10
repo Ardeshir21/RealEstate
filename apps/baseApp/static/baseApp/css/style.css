@@ -1659,13 +1659,13 @@ img {
   margin-left: 0;
   margin-right: 20px;
   width: 90px;
-  height: 20px;
+  height: 30px;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0; }
 .pagination .page-item:last-child .page-link {
   margin-left: 20px;
   width: 90px;
-  height: 20px;
+  height: 30px;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0; }
 .pagination .page-item.active .page-link {
@@ -1674,13 +1674,13 @@ img {
 .pagination .page-link {
   padding: 0;
   margin-left: 3px;
-  line-height: 20px;
+  line-height: 30px;
   color: #323232;
   border: none;
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
   background-color: var(--main-color);
-  font-size: 12px;
+  font-size: 14px;
   color: #ffffff;
   text-align: center;
   margin-bottom: 5px; }

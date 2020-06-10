@@ -1,14 +1,14 @@
-{% extends "baseApp/base.html" %}
+{% extends "FAbaseApp/base.html" %}
 {% load static %}
 {% load humanize %}
 {% load my_tags %}
 
 {% block head %}
     <!-- Css Styles for these template (page) -->
-    <link rel="stylesheet" href="{% static "baseApp/css/detailView/elegant-icons.css" %}" type="text/css">
-    <link rel="stylesheet" href="{% static "baseApp/css/detailView/Azenta-style.css" %}" type="text/css">
-    <!-- This for list menu with checkbox in The Sidebar Search -->
-    <link href="{% static "baseApp/css/sumoselect.css" %}" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static "FAbaseApp/css/detailView/elegant-icons.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "FAbaseApp/css/detailView/Azenta-style.css" %}" type="text/css">
+    <!-- This for list menu with checkbox-->
+    <link href="{% static "FAbaseApp/css/sumoselect.css" %}" rel="stylesheet" />
 {% endblock head %}
 
 
@@ -40,19 +40,19 @@
                         <ul class="room-features">
                             <li>
                                 <i class="fa fa-arrows"></i>
-                                <p>{{property.build_area}} sq. m</p>
+                                <p>{{property.build_area}} متر مربع</p>
                             </li>
                             <li>
                                 <i class="fa fa-bed"></i>
-                                <p>{{property.bedroom}}</p>
+                                <p>{{property.bedroom.description_FA}}</p>
                             </li>
                             <li>
                                 <i class="fa fa-bath"></i>
-                                <p>{{property.bathroom}} Bathroom(s)</p>
+                                <p>{{property.bathroom}} سرویس بهداشتی</p>
                             </li>
                             <li>
                                 <i class="fa fa-car"></i>
-                                <p>پارکینگ {{property.garage}}</p>
+                                <p>{{property.garage}} پارکینگ</p>
                             </li>
                         </ul>
                     </div>
@@ -88,8 +88,8 @@
                         </div>
                         <!-- Property Text and Features -->
                         <div class="pd-desc">
-                            <h4>Description</h4>
-                            <p>{{property.description|safe}}</p>
+                            <h4>توضیحات</h4>
+                            <p>{{property.description_FA|safe}}</p>
                         </div>
                         <!-- TABS -->
                         <div class="pd-details-tab">
@@ -97,13 +97,13 @@
                             <div class="tab-item">
                                 <ul class="nav" role="tablist">
                                     <li>
-                                        <a class="active" data-toggle="tab" href="#tab-1" role="tab">Overview</a>
+                                        <a class="active" data-toggle="tab" href="#tab-1" role="tab">درباره ملک</a>
                                     </li>
                                     <li>
-                                        <a data-toggle="tab" href="#tab-2" role="tab">Apartment</a>
+                                        <a data-toggle="tab" href="#tab-2" role="tab">آپارتمان</a>
                                     </li>
                                     <li>
-                                        <a data-toggle="tab" href="#tab-3" role="tab">Region</a>
+                                        <a data-toggle="tab" href="#tab-3" role="tab">منطقه</a>
                                     </li>
                                 </ul>
                             </div>
@@ -116,44 +116,44 @@
                                             <table class="left-table">
                                                 <tbody>
                                                     <tr>
-                                                        <td class="pt-name">Price</td>
+                                                        <td class="pt-name">قیمت</td>
                                                         {% if property.tag == "FR" %}
                                                           <td class="p-value">
                                                             {% filter floatformat:"0"|intcomma %}
                                                                 {{property.price}}
-                                                            {% endfilter %} $/Month
+                                                            {% endfilter %} دلار/ماه
                                                           </td>
                                                         {% else %}
                                                           <td class="p-value">
                                                             {% filter floatformat:"0"|intcomma %}
                                                                 {{property.price}}
-                                                            {% endfilter %} $
+                                                            {% endfilter %} دلار
                                                           </td>
                                                         {% endif %}
                                                     </tr>
                                                     <tr>
-                                                        <td class="pt-name">Property Type</td>
+                                                        <td class="pt-name">نوع ملک</td>
                                                         <td class="p-value">{{property.get_type_display}}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td class="pt-name">Year Built</td>
+                                                        <td class="pt-name">سن بنا</td>
                                                         <td class="p-value">{{property.age}}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td class="pt-name">Bathrooms</td>
+                                                        <td class="pt-name">سرویس بهداشتی</td>
                                                         <td class="p-value">{{property.bathroom}}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td class="pt-name">Rooms</td>
+                                                        <td class="pt-name">اتاق خواب</td>
                                                         <td class="p-value">{{property.bedroom}}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td class="pt-name">Parking lots</td>
+                                                        <td class="pt-name">پارکینگ</td>
                                                         <td class="p-value">{{property.parking}}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td class="pt-name">Lot area</td>
-                                                        <td class="p-value">{{property.build_area}} sq. m</td>
+                                                        <td class="pt-name">مساحت</td>
+                                                        <td class="p-value">{{property.build_area}} متر مربع</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -164,11 +164,11 @@
                                                         <td class="p-value">Adam Smith</td>
                                                     </tr>
                                                     <tr>
-                                                        <td class="pt-name">Reference</td>
-                                                        <td class="p-value"># SET-00{{property.id}}</td>
+                                                        <td class="pt-name">کد ملک</td>
+                                                        <td dir="ltr" class="p-value"># SET-00{{property.id}}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td class="pt-name">Contract type</td>
+                                                        <td class="pt-name">نوع معامله</td>
                                                         <td class="p-value">{{property.get_tag_display}}</td>
                                                     </tr>
                                                     <tr>
@@ -192,7 +192,7 @@
                                         </div>
                                         <!-- Features -->
                                         <ul class="listings-core-features d-flex align-items-center">
-                                          {% for feature in property.features.all %}
+                                          {% for feature in property.features_FA.all %}
                                             <li><i class="fa fa-check" aria-hidden="true"></i>{{feature}}</li>
                                           {% endfor %}
                                         </ul>
@@ -200,14 +200,14 @@
                                     <!-- Apartment TAB 2 -->
                                     <div class="tab-pane fade" id="tab-2" role="tabpanel">
                                         <div class="pd-table-desc">
-                                            <p>{{property.complex.description|safe}}</p>
+                                            <p>{{property.complex.description_FA|safe}}</p>
 
                                         </div>
                                     </div>
                                     <!-- Region TAB 3 -->
                                     <div class="tab-pane fade" id="tab-3" role="tabpanel">
                                         <div class="pd-table-amenities">
-                                            <p>{{property.complex.region.description|safe}}</p>
+                                            <p>{{property.complex.region.description_FA|safe}}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -215,7 +215,7 @@
                         </div>
                         <!-- MAP -->
                         <div class="property-map">
-                            <h4>Map</h4>
+                            <h4>نقشه</h4>
                             <div class="map-inside">
                                 <iframe
                                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2942.5524090066037!2d-71.10245469994108!3d42.47980730490846!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89e3748250c43a43%3A0xe1b9879a5e9b6657!2sWinter%20Street%20Public%20Parking%20Lot!5e0!3m2!1sen!2sbd!4v1577299251173!5m2!1sen!2sbd"
@@ -263,26 +263,26 @@
                 <!-- SIDE FILTER BAR -->
                 <div class="col-lg-3 text-center">
                     <div class="property-sidebar">
-                        <h4>SEARCH PROPERTY</h4>
+                        <h4>جستجوی ملک</h4>
                         <!-- SEARCH FORM -->
-                        <form action="{% url 'baseApp:properties' %}" method="GET" id="advanceSearch" class="sidebar-search">
+                        <form action="{% url 'FAbaseApp:properties' %}" method="GET" id="advanceSearch" class="sidebar-search">
 
                             <!-- SALE/RENT Button -->
                             <div class="sidebar-btn">
                                 <div class="bt-item">
                                     <input type="radio" name="tag_select" value='sale' id="st-buy" checked>
-                                    <label for="st-buy">Sale</label>
+                                    <label for="st-buy">خرید</label>
                                 </div>
                                 <div class="bt-item">
                                     <input type="radio" name="tag_select"  value='rent' id="st-rent">
-                                    <label for="st-rent">Rent</label>
+                                    <label for="st-rent">اجاره</label>
                                 </div>
                             </div>
 
                             <!-- Open Search -->
                             <div class="form-group text-center">
-                              <p><small>Search by Reference No.</small></p>
-                              <select multiple="multiple" name="ref_select" placeholder="For Example: SET-0026" class="SlectBox-grp-src">
+                              <p><small>جستجو از طریق کد ملک</small></p>
+                              <select multiple="multiple" name="ref_select" placeholder="به عنوان نمونه: SET-0026" class="SlectBox-grp-src">
                                 {% for asset in assets_all %}
                                   <option>SET-00{{asset.id}}</option>
                                 {% endfor %}
@@ -290,8 +290,8 @@
                             </div>
 
                             <div class="form-group text-center">
-                              <p><small>Apartment Name</small></p>
-                              <select multiple="multiple" name="apartment_select" placeholder="All Apartments" class="SlectBox-grp-src">
+                              <p><small>نام آپارتمان</small></p>
+                              <select multiple="multiple" name="apartment_select" placeholder="همه آپارتمان ها" class="SlectBox-grp-src">
                                 {% for apartment in apartments %}
                                   <option value="{{apartment.id}}">{{apartment.name}}</option>
                                 {% endfor %}
@@ -300,8 +300,8 @@
 
                             <!-- Property Types -->
                             <div class="form-group text-center">
-                              <small>Property Type</small>
-                              <select multiple="multiple" name="propertyType_select" placeholder="All Types" class="SlectBox-grp-src">
+                              <p><small>نوع ملک</small></p>
+                              <select multiple="multiple" name="propertyType_select" placeholder="همه انواع ملک" class="SlectBox-grp-src">
                                 {% for type in propertyTypeNames %}
                                   <option>{{type}}</option>
                                 {% endfor %}
@@ -310,22 +310,22 @@
 
                             <!-- Bedroom -->
                             <div class="form-group text-center">
-                              <small>Number of Bedrooms</small>
-                              <select multiple="multiple" name="bedroom_select" placeholder="Any Number" class="SlectBox-grp-src">
+                              <p><small>تعداد اتاق خواب</small></p>
+                              <select multiple="multiple" name="bedroom_select" placeholder="تمام موارد" class="SlectBox-grp-src">
                                 {% for num in bedroomNumbers %}
-                                  <option value={{num.number}}>{{num.description}}</option>
+                                  <option value={{num.number}}>{{num.description_FA}}</option>
                                 {% endfor %}
                               </select>
                             </div>
 
                             <!-- Space Range -->
                             <div class="slider-range text-center">
-                                <div data-min={{spaceRange.build_area__min}} data-max={{spaceRange.build_area__max}} data-unit=" sq. m" data-step="5" class="slider-range-price ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" data-value-min={{spaceRange.build_area__min}} data-value-max={{spaceRange.build_area__max}}>
+                                <div data-min={{spaceRange.build_area__min}} data-max={{spaceRange.build_area__max}} data-unit=" متر مربع" data-step="5" class="slider-range-price ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" data-value-min={{spaceRange.build_area__min}} data-value-max={{spaceRange.build_area__max}}>
                                     <div class="ui-slider-range ui-widget-header ui-corner-all"></div>
                                     <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
                                     <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
                                 </div>
-                                <div class="range pt-2">{{spaceRange.build_area__min}} sq. m - {{spaceRange.build_area__max}} sq. m</div>
+                                <div dir="rtl" class="range pt-2">{{spaceRange.build_area__min}} متر مربع - {{spaceRange.build_area__max}} متر مربع</div>
                                 <!-- for space to read on GET request -->
                                 <input type="hidden" name="space_select" id="minval" readonly style= "background: transparent; border: none; width:0px; height:0px;">
                                 <input type="hidden" name="space_select" id="maxval" readonly style= "background: transparent; border: none; width:0px; height:0px;">
@@ -334,18 +334,18 @@
                             <!-- Price Range -->
                             <div class="slider-range text-center">
 
-                                <div id='priceDiv' data-min={{priceRange.price__min}} data-max={{priceRange.price__max}} data-unit=" $" data-step="10000" class="slider-range-price ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" data-value-min={{priceRange.price__min}} data-value-max={{priceRange.price__max}}>
+                                <div id='priceDiv' data-min={{priceRange.price__min}} data-max={{priceRange.price__max}} data-unit=" دلار" data-step="10000" class="slider-range-price ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" data-value-min={{priceRange.price__min}} data-value-max={{priceRange.price__max}}>
                                     <div class="ui-slider-range ui-widget-header ui-corner-all"></div>
                                     <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
                                     <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
                                 </div>
-                                <div class="range pt-2" id='priceHTMLtext'>
+                                <div dir="rtl" class="range pt-2" id='priceHTMLtext'>
                                   {% filter floatformat:"0"|intcomma %}
                                     {{priceRange.price__min}}
-                                  {% endfilter %} $ -
+                                  {% endfilter %} دلار -
                                   {% filter floatformat:"0"|intcomma %}
                                     {{priceRange.price__max}}
-                                  {% endfilter %} $
+                                  {% endfilter %} دلار
 
                                 </div>
 
@@ -355,7 +355,7 @@
 
                             </div>
 
-                            <button type="submit" id="advancedButton" class="btn south-btn">Search</button>
+                            <button type="submit" id="advancedButton" class="btn south-btn">جستجو</button>
                         </form>
 
                         <!-- MORE SIDE BAR -->
