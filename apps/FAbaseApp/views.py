@@ -1,4 +1,4 @@
-## This views.py is excatly the same as baseApp/views.property
+## This views.py is excatly the same as baseApp/views.py 
 ## The differences are in import modules part and the Template html files.
 ## The extraContent part is also has some customized changes for FA language
 

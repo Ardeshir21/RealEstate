@@ -1,3 +1,2 @@
-from django.db import models
 
-# Create your models here.
+# This app uses the same model as baseApp

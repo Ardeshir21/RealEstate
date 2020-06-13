@@ -1,17 +1,17 @@
-{% extends "baseApp/base.html" %}
+{% extends "FAbaseApp/base.html" %}
 {% load static %}
 {% load humanize %}
 
 
 {% block head_title %}
 <!-- Title  -->
-<title>Gamma Turkey - Real Estate Agency | Home</title>
+<title>Gamma Turkey - Real Estate Agency | Blog</title>
 {% endblock head_title %}
 
 
 {% block body_content %}
   <!-- ##### WideImage Area Start ##### -->
-  {% include "baseApp/includes/wideImage.html" %}
+  {% include "FAbaseApp/includes/wideImage.html" %}
 
 
   <!-- ##### Blog Area Start ##### -->
@@ -29,7 +29,7 @@
               <div class="blog-sidebar-area">
                 <!-- Search Widget -->
                 <div class="search-widget-area mb-70 ml-30">
-                    <form action="{% url 'blogApp:search' %}" method="GET">
+                    <form action="{% url 'FAblogApp:search' %}" method="GET">
                         <input type="search" name="s" id="search" placeholder="Search a Keyword">
                         <button type="submit"><i class="fa fa-search"></i></button>
                     </form>
@@ -39,7 +39,7 @@
                     <h5>Categories</h5>
                     <ul class="catagories-menu">
                       {% for category in categories %}
-                        <li><a href="{% url 'blogApp:category_list' category=category.slug %}">{{category}}</a></li>
+                        <li><a href="{% url 'FAblogApp:category_list' category=category.slug %}">{{category}}</a></li>
                       {% endfor %}
                     </ul>
                 </div>
@@ -48,7 +48,7 @@
                 <div class="featured-properties-slides owl-carousel">
                   {% for property in featuredProperties %}
                     <!-- Single Property Thumbnail -->
-                        {% include "baseApp/includes/singlePropertyThumbnail.html" %}
+                        {% include "FAbaseApp/includes/singlePropertyThumbnail.html" %}
                   {% endfor %}
                 </div>
               </div>

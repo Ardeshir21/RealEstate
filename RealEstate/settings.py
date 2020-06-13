@@ -69,7 +69,7 @@ INSTALLED_APPS = [
     'apps.baseApp',
     'apps.blogApp',
     'apps.FAbaseApp',
-    # 'apps.FAblogApp',
+    'apps.FAblogApp',
 
     # for templates to sperate digits
     'django.contrib.humanize',

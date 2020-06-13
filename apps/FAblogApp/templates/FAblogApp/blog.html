@@ -1,4 +1,4 @@
-{% extends "baseApp/base.html" %}
+{% extends "FAbaseApp/base.html" %}
 {% load static %}
 {% load my_tags %}
 {% load humanize %}
@@ -6,13 +6,13 @@
 
 {% block head_title %}
 <!-- Title  -->
-<title>Gamma Turkey - Real Estate Agency | Home</title>
+<title>Gamma Turkey - Real Estate Agency | Blog</title>
 {% endblock head_title %}
 
 
 {% block body_content %}
     <!-- ##### wideImage Area Start ##### -->
-    {% include "baseApp/includes/wideImage.html" %}
+    {% include "FAbaseApp/includes/wideImage.html" %}
 
     <!-- ##### Blog Area Start ##### -->
     <section class="south-blog-area section-padding-100">
@@ -37,15 +37,15 @@
                                 </p>
                                 <p>By <a href="#">{{post.author}}</a> | in
                                   {% for category in post.categories.all %}
-                                    <a href="{% url 'blogApp:category_list' category=category.slug %}">{{category}}, </a>
+                                    <a href="{% url 'FAblogApp:category_list' category=category.slug %}">{{category}}, </a>
                                   {% endfor %}
                                 </p>
                             </div>
                             <!-- Headline -->
-                            <a href="{% url 'blogApp:post_detail' slug=post.slug %}" class="headline">{{post.title}}</a>
+                            <a href="{% url 'FAblogApp:post_detail' slug=post.slug %}" class="headline">{{post.title}}</a>
                             <p>{{post.shortContent|slice:":370" }} ...</p>
                             <!-- Read More btn -->
-                            <a href="{% url 'blogApp:post_detail' slug=post.slug %}" class="btn south-btn">Read More</a>
+                            <a href="{% url 'FAblogApp:post_detail' slug=post.slug %}" class="btn south-btn">Read More</a>
                         </div>
                     </div>
                   {% endfor %}
@@ -56,7 +56,7 @@
                   <div class="blog-sidebar-area">
                     <!-- Search Widget -->
                     <div class="search-widget-area mb-70 ml-30">
-                        <form action="{% url 'blogApp:search' %}" method="GET">
+                        <form action="{% url 'FAblogApp:search' %}" method="GET">
                             <input type="search" name="s" id="search" placeholder="Search a Keyword">
                             <button type="submit"><i class="fa fa-search"></i></button>
                         </form>
@@ -66,7 +66,7 @@
                         <h5>Categories</h5>
                         <ul class="catagories-menu">
                           {% for category in categories %}
-                            <li><a href="{% url 'blogApp:category_list' category=category.slug %}">{{category}}</a></li>
+                            <li><a href="{% url 'FAblogApp:category_list' category=category.slug %}">{{category}}</a></li>
                           {% endfor %}
                         </ul>
                     </div>
@@ -76,7 +76,7 @@
 
                       {% for property in featuredProperties %}
                         <!-- Single Property Thumbnail -->
-                            {% include "baseApp/includes/singlePropertyThumbnail.html" %}
+                            {% include "FAbaseApp/includes/singlePropertyThumbnail.html" %}
                       {% endfor %}
                     </div>
                   </div>
@@ -84,7 +84,7 @@
             </div>
 
             <!-- Paginate  -->
-            {% include "baseApp/includes/paginator.html" %}
+            {% include "FAbaseApp/includes/paginator.html" %}
         </div>
     </section>
     <!-- ##### Blog Area End ##### -->

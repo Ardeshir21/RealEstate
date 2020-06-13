@@ -37,7 +37,7 @@ class IndexView(generic.ListView):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
-        # Append extraContext
+        # Append shared extraContext
         context.update(get_extra_context())
         context['slideContent'] = models.Slide.objects.filter(useFor__exact='HOME', active__exact=True)
         return context
