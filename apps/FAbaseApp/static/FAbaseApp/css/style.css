@@ -83,7 +83,7 @@ p {
   color: #7d7d7d;
   font-size: 14px;
   line-height: 2;
-  font-weight: 600; }
+ }
 
 a {
   -webkit-transition-duration: 500ms;
@@ -91,7 +91,7 @@ a {
   text-decoration: none;
   outline: none;
   font-size: 14px;
-  font-weight: 600; }
+ }
 
 a.dropdown-item {
     font-size: 17px;
@@ -405,7 +405,7 @@ img {
   color: #ffffff;
   font-size: 18px;
   font-weight: 100;
-  font-family: IranSans-Bold;
+  font-family: IranSans-Medium;
   background-color: var(--main-color);
   border-radius: 0;
   line-height: 50px;
@@ -1286,7 +1286,9 @@ img {
     font-size: 60px;
     margin-bottom: 0;
     background-color: #000000;
-    padding: 5px 20px 7px;
+    padding: 13px;
+    direction: rtl;
+    font-weight: 600;
     line-height: 1;
     color: #ffffff;
     display: inline-block;
@@ -1582,14 +1584,18 @@ img {
   .single-blog-area .post-content {
     position: relative;
     z-index: 1;
-    padding: 15px 0; }
+    padding: 15px 15px 0 0; }
     .single-blog-area .post-content .post-date a {
       font-size: 14px;
       color: var(--main-color);
       margin-bottom: 10px;
       display: block; }
     .single-blog-area .post-content .headline {
-      font-size: 30px;
+      font-size: 21px;
+      direction: rtl;
+      font-family: IranSans-Bold;
+      text-align: right;
+      padding: 6px 0 6px 0;
       color: #323232;
       display: block; }
     .single-blog-area .post-content .post-meta {
@@ -1597,17 +1603,26 @@ img {
       margin-bottom: 5px; }
       .single-blog-area .post-content .post-meta p {
         color: #aaa8a8;
+        direction: rtl;
+        text-align: right;
         font-size: 12px; }
         .single-blog-area .post-content .post-meta p a {
           font-size: 12px;
           color: #aaa8a8;
+          direction: rtl;
+          text-align: right;
           display: inline-block; }
           .single-blog-area .post-content .post-meta small {
               font-weight: 500;
               font-size: 12px;
+              text-align: right;
+              direction: rtl;
               color: #aaa8a8;}
     .single-blog-area .post-content p {
-      margin-bottom: 0px; }
+      margin-bottom: 0px;
+      font-weight: 200;
+      text-align: right;
+      direction: rtl;}
 
 .search-widget-area form {
   position: relative;
@@ -1616,9 +1631,10 @@ img {
   width: 100%;
   height: 43px;
   border: 1px solid #e1dddd;
-  font-size: 12px;
+  font-size: 14px;
   font-style: italic;
-  padding: 0 30px; }
+  direction: rtl;
+  padding: 0 50px 0 0; }
 .search-widget-area button[type=submit] {
   width: 50px;
   height: 43px;
@@ -1633,12 +1649,18 @@ img {
 
 .south-catagories-card h5 {
   margin-bottom: 30px;
-  font-size: 16px; }
+  padding: 0 20px 0 0;
+  direction: rtl;
+  font-family: IranSans-Bold;
+  text-align: right;
+  font-size: 19px; }
 .south-catagories-card ul li a {
   display: block;
-  padding: 8px 0;
+  padding: 0 50px 0 0;
   color: #7d7d7d;
-  font-size: 14px;
+  direction: rtl;
+  text-align: right;
+  font-size: 17px;
   font-weight: 400; }
   .south-catagories-card ul li a:hover, .south-catagories-card ul li a:focus {
     color: var(--main-color); }

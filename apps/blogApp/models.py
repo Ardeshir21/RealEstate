@@ -47,7 +47,7 @@ class Post(models.Model):
     content = RichTextUploadingField(help_text='Full images can be 730px wide')
     shortContent = models.TextField(max_length=370, blank=True, help_text='Max Characters = 370')
     image = models.ImageField(upload_to='blogApp/post/', blank=True, null=True,
-                                help_text="Thumbnail Image  1600x1200")
+                                help_text="Thumbnail Image  1200x630")
     slug = models.SlugField(max_length=150, unique=True, blank=True, null=True, allow_unicode=True,
                                 help_text="The name of the page as it will appear in URLs e.g http://domain.com/blog/[my-slug]/")
     created_on = models.DateTimeField(auto_now_add=True)

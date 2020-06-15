@@ -7,32 +7,6 @@
 
 **************************************/
 
-body {
-    background-color: #ffffff;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-body,
-.navbar-toggleable-md .navbar-nav .nav-link,
-.market-header,
-.btn,
-.dropdown-item,
-.form-control,
-p {
-    font-family: 'Poppins', serif !important;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5 {
-    font-weight: 600;
-}
 
 .navbar-inverse .navbar-nav .nav-link,
 .navbar-nav .nav-link {
@@ -140,8 +114,9 @@ h5 {
 
 .blog-meta small a,
 .blog-meta small {
-    font-weight: 500;
+    font-weight: 300;
     font-size: 14px;
+    direction: rtl;
     color: #999 !important;
 }
 
@@ -189,6 +164,7 @@ h5 {
 .blog-meta .bg-orange {
     color: #ffffff !important;
     padding: 0 0.8rem;
+    direction: rtl;
     border-radius: 3px;
 }
 

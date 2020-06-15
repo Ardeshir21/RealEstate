@@ -36,7 +36,7 @@ class PostList(generic.ListView):
         context.update(get_extra_context())
 
         # This title is different for this view
-        context['pageTitle'] = 'BLOG'
+        context['pageTitle'] = 'وبلاگ'
         context['slideContent'] = baseAppModel.Slide.objects.get(useFor__exact='BLOG_HOME', active__exact=True)
 
         return context
@@ -45,7 +45,7 @@ class PostList(generic.ListView):
 class CategoryListView(generic.ListView):
         context_object_name = 'allPosts'
         model = models.Post
-        template_name = 'FAblogApp/searchResult.html'
+        template_name = 'FAblogApp/search_result.html'
         paginate_by = 8
 
         def get_queryset(self, **kwargs):
@@ -88,7 +88,7 @@ class PostDetail(generic.DetailView):
         context.update(get_extra_context())
 
         # This title is different for this view
-        context['pageTitle'] = 'POST'
+        context['pageTitle'] = 'مقاله'
         context['slideContent'] = baseAppModel.Slide.objects.get(useFor__exact='BLOG_POST', active__exact=True)
         return context
 
@@ -116,7 +116,7 @@ class PostSearch(generic.ListView):
         context.update(get_extra_context())
 
         # This title is different for this view
-        context['pageTitle'] = 'SEARCH'
+        context['pageTitle'] = 'جستجوی مطالب'
         context['slideContent'] = baseAppModel.Slide.objects.get(useFor__exact='BLOG_SEARCH', active__exact=True)
         # result counte
         context['resultCount'] = len(self.get_queryset())
