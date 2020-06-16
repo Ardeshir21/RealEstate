@@ -35,7 +35,7 @@ class PostList(generic.ListView):
 class CategoryListView(generic.ListView):
         context_object_name = 'allPosts'
         model = models.Post
-        template_name = 'blogApp/searchResult.html'
+        template_name = 'blogApp/search_result.html'
         paginate_by = 8
 
         def get_queryset(self, **kwargs):

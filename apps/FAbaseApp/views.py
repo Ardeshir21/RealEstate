@@ -1,4 +1,4 @@
-## This views.py is excatly the same as baseApp/views.py 
+## This views.py is excatly the same as baseApp/views.py
 ## The differences are in import modules part and the Template html files.
 ## The extraContent part is also has some customized changes for FA language
 
@@ -267,4 +267,17 @@ class AssetSingleView(generic.DetailView):
         context.update(get_extra_context())
         context['slideContent'] = models.Slide.objects.get(useFor__exact='PROPERTY_PAGE', active__exact=True)
         context['assets_all'] = models.Asset.objects.all()
+        return context
+
+# About Us
+class AboutUsView(generic.TemplateView):
+    template_name = 'FAbaseApp/about_us.html'
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Append extraContext
+        context.update(get_extra_context())
+        context['slideContent'] = models.Slide.objects.get(useFor__exact='PROPERTY_PAGE', active__exact=True)
+        context['pageTitle'] = 'درباره ما'
         return context

@@ -1,0 +1,22 @@
+
+<!-- ##### Not used For loop to customiz each field seperatly. ##### -->
+<!-- CONTACT FORM -->
+<form action="#" method="POST">{% csrf_token %}
+    <div class="form-group">
+        {{form.name}}
+        {{form.name.errors}}
+    </div>
+    <div class="form-group">
+        {{form.sender_email}}
+        {{form.sender_email.errors}}
+    </div>
+    <div class="form-group">
+        {{form.sender_phone}}
+        {{form.sender_phone.errors}}
+    </div>
+    <div class="form-group">
+        {{form.message}}
+        {{form.message.errors}}
+    </div>
+    <button type="submit" class="btn south-btn">Send Message</button>
+</form>

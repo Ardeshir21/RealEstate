@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from django.views import generic
-from . import models
+from . import models, forms
 from apps.blogApp import models as blogAppModel
 from django.db.models import Max, Min, Q
 from django.urls import reverse_lazy, reverse
+
 
 
 # Here is the Extra Context ditionary which is used in get_context_data of Views classes
@@ -25,8 +26,6 @@ def get_extra_context():
         'apartments': models.Complex.objects.all()
         }
     return extraContext
-
-
 
 # Index View
 class IndexView(generic.ListView):
@@ -249,6 +248,40 @@ class AssetSingleView(generic.DetailView):
         context['assets_all'] = models.Asset.objects.all()
         return context
 
+# About Us
+class AboutUsView(generic.TemplateView):
+    template_name = 'baseApp/about_us.html'
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Append extraContext
+        context.update(get_extra_context())
+        context['slideContent'] = models.Slide.objects.get(useFor__exact='PROPERTY_PAGE', active__exact=True)
+        context['pageTitle'] = 'ABOUT US'
+        return context
+
+class ContactView(generic.edit.FormView):
+    template_name = 'baseApp/about_us.html'
+    form_class = forms.ContactForm
+    success_url = reverse_lazy('baseApp:index')
+
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
+        form.send_email()
+        return super().form_valid(form)
+
+    # Calls get_form() and adds the result to the context data with the name ‘form’.
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Append extraContext
+        context.update(get_extra_context())
+        context['slideContent'] = models.Slide.objects.get(useFor__exact='PROPERTY_PAGE', active__exact=True)
+        context['pageTitle'] = 'ABOUT US'
+        return context
+
 
 # FORMS are here
 # from . import forms
@@ -264,8 +297,6 @@ class AssetSingleView(generic.DetailView):
 #         # It should return an HttpResponse.
 #         form.save()
 #         return super().form_valid(form)
-
-
 
 # for handling multiple files
     # def post(self, request, *args, **kwargs):

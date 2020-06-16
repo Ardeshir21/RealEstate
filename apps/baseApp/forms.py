@@ -1,11 +1,37 @@
 from django import forms
-from . import models
+from phonenumber_field.formfields import PhoneNumberField
+from django.core.mail import send_mail
 
-# Not using this form, because the Admin page form is enough for property entry
-class createAssetForm(forms.ModelForm):
-    class Meta():
-        model= models.Asset
-        fields = '__all__'
-        widgets = {
-                'tag': forms.RadioSelect,
-        }
+
+class ContactForm(forms.Form):
+    name = forms.CharField(max_length=100,
+                            widget=forms.TextInput(attrs={'placeholder': 'Your Name',
+                                                            'class': 'form-control'})
+                            )
+    message = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Your Message',
+                                                            'class': 'form-control'}))
+    sender_email = forms.EmailField(
+                                widget=forms.EmailInput(attrs={'placeholder': 'someone@example.com',
+                                                                'class': 'form-control'})
+                                )
+    sender_phone = PhoneNumberField(required=False,
+                                    widget=forms.TextInput(attrs={'placeholder': '+905356832320',
+                                                                    'class': 'form-control'})
+                                    )
+
+    CHOICES = [(True, 'Yes'), (False, 'No')]
+    cc_myself = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES, required=False,
+                                    help_text='Send a Copy of This Message to My Email Address')
+
+    def send_email(self):
+        name = self.cleaned_data['name']
+        message = self.cleaned_data['message']
+        sender_email = self.cleaned_data['sender_email']
+        sender_phone = self.cleaned_data['sender_phone']
+        cc_myself = self.cleaned_data['cc_myself']
+        recipients = ['examples21@gmail.com']
+        if cc_myself:
+            recipients.append(sender_email)
+
+        # send_mail('HELLO', message, sender_email, recipients)
+        pass
