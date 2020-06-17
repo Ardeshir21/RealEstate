@@ -19,7 +19,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-12 col-lg-8">
-                    <div class="section-heading text-right wow fadeInUp" data-wow-delay="250ms">
+                    <div class="section-heading wow fadeInUp" data-wow-delay="250ms">
                         <h2>ما بهرین ها را به شما ارائه می دهیم</h2>
                         <p>اینجا یک جمله میتوان نوشت!</p>
                     </div>
@@ -30,7 +30,7 @@
                 </div>
 
                 <div class="col-12 col-lg-4">
-                    <div class="section-heading text-right wow fadeInUp" data-wow-delay="250ms">
+                    <div class="section-heading wow fadeInUp" data-wow-delay="250ms">
                         <h2>فرصت های ویژه</h2>
                         <p>ملک های استثنایی</p>
                     </div>
@@ -46,6 +46,48 @@
         </div>
     </section>
     <!-- ##### About Content Wrapper End ##### -->
+
+    <!-- Contact Us Form Start -->
+    <section class="south-contact-area section-padding-100">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="contact-heading">
+                        <h6>اطلاعات تماس</h6>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-lg-4">
+                    <div class="content-sidebar">
+                        <!-- Office Hours -->
+                        <div class="weekly-office-hours">
+                            <ul>
+                                <li class="d-flex align-items-center justify-content-between"><span>Monday - Friday</span> <span>09 AM - 19 PM</span></li>
+                                <li class="d-flex align-items-center justify-content-between"><span>Saturday</span> <span>09 AM - 14 PM</span></li>
+                                <li class="d-flex align-items-center justify-content-between"><span>Sunday</span> <span>Closed</span></li>
+                            </ul>
+                        </div>
+                        <!-- Address -->
+                        <div class="address mt-30">
+                            <h6 style="direction: ltr;"><img src="{% static "baseApp/img/icons/phone-call.png" %}" alt=""> +90 535 683 2320</h6>
+                            <h6 style="direction: ltr;"><img src="{% static "baseApp/img/icons/envelope.png" %}" alt=""> contact@gammaturkey.com</h6>
+                            <h6><img src="{% static "baseApp/img/icons/location.png" %}" alt="">Turkey, Istanbul</h6>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Form Area -->
+                <div class="col-12 col-lg-8">
+                    <div class="contact-form">
+                      {% include "FAbaseApp/includes/contactForm.html" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Contact Us Form End -->
 
     <!-- ##### Call To Action Area Start ##### -->
     <section class="call-to-action-area bg-fixed bg-overlay-black" style="background-image: url({% static "FAbaseApp/img/bg-img/cta.jpg" %})">
@@ -143,4 +185,5 @@
         </div>
     </section>
     <!-- ##### Meet The Team Area End ##### -->
+
 {% endblock body_content %}

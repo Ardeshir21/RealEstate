@@ -4,6 +4,7 @@
 
 # Import models from baseApp
 from apps.baseApp import models
+from . import forms
 from django.shortcuts import render
 from django.views import generic
 # This app has its own blog model
@@ -270,9 +271,18 @@ class AssetSingleView(generic.DetailView):
         return context
 
 # About Us
-class AboutUsView(generic.TemplateView):
+class ContactView(generic.edit.FormView):
     template_name = 'FAbaseApp/about_us.html'
+    form_class = forms.ContactForm
+    success_url = reverse_lazy('FAbaseApp:index')
 
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
+        form.send_email()
+        return super().form_valid(form)
+
+    # Calls get_form() and adds the result to the context data with the name ‘form’.
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)

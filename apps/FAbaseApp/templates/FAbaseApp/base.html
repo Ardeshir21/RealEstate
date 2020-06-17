@@ -22,6 +22,7 @@
 
     <!-- Style CSS -->
     <link rel="stylesheet" href="{% static "FAbaseApp/css/style.css" %}">
+
     {% block head %}
       <!-- Something HERE -->
     {% endblock head %}
@@ -242,6 +243,8 @@
     <script src="{% static "FAbaseApp/js/plugins.js" %}"></script>
     <script src="{% static "FAbaseApp/js/classy-nav.min.js" %}"></script>
     <script src="{% static "FAbaseApp/js/jquery-ui.min.js" %}"></script>
+    <!-- Toggle button for forms -->
+    <script src="{% static "FAbaseApp/js/bootstrap-toggle.min.js" %}"></script>
     <!-- Active js -->
     <script src="{% static "FAbaseApp/js/active.js" %}"></script>
     <!-- Region selection buttons for Search area -->
@@ -354,6 +357,7 @@
           $("#advanceSearch").submit();
       });
     </script>
+
   </body>
 
 </html>

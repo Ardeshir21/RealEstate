@@ -5,22 +5,23 @@ from django.core.mail import send_mail
 
 class ContactForm(forms.Form):
     name = forms.CharField(max_length=100,
-                            widget=forms.TextInput(attrs={'placeholder': 'Your Name',
+                            widget=forms.TextInput(attrs={'placeholder': 'نام شما',
                                                             'class': 'form-control'})
                             )
-    message = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Your Message',
+    message = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'پیغام شما',
                                                             'class': 'form-control'}))
     sender_email = forms.EmailField(
                                 widget=forms.EmailInput(attrs={'placeholder': 'someone@example.com',
-                                                                'class': 'form-control'})
+                                                                'class': 'form-control',
+                                                                'style': 'direction: ltr;'})
                                 )
     sender_phone = PhoneNumberField(required=False,
-                                    widget=forms.TextInput(attrs={'placeholder': '+905356832320',
-                                                                    'class': 'form-control'})
+                                    widget=forms.TextInput(attrs={'placeholder': '+989123456789',
+                                                                    'class': 'form-control',
+                                                                    'style': 'direction: ltr;'})
                                     )
 
     cc_myself = forms.BooleanField(required=False)
-
 
     def send_email(self):
         name = self.cleaned_data['name']

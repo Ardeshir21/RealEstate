@@ -53,6 +53,7 @@
 @import url(themify-icons.css);
 @import url(nice-select.css);
 @import url(jquery-ui.min.css);
+@import url(bootstrap-toggle.css);
 
 /* :: 3.0 Base CSS */
 /* This Part is for setting the main color theme for whole project */
@@ -478,13 +479,12 @@ img {
 .form-group .btn-primary {
   background-color: var(--forSale-tag-color) !important;
   border-color: var(--main-color) !important;
-  margin: 2px !important;
 }
 
-.form-group .btn-default {
-  margin: 2px !important;
+.form-group .btn-danger {
+  background-color: var(--forRent-tag-color) !important;
+  border-color: var(--main-color) !important;
 }
-
 
 /* :: 8.0 Header Area CSS */
 .dark .classynav ul li .dropdown,
@@ -1787,6 +1787,11 @@ img {
 .south-contact-area .comment-form .form-group,
 .south-contact-area .contact-form .form-group {
   margin-bottom: 10px; }
+
+.toggle-btn{
+  text-align: center;
+}
+
 .leave-comment-area .comment-form .form-control,
 .leave-comment-area .contact-form .form-control,
 .south-contact-area .comment-form .form-control,
@@ -1794,10 +1799,11 @@ img {
   width: 100%;
   height: 43px;
   background-color: transparent;
-  padding: 15px;
+  padding: 15px 22px 15px 15px;
   border: 1px solid #e1dddd;
   font-size: 12px;
   font-style: italic;
+  direction: rtl;
   margin-bottom: 0 !important; }
 .leave-comment-area .comment-form textarea.form-control,
 .leave-comment-area .contact-form textarea.form-control,
@@ -1824,7 +1830,9 @@ img {
 
 /* :: 21.0 Contact Area CSS */
 .contact-heading {
-  margin-bottom: 90px; }
+  margin-bottom: 90px;
+  direction: rtl;
+  text-align: right;}
   .contact-heading h6 {
     border-bottom: 2px solid var(--main-color);
     display: inline-block;
@@ -1850,6 +1858,9 @@ img {
     margin-bottom: 20px;
     display: block;
     font-size: 14px;
+    font-family: sans-serif;
+    font-weight: 600;
+    direction: rtl;
     padding-left: 40px;
     line-height: 1.8; }
     .content-sidebar .address h6 img {

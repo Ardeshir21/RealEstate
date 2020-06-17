@@ -19,8 +19,10 @@
           .toggle.ios, .toggle-on.ios, .toggle-off.ios { border-radius: 20px;}
           .toggle.ios .toggle-handle { border-radius: 20px; background: black;}
         </style>
-        <input name="cc_myself" type="checkbox" data-toggle="toggle" data-size="small" data-on="Send a copy of this message to me" data-off="I don't need the copy of this message" data-offstyle="danger" data-style="ios">
+        <input name="cc_myself" type="checkbox" data-toggle="toggle" data-size="small" data-on="کپی پیام برای خودم نیز ارسال شود" data-off="کپی پیام را نیاز ندارم" data-offstyle="danger" data-style="ios">
     </div>
+
+
     <!-- Phone -->
     <div class="form-group">
         {{form.sender_phone}}
@@ -32,5 +34,5 @@
         {{form.message.errors}}
     </div>
     <!-- Submit -->
-    <button type="submit" class="btn south-btn">Send Message</button>
+    <button type="submit" class="btn south-btn">ارسال</button>
 </form>
