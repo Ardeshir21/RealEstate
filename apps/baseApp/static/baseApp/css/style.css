@@ -463,12 +463,13 @@ img {
 .form-group .btn-primary {
   background-color: var(--forSale-tag-color) !important;
   border-color: var(--main-color) !important;
-  margin: 2px !important;
 }
 
-.form-group .btn-default {
-  margin: 2px !important;
+.form-group .btn-danger {
+  background-color: var(--forRent-tag-color) !important;
+  border-color: var(--main-color) !important;
 }
+
 
 
 /* :: 8.0 Header Area CSS */
@@ -1736,6 +1737,11 @@ img {
 .south-contact-area .comment-form .form-group,
 .south-contact-area .contact-form .form-group {
   margin-bottom: 10px; }
+
+  .toggle-btn{
+    text-align: center;
+  }
+
 .leave-comment-area .comment-form .form-control,
 .leave-comment-area .contact-form .form-control,
 .south-contact-area .comment-form .form-control,
