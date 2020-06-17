@@ -1738,10 +1738,12 @@ img {
 .south-contact-area .contact-form .form-group {
   margin-bottom: 10px; }
 
-  .toggle-btn{
-    text-align: center;
+  .cc-toggle{
+    padding-left: 30px;
   }
-
+  .cc-toggle p{
+    margin-right: 15px;
+  }
 .leave-comment-area .comment-form .form-control,
 .leave-comment-area .contact-form .form-control,
 .south-contact-area .comment-form .form-control,

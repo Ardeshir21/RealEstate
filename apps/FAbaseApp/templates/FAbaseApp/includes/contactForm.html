@@ -14,12 +14,14 @@
 
     </div>
     <!-- CC email -->
-    <div class="form-group toggle-btn">
+    <div class="form-group">
         <style>
-          .toggle.ios, .toggle-on.ios, .toggle-off.ios { border-radius: 20px;}
-          .toggle.ios .toggle-handle { border-radius: 20px; background: black;}
+          .toggle.ios .toggle-handle { background: black;}
         </style>
-        <input name="cc_myself" type="checkbox" data-toggle="toggle" data-size="small" data-on="کپی پیام برای خودم نیز ارسال شود" data-off="کپی پیام را نیاز ندارم" data-offstyle="danger" data-style="ios">
+        <div dir="rtl" class="row cc-toggle">
+            <p>کپی این پیغام برای خودم ارسال شود</p>
+            <input name="cc_myself" type="checkbox" data-toggle="toggle" data-size="small" data-on="بله" data-off="خیر" data-offstyle="danger" data-style="ios">
+        </div>
     </div>
 
 
@@ -28,6 +30,7 @@
         {{form.sender_phone}}
         {{form.sender_phone.errors}}
     </div>
+
     <!-- Message -->
     <div class="form-group">
         {{form.message}}
