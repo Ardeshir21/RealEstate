@@ -271,7 +271,7 @@ class ContactView(generic.edit.FormView):
         return context
 
 # Error Pages
-def error_404(request, exception):
+def error_404(request):
         data = {}
         # The html file should be in templates folder not the subfolders
         return render(request,'baseApp/404.html', data)
