@@ -44,6 +44,9 @@ SECRET_KEY = secrets_dict['SECRET_KEY']
 # I used bool() to return False
 DEBUG = bool(secrets_dict['DEBUG'])
 
+# This helps to get the errors even if the DEBUG is False
+# DEBUG_PROPAGATE_EXCEPTIONS = True
+
 ALLOWED_HOSTS = ['161.35.103.31',
                  'localhost',
                  '127.0.0.1',
@@ -81,6 +84,8 @@ INSTALLED_APPS = [
     'ckeditor_uploader',
     # for Google Map and Address Fields
     'django_google_maps',
+    # for scss files usage
+    'compressor',
 ]
 
 MIDDLEWARE = [
@@ -172,6 +177,16 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
+# This seeting is for scss files
+STATICFILES_FINDERS = ['django.contrib.staticfiles.finders.FileSystemFinder',
+                        'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+                        # other finders
+                        'compressor.finders.CompressorFinder',]
+COMPRESS_PRECOMPILERS = (
+    ('text/x-scss', 'django_libsass.SassCompiler'),
+)
+COMPRESS_OFFLINE = True
+LIBSASS_OUTPUT_STYLE = 'compressed'
 
 STATIC_URL = '/static/'
 

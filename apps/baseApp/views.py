@@ -20,8 +20,8 @@ def get_extra_context():
         'priceRange': models.Asset.objects.aggregate(Min('price'), Max('price')),
         # Featured part of the page
         'featuredProperties': models.Asset.objects.filter(featured=True),
-        # Blog models
-        'blogPosts': blogAppModel.Post.objects.filter(status=True, featured=True),
+        # Blog models with EN language filter
+        'blogPosts': blogAppModel.Post.objects.filter(status=True, language='EN', featured=True),
         # Apartments Unqiue names
         'apartments': models.Complex.objects.all()
         }
@@ -249,18 +249,6 @@ class AssetSingleView(generic.DetailView):
         return context
 
 # About Us
-class AboutUsView(generic.TemplateView):
-    template_name = 'baseApp/about_us.html'
-
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
-        context = super().get_context_data(**kwargs)
-        # Append extraContext
-        context.update(get_extra_context())
-        context['slideContent'] = models.Slide.objects.get(useFor__exact='PROPERTY_PAGE', active__exact=True)
-        context['pageTitle'] = 'ABOUT US'
-        return context
-
 class ContactView(generic.edit.FormView):
     template_name = 'baseApp/about_us.html'
     form_class = forms.ContactForm
@@ -282,6 +270,11 @@ class ContactView(generic.edit.FormView):
         context['pageTitle'] = 'ABOUT US'
         return context
 
+# Error Pages
+def error_404(request, exception):
+        data = {}
+        # The html file should be in templates folder not the subfolders
+        return render(request,'baseApp/404.html', data)
 
 # FORMS are here
 # from . import forms

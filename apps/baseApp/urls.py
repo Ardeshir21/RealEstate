@@ -19,3 +19,6 @@ urlpatterns = [
     path('RealSiteMap.xml', sitemap, {'sitemaps': sitemaps_dict},
      name='django.contrib.sitemaps.views.sitemap'),
 ]
+
+
+handler404 = 'apps.baseApp.views.error_404'

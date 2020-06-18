@@ -36,8 +36,8 @@ def get_extra_context():
         'priceRange': models.Asset.objects.aggregate(Min('price'), Max('price')),
         # Featured part of the page
         'featuredProperties': models.Asset.objects.filter(featured=True),
-        # Blog models
-        'blogPosts': blogAppModel.Post.objects.filter(status=True, featured=True),
+        # Blog models for FA Posts
+        'blogPosts': blogAppModel.Post.objects.filter(status=True, language='FA', featured=True),
         # Apartments Unqiue names
         'apartments': models.Complex.objects.all()
         }

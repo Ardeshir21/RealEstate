@@ -1188,9 +1188,12 @@ img {
       .footer-area .copywrite-text p a {
         font-size: 12px;
         color: #7d7d7d; }
-
+.footer-logo{
+  text-align: right;
+}
 .footer-widget-area .widget-title {
-  margin-bottom: 90px; }
+  margin-bottom: 90px;
+  text-align: right;}
   .footer-widget-area .widget-title h6 {
     font-size: 16px;
     color: #ffffff;
@@ -1203,7 +1206,9 @@ img {
 .footer-widget-area p {
   color: #7d7d7d;
   margin-bottom: 0;
-  font-weight: 400; }
+  font-weight: 400;
+  direction: rtl;
+  text-align: right;}
 .footer-widget-area .weekly-office-hours ul li {
   padding: 15px 0;
   display: block;
