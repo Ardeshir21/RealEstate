@@ -14,11 +14,11 @@ urlpatterns = [
     path('properties/', views.AssetFilterView.as_view(), name='properties'),
     path('properties/<int:pk>/', views.AssetSingleView.as_view(), name='propertyView'),
     path('about-us/', views.ContactView.as_view(), name='about_us'),
-    path('t/', views.error_404, name='tt'),
+
     # This is for sitemap.xml
     path('RealSiteMap.xml', sitemap, {'sitemaps': sitemaps_dict},
      name='django.contrib.sitemaps.views.sitemap'),
 ]
 
 
-# handler404 = 'apps.baseApp.views.error_404'
+handler404 = 'apps.baseApp.views.error_404'
