@@ -1,16 +1,15 @@
-{% load compress %}
-{% load static %}
-
-{% compress css %}
-    <link type="text/x-scss" href="{% static "baseApp/css/404.scss" %}" rel="stylesheet" media="screen">
-{% endcompress %}
+{% load compress static %}
 
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
     <title>Page Not Found</title>
-    <!-- <link rel="stylesheet" href="{% static "baseApp/css/404.css" %}"> -->
+    <!-- Favicon  -->
+    <link rel="icon" href="{% static "baseApp/img/core-img/favicon.ico" %}">
+    {% compress css %}
+        <link type="text/x-scss" href="{% static "baseApp/css/404.scss" %}" rel="stylesheet" media="screen">
+    {% endcompress %}
   </head>
 
   <body>

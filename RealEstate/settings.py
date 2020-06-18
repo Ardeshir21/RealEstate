@@ -45,7 +45,7 @@ SECRET_KEY = secrets_dict['SECRET_KEY']
 DEBUG = bool(secrets_dict['DEBUG'])
 
 # This helps to get the errors even if the DEBUG is False
-# DEBUG_PROPAGATE_EXCEPTIONS = True
+DEBUG_PROPAGATE_EXCEPTIONS = True
 
 ALLOWED_HOSTS = ['161.35.103.31',
                  'localhost',
