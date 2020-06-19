@@ -9,6 +9,3 @@ urlpatterns = [
     path('properties/<int:pk>/', views.AssetSingleView.as_view(), name='propertyView'),
     path('about-us/', views.ContactView.as_view(), name='about_us')
 ]
-
-
-handler404 = 'apps.FAbaseApp.views.error_404'

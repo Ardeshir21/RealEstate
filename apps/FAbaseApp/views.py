@@ -291,9 +291,3 @@ class ContactView(generic.edit.FormView):
         context['slideContent'] = models.Slide.objects.get(useFor__exact='PROPERTY_PAGE', active__exact=True)
         context['pageTitle'] = 'درباره ما'
         return context
-
-# Error Pages
-def error_404(request, exception):
-        data = {}
-        # The html file should be in templates folder not the subfolders
-        return render(request,'FAbaseApp/404.html', data)
