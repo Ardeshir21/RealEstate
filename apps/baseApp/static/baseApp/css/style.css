@@ -835,9 +835,6 @@ img {
       min-width: 50%;
       margin-bottom: 40px;
       }
-      @media only screen and (max-width: 767px) {
-        .south-search-area .advanced-search-form .slider-range {
-          margin-bottom: 50px; } }
       .south-search-area .advanced-search-form .slider-range:first-child {
         padding-right: 15px; }
       .south-search-area .advanced-search-form .slider-range:last-child {
@@ -883,9 +880,6 @@ img {
       font-size: 12px;
       margin-top: 15px;
       font-weight: 600; }
-      @media only screen and (max-width: 767px) {
-        .south-search-area .advanced-search-form .range {
-          font-size: 10px; } }
     .south-search-area .advanced-search-form .more-filter a {
       text-transform: uppercase;
       font-size: 12px;
