@@ -422,7 +422,9 @@ img {
       color: #ffffff;
       background-color: #000000; }
 
-
+.region-btn{
+  margin: 4px;
+}
 .dealType {
   width:90px;
 }

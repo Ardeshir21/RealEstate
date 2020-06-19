@@ -276,7 +276,7 @@ def error_404(request, exception):
         # The html file should be in templates folder not the subfolders
         return render(request,'baseApp/404.html', data)
 
-def error_500(request, exception):
+def error_500(request):
         data = {}
         # The html file should be in templates folder not the subfolders
         return render(request,'baseApp/500.html', data)
