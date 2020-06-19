@@ -8,6 +8,7 @@ media/
 migrations/
 venv
 staticfiles
+/static
 .env
 db.sqlite3
 RealEstateKEYS.txt
