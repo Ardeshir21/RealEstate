@@ -116,22 +116,34 @@
 
                             <!-- Space Range -->
                             <div class="col-12 col-md-12 col-lg-12 col-xl-6 d-flex">
-                                  <div class="slider-range ">
-                                    <p>Area Range (Sq. Meter)</p>
-                                    <div id="slider_area" data-min={{spaceRange.build_area__min}} data-max={{spaceRange.build_area__max}}></div>
-                                    <label>Min: </label> <input class="range-box-area mr-15" pattern="[0-9]" type="number" min={{spaceRange.build_area__min}} max={{spaceRange.build_area__max}} name="space_select" step="10" id="input-area-min">
-                                    <label>Max: </label> <input class="range-box-area mr-15" pattern="[0-9]" type="number" min={{spaceRange.build_area__min}} max={{spaceRange.build_area__max}} name="space_select" step="10" id="input-area-max">
+                                <div class="slider-range text-center">
+                                  <p>Area Range (Sq. Meter)</p>
+                                  <div id="slider_area" data-min={{spaceRange.build_area__min}} data-max={{spaceRange.build_area__max}}></div>
+                                  <div class="row justify-content-center">
+                                    <div class="col-5 col-md-4 col-lg-4 col-xl-5">
+                                      <label>Min: </label> <input class="range-box-area mr-15" pattern="[0-9]" type="number" min={{spaceRange.build_area__min}} max={{spaceRange.build_area__max}} name="space_select" step="10" id="input-area-min">
+                                    </div>
+                                    <div class="col-5 col-md-4 col-lg-4 col-xl-5">
+                                      <label>Max: </label> <input class="range-box-area mr-15" pattern="[0-9]" type="number" min={{spaceRange.build_area__min}} max={{spaceRange.build_area__max}} name="space_select" step="10" id="input-area-max">
+                                    </div>
                                   </div>
+                                </div>
                             </div>
 
                             <!-- Price Range -->
                             <div class="col-12 col-md-12 col-lg-12 col-xl-6 d-flex">
-                                  <div class="slider-range ">
-                                    <p>Price Range ($)</p>
-                                    <div id="slider_price" data-min={{priceRange.price__min}} data-max={{priceRange.price__max}}></div>
-                                    <label>Min ($): </label> <input class="range-box-price mr-15" pattern="[0-9]" type="number" min={{priceRange.price__min}} max={{priceRange.price__max}} name="price_select" step="5000" id="input-price-min">
-                                    <label>Max ($): </label> <input class="range-box-price mr-15" pattern="[0-9]" type="number" min={{priceRange.price__min}} max={{priceRange.price__max}} name="price_select" step="5000" id="input-price-max">
+                                <div class="slider-range text-center">
+                                  <p>Price Range ($)</p>
+                                  <div id="slider_price" data-min={{priceRange.price__min}} data-max={{priceRange.price__max}}></div>
+                                  <div class="row justify-content-center">
+                                    <div class="col-5 col-md-4 col-lg-4 col-xl-5">
+                                      <label>Min: </label> <input class="range-box-price mr-15" pattern="[0-9]" type="number" min={{priceRange.price__min}} max={{priceRange.price__max}} name="price_select" step="5000" id="input-price-min">
+                                    </div>
+                                    <div class="col-5 col-md-4 col-lg-4 col-xl-5">
+                                      <label>Max: </label> <input class="range-box-price mr-15" pattern="[0-9]" type="number" min={{priceRange.price__min}} max={{priceRange.price__max}} name="price_select" step="5000" id="input-price-max">
+                                    </div>
                                   </div>
+                                </div>
                             </div>
 
                             <!-- More Filters Part -->

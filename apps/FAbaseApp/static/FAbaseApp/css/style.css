@@ -854,13 +854,6 @@ img {
       margin-bottom: 8px;
       text-align: center;
       }
-      .south-search-area .advanced-search-form .slider-range p {
-        color: #a3a5a8;
-        font-weight: 100;
-        font-size: 12px;
-        margin-bottom: 6px;
-        font-family: 'IranSans-Medium', sans-serif;}
-
       @media only screen and (max-width: 767px) {
         .south-search-area .advanced-search-form .slider-range {
           margin-bottom: 50px; } }
@@ -1484,7 +1477,7 @@ img {
   direction: rtl;
   margin-bottom: 0px;
   font-weight: 100;
-  font-size: 12px;
+  font-size: 13px;
   font-family: 'IranSans-Medium', sans-serif;
 }
 
