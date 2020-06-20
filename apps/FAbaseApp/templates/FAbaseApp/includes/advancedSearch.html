@@ -3,6 +3,7 @@
 
 <!-- This for list menu with checkbox-->
 <link href="{% static "FAbaseApp/css/sumoselect.css" %}" rel="stylesheet" />
+<link href="{% static "FAbaseApp/css/nouislider.min.css" %}"  rel="stylesheet">
 
 <!-- This template use "extraContext" dictionary as the Context data -->
 <div class="south-search-area">
@@ -20,7 +21,7 @@
                             <!-- Open Search -->
                             <div class="col-12 col-md-4 col-lg-4">
                                 <div class="form-group text-center">
-                                  <p><small>جستجو از طریق کد ملک</small></p>
+                                  <p>جستجو از طریق کد ملک</p>
                                   <select multiple="multiple" name="ref_select" placeholder="به عنوان نمونه: SET-0026" class="SlectBox-grp-src">
                                     {% for asset in assets_all %}
                                       <option>SET-00{{asset.id}}</option>
@@ -32,7 +33,7 @@
                             <!-- Property Types -->
                             <div class="col-12 col-md-4 col-lg-4">
                                 <div class="form-group text-center">
-                                  <p><small>نوع ملک</small></p>
+                                  <p>نوع ملک</p>
                                   <select multiple="multiple" name="propertyType_select" placeholder="همه انواع ملک" class="SlectBox-grp-src">
                                     {% for type in propertyTypeNames %}
                                       <option>{{type}}</option>
@@ -44,7 +45,7 @@
                             <!-- Tag Type Toggle Button -->
                             <div class="col-12 col-md-4 col-lg-4">
                               <div class="form-group text-center">
-                                  <p><small>نوع معامله</small></p>
+                                  <p>نوع معامله</p>
                                   <div class="sidebar-btn">
                                       <div class="bt-item">
                                           <input type="radio" name="tag_select" value='sale' id="st-buy" checked>
@@ -79,7 +80,7 @@
                             <!-- Bedrooms -->
                             <div class="col-12 col-md-4 col-lg-4 mb-30">
                                 <div class="form-group text-center">
-                                  <p><small>تعداد اتاق خواب</small></p>
+                                  <p>تعداد اتاق خواب</p>
                                   <select multiple="multiple" name="bedroom_select" placeholder="تمام موارد" class="SlectBox-grp-src">
                                        <!-- Studio type room and 1 bedroom -->
                                     {% for num in bedroomNumbers %}
@@ -92,7 +93,7 @@
                             <!-- Apartment Name -->
                             <div class="col-12 col-md-4 col-lg-4 mb-30">
                                 <div class="form-group text-center">
-                                  <p><small>نام آپارتمان</small></p>
+                                  <p>نام آپارتمان</p>
                                   <select multiple="multiple" name="apartment_select" placeholder="همه آپارتمان ها" class="SlectBox-grp-src">
                                     {% for apartment in apartments %}
                                       <option value="{{apartment.id}}">{{apartment.name}}</option>
@@ -104,7 +105,7 @@
                             <!-- Installment -->
                             <div class="col-12 col-md-4 col-lg-4 mb-50">
                                 <div class="form-group text-center">
-                                  <p><small>نحوه پرداخت</small></p>
+                                  <p>نحوه پرداخت</p>
                                   <span class="button-checkbox">
                                       <button type="button" class="btn" data-color="primary">امکان پرداخت اقساطی</button>
                                       <input type="checkbox" name='installment_select' class="hidden" value='1'/>
@@ -112,46 +113,24 @@
                                 </div>
                             </div>
 
-                            <!-- Sliders -->
-                            <div class="col-12 col-md-12 col-lg-12 col-xl-12 d-flex">
-                                <!-- Space Range -->
-                                <div class="slider-range ">
-                                    <div data-min={{spaceRange.build_area__min}} data-max={{spaceRange.build_area__max}} data-unit=" متر مربع" data-step="5" class="slider-range-price ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" data-value-min={{spaceRange.build_area__min}} data-value-max={{spaceRange.build_area__max}}>
-                                        <div class="ui-slider-range ui-widget-header ui-corner-all"></div>
-                                        <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
-                                        <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
-                                    </div>
-                                    <div dir="rtl" class="range">{{spaceRange.build_area__min}} متر مربع - {{spaceRange.build_area__max}} متر مربع</div>
-                                    <!-- for space to read on GET request -->
-                                    <input type="hidden" name="space_select" id="minval" readonly style= "background: transparent; border: none; width:0px; height:0px;">
-                                    <input type="hidden" name="space_select" id="maxval" readonly style= "background: transparent; border: none; width:0px; height:0px;">
+                            <!-- Space Range -->
+                            <div class="col-12 col-md-12 col-lg-12 col-xl-6 d-flex">
+                                  <div class="slider-range ">
+                                    <p>متراژ (متر مربع)</p>
+                                    <div id="slider_area" data-min={{spaceRange.build_area__min}} data-max={{spaceRange.build_area__max}}></div>
+                                    <input class="range-box-area ml-15" pattern="[0-9]" type="number" min={{spaceRange.build_area__min}} max={{spaceRange.build_area__max}} name="space_select" step="10" id="input-area-min"> <label>حداقل: </label>
+                                    <input class="range-box-area ml-15" pattern="[0-9]" type="number" min={{spaceRange.build_area__min}} max={{spaceRange.build_area__max}} name="space_select" step="10" id="input-area-max"> <label>حداکثر: </label>
+                                  </div>
+                            </div>
 
-
-                                </div>
-
-                                <!-- Price Range -->
-                                <div class="slider-range">
-
-                                    <div id='priceDiv' data-min={{priceRange.price__min}} data-max={{priceRange.price__max}} data-unit=" دلار" data-step="10000" class="slider-range-price ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" data-value-min={{priceRange.price__min}} data-value-max={{priceRange.price__max}}>
-                                        <div class="ui-slider-range ui-widget-header ui-corner-all"></div>
-                                        <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
-                                        <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
-                                    </div>
-                                    <div dir="rtl" class="range" id='priceHTMLtext'>
-                                      {% filter floatformat:"0"|intcomma %}
-                                        {{priceRange.price__min}}
-                                      {% endfilter %} دلار -
-                                      {% filter floatformat:"0"|intcomma %}
-                                        {{priceRange.price__max}}
-                                      {% endfilter %} دلار
-
-                                    </div>
-
-                                    <!-- for price to read on GET request-->
-                                    <input type="hidden" name="price_select" id="minval" readonly style= "background: transparent; border: none; width:0px; height:0px;">
-                                    <input type="hidden" name="price_select" id="maxval" readonly style= "background: transparent; border: none; width:0px; height:0px;">
-
-                                </div>
+                            <!-- Price Range -->
+                            <div class="col-12 col-md-12 col-lg-12 col-xl-6 d-flex">
+                                  <div class="slider-range ">
+                                    <p>بازه قیمت (دلار)</p>
+                                    <div id="slider_price" data-min={{priceRange.price__min}} data-max={{priceRange.price__max}}></div>
+                                    <input class="range-box-price ml-15" pattern="[0-9]" type="number" min={{priceRange.price__min}} max={{priceRange.price__max}} name="price_select" step="5000" id="input-price-min"> <label>حداقل(دلار): </label>
+                                    <input class="range-box-price ml-15" pattern="[0-9]" type="number" min={{priceRange.price__min}} max={{priceRange.price__max}} name="price_select" step="5000" id="input-price-max"> <label>حداکثر (دلار): </label>
+                                  </div>
                             </div>
 
                             <!-- More Filters Part -->
@@ -191,3 +170,79 @@
         </div>
     </div>
 </div>
+
+<!-- JS scripts -->
+<script src="{% static "FAbaseApp/js/nouislider.min.js" %}" ></script>
+
+<!-- Slider Settings -->
+<script type="text/javascript">
+      // A function to comma seperate the digits
+
+      // PRICE SLIDER
+            var slider_price = document.getElementById('slider_price');
+            var min_price = slider_price.getAttribute('data-min')
+            var max_price = slider_price.getAttribute('data-max')
+            noUiSlider.create(slider_price, {
+                start: [min_price, max_price],
+                connect: true,
+                step: 500,
+                range: {
+                    'min': {{priceRange.price__min}},
+                    'max': {{priceRange.price__max}}
+                }
+            });
+
+      // Update input by handle
+          var inputPriceMin = document.getElementById('input-price-min');
+          var inputPriceMax = document.getElementById('input-price-max');
+          slider_price.noUiSlider.on('update', function (values, handle) {
+
+      // "values" is a list of [min, max] numbers. And "handle" can be 0 or 1
+            inputPriceMin.value = Math.round(values[0])
+            inputPriceMax.value = Math.round(values[1])
+          });
+
+      // Update handle by entering input
+          inputPriceMin.addEventListener('change', function () {
+              slider_price.noUiSlider.set([this.value, null]);
+          });
+
+          inputPriceMax.addEventListener('change', function () {
+              slider_price.noUiSlider.set([null, this.value]);
+          });
+
+
+    // AREA SLIDER
+          var slider_area = document.getElementById('slider_area');
+          var min_area = slider_area.getAttribute('data-min')
+          var max_area = slider_area.getAttribute('data-max')
+          noUiSlider.create(slider_area, {
+              start: [min_area, max_area],
+              connect: true,
+              step: 10,
+              range: {
+                  'min': {{spaceRange.build_area__min}},
+                  'max': {{spaceRange.build_area__max}}
+              }
+          });
+
+    // Update input by handle
+        var inputAreaMin = document.getElementById('input-area-min');
+        var inputAreaMax = document.getElementById('input-area-max');
+        slider_area.noUiSlider.on('update', function (values, handle) {
+
+    // "values" is a list of [min, max] numbers. And "handle" can be 0 or 1
+          inputAreaMin.value = Math.round(values[0])
+          inputAreaMax.value = Math.round(values[1])
+        });
+
+    // Update handle by entering input
+        inputAreaMin.addEventListener('change', function () {
+            slider_area.noUiSlider.set([this.value, null]);
+        });
+
+        inputAreaMax.addEventListener('change', function () {
+            slider_area.noUiSlider.set([null, this.value]);
+        });
+
+</script>

@@ -59,9 +59,10 @@
 /* This Part is for setting the main color theme for whole project */
 :root {
   --main-color: #947054;
-  /* for: sale-tag, menu-hover, region-select-buttons */
   --forSale-tag-color: #d5a253;
   --forRent-tag-color: #bd2130;
+  --slider-color: #d5a253;
+  --handle-color: #947054;
 }
 
 * {
@@ -849,9 +850,17 @@ img {
         font-weight: 400; }
     .south-search-area .advanced-search-form .slider-range {
       flex: 0 0 50%;
-      min-width: 50%;
-      margin-bottom: 40px;
+      min-width: 100%;
+      margin-bottom: 8px;
+      text-align: center;
       }
+      .south-search-area .advanced-search-form .slider-range p {
+        color: #a3a5a8;
+        font-weight: 100;
+        font-size: 12px;
+        margin-bottom: 6px;
+        font-family: 'IranSans-Medium', sans-serif;}
+
       @media only screen and (max-width: 767px) {
         .south-search-area .advanced-search-form .slider-range {
           margin-bottom: 50px; } }
@@ -896,13 +905,30 @@ img {
       border: none;
       background: var(--main-color);
       margin-top: -3px; }
-    .south-search-area .advanced-search-form .range {
-      font-size: 12px;
-      margin-top: 15px;
-      font-weight: 600; }
-      @media only screen and (max-width: 767px) {
-        .south-search-area .advanced-search-form .range {
-          font-size: 10px; } }
+      .south-search-area .advanced-search-form .range-box-area {
+        font-size: 15px;
+        direction: rtl;
+        color: #7d7d7d;
+        border-width: 1px;
+        border-radius: 5px;
+        width: 50px;
+        text-align: center;
+        margin-top: 10px;}
+
+      .south-search-area .advanced-search-form .range-box-price {
+        font-size: 15px;
+        direction: rtl;
+        color: #7d7d7d;
+        border-width: 1px;
+        border-radius: 5px;
+        width: 85px;
+        text-align: center;
+        margin-top: 10px;}
+      .south-search-area .advanced-search-form label {
+        font-size: 15px;
+        direction: rtl;
+        color: #7d7d7d;
+        text-align: center;}
     .south-search-area .advanced-search-form .more-filter a {
       text-transform: uppercase;
       font-size: 12px;
@@ -1451,12 +1477,12 @@ img {
     opacity: 1;
     visibility: visible; }
 
+
 .form-group p{
-  margin: 0;
-  text-align: center;
-}
-.form-group p small {
   color: #a3a5a8;
+  text-align: center;
+  direction: rtl;
+  margin-bottom: 0px;
   font-weight: 100;
   font-size: 12px;
   font-family: 'IranSans-Medium', sans-serif;

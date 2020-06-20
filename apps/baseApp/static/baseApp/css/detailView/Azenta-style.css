@@ -409,17 +409,7 @@ body {
 	border: none;
 	border-radius: 50px;
 }
-.ui-slider .ui-slider-range {
-	background: #d5a253;
-}
-.ui-slider-horizontal .ui-slider-handle {
-	width: 14px;
-	height: 14px;
-	background: #d5a253;
-	border-radius: 0%;
-	border: none;
-	margin-left: 0;
-}
+
 /*---------------------
   How IT WOrks Section
 -----------------------*/
@@ -1192,18 +1182,33 @@ body {
 .property-sidebar .sidebar-search {
 	margin-bottom: 75px;
 }
-.property-sidebar small {
-	color: #a3a5a8;
-  font-weight: 600;
-  font-size: 12px;
-  font-family: 'Montserrat Alternates', sans-serif;
-}
 
 .property-sidebar .sidebar-search .slider-range{
   flex: 0 0 50%;
   max-width: 96%;
-  margin-top: 40px;
+  margin-top: 25px;
   margin-bottom: 15px;
+}
+
+.property-sidebar .sidebar-search .slider-range .range-box-area {
+  font-size: 15px;
+  color: #7d7d7d;
+  border-width: 1px;
+  border-radius: 4px;
+  width: 50px;
+  text-align: center;
+  margin-top: 10px;
+  font-weight: 600;
+}
+.property-sidebar .sidebar-search .slider-range .range-box-price {
+  font-size: 15px;
+  color: #7d7d7d;
+  border-width: 1px;
+  border-radius: 4px;
+  width: 85px;
+  text-align: center;
+  margin-top: 10px;
+  font-weight: 600;
 }
 .property-sidebar .sidebar-search .nice-select {
 	width: 100%;

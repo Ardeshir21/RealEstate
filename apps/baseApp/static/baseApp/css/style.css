@@ -59,6 +59,8 @@
   --main-color: #947054;
   --forSale-tag-color: #d5a253;
   --forRent-tag-color: #bd2130;
+  --slider-color: #d5a253;
+  --handle-color: #947054;
 }
 
 * {
@@ -116,6 +118,9 @@ img {
 .mt-15 {
   margin-top: 15px; }
 
+.mt-20 {
+  margin-top: 20px; }
+
 .mt-30 {
   margin-top: 30px; }
 
@@ -130,6 +135,9 @@ img {
 
 .mb-15 {
   margin-bottom: 15px; }
+
+.mb-20 {
+  margin-bottom: 20px; }
 
 .mb-30 {
   margin-bottom: 30px; }
@@ -832,9 +840,16 @@ img {
         font-weight: 600; }
     .south-search-area .advanced-search-form .slider-range {
       flex: 0 0 50%;
-      min-width: 50%;
-      margin-bottom: 40px;
+      min-width: 100%;
+      margin-bottom: 8px;
+      text-align: center;
       }
+      .south-search-area .advanced-search-form .slider-range p{
+        color: #a3a5a8;
+        font-weight: 600;
+        font-size: 12px;
+        font-family: 'Montserrat Alternates', sans-serif;
+        }
       .south-search-area .advanced-search-form .slider-range:first-child {
         padding-right: 15px; }
       .south-search-area .advanced-search-form .slider-range:last-child {
@@ -876,9 +891,29 @@ img {
       border: none;
       background: var(--main-color);
       margin-top: -3px; }
-    .south-search-area .advanced-search-form .range {
-      font-size: 12px;
-      margin-top: 15px;
+    .south-search-area .advanced-search-form .range-box-area {
+      font-size: 15px;
+      color: #7d7d7d;
+      border-width: 1px;
+      border-radius: 4px;
+      width: 50px;
+      text-align: center;
+      margin-top: 10px;
+      font-weight: 600; }
+
+    .south-search-area .advanced-search-form .range-box-price {
+      font-size: 15px;
+      color: #7d7d7d;
+      border-width: 1px;
+      border-radius: 4px;
+      width: 85px;
+      text-align: center;
+      margin-top: 10px;
+      font-weight: 600; }
+    .south-search-area .advanced-search-form label {
+      font-size: 15px;
+      color: #7d7d7d;
+      text-align: center;
       font-weight: 600; }
     .south-search-area .advanced-search-form .more-filter a {
       text-transform: uppercase;
@@ -1413,14 +1448,12 @@ img {
     opacity: 1;
     visibility: visible; }
 
-.form-group p{
-  margin: 0;
-  text-align: center;
-}
-.form-group p small {
+.form-group p {
   color: #a3a5a8;
   font-weight: 600;
   font-size: 12px;
+  margin-bottom: 0px;
+  text-align: center;
   font-family: 'Montserrat Alternates', sans-serif;
 }
 
