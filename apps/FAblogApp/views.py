@@ -22,7 +22,6 @@ def get_extra_context():
     return extraContext
 
 
-
 class PostList(generic.ListView):
     context_object_name = 'allPosts'
     queryset = models.Post.objects.filter(language='FA', status=True).order_by('-created_on')
@@ -36,7 +35,6 @@ class PostList(generic.ListView):
         context.update(get_extra_context())
 
         # This title is different for this view
-        context['pageTitle'] = 'وبلاگ'
         context['slideContent'] = baseAppModel.Slide.objects.get(useFor__exact='BLOG_HOME', active__exact=True)
 
         return context
@@ -88,14 +86,14 @@ class PostDetail(generic.DetailView):
         context.update(get_extra_context())
 
         # This title is different for this view
-        context['pageTitle'] = 'مقاله'
         context['slideContent'] = baseAppModel.Slide.objects.get(useFor__exact='BLOG_POST', active__exact=True)
         return context
 
 
 class PostSearch(generic.ListView):
     context_object_name = 'allPosts'
-    template_name = 'FAblogApp/searchResult.html'
+    template_name = 'FAblogApp/search_result.html'
+    model = models.Post
     paginate_by = 8
 
     def get_queryset(self, **kwargs):

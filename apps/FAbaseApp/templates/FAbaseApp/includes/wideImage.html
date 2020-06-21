@@ -1,5 +1,6 @@
 <!-- Need "slideContent" and "pageTitle" as context data -->
 <section class="breadcumb-area bg-img" style="background-image: url({{slideContent.image.url}});">
+  {% if pageTitle %}
     <div class="container h-100">
         <div class="row h-100 align-items-center">
             <div class="col-12">
@@ -9,4 +10,5 @@
             </div>
         </div>
     </div>
+  {% endif %}
 </section>

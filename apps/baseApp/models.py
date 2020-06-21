@@ -13,8 +13,11 @@ ASSET_TYPES = [('FL', 'Flat'),
                 ('OF', 'Office'),
                 ('ST', 'Store')]
 
-TAG_CHOICES =[('FS', 'For Sale'),
+TAG_CHOICES = [('FS', 'For Sale'),
                 ('FR', 'For Rent')]
+
+HEATING_TYPES = [('CE', 'Central'),
+                ('CO', 'Combi')]
 
 COMPLEX_FEATURES_CATEGORY = [('GENERAL', 'General'),
                             ('TECHNICAL', 'Technical'),
@@ -96,7 +99,7 @@ class Complex(models.Model):
     name = models.CharField(max_length=150, unique=True)
     region = models.ForeignKey(Region, related_name='regions', on_delete=models.CASCADE)
     age = models.PositiveIntegerField(default=0)
-    completion_date = models.DateTimeField(blank=True, null=True)
+    completion_date = models.DateField(blank=True, null=True)
     features = models.ManyToManyField(ComplexFeatures, blank=True, null=True)
     build_area = models.PositiveIntegerField(default=0)
     description = RichTextUploadingField(null=True, blank=True)
@@ -133,15 +136,19 @@ class Asset(models.Model):
     complex = models.ForeignKey(Complex, related_name='complexes', on_delete=models.CASCADE)
     description = RichTextUploadingField(help_text='Full images can be 730px wide', null=True, blank=True)
     description_FA = RichTextUploadingField(help_text='Full images can be 730px wide', null=True, blank=True)
-    type = models.CharField(max_length=150, choices=ASSET_TYPES, default='FL')
+    type = models.CharField(max_length=15, choices=ASSET_TYPES, default='FL')
     installment = models.BooleanField(choices=YES_NO_CHOICES, default=False)
     price = models.DecimalField(max_digits=15, decimal_places=0, default=0.0)
+    rental_income = models.DecimalField(max_digits=8, decimal_places=0, default=0.0)
+    dues = models.DecimalField(max_digits=5, decimal_places=0, default=0.0)
     furnished = models.BooleanField(choices=YES_NO_CHOICES, default=False)
     bedroom = models.ForeignKey(Bedroom, related_name='bedrooms', on_delete=models.CASCADE)
     bathroom = models.PositiveIntegerField(default=1)
+    heating_type = models.CharField(max_length=10, choices=HEATING_TYPES, default='CE')
     garage = models.PositiveIntegerField(default=1)
-    floors = models.PositiveIntegerField()
+    floor = models.PositiveIntegerField()
     build_area = models.PositiveIntegerField(default=0)
+    build_area_gross = models.PositiveIntegerField(default=0)
     features = models.ManyToManyField(AssetFeatures, blank=True, null=True)
     featured = models.BooleanField(choices=YES_NO_CHOICES, default=False)
     active = models.BooleanField(choices=YES_NO_CHOICES, default=True)

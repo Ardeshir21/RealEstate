@@ -37,7 +37,6 @@ class AssetAdmin(admin.ModelAdmin):
     # Using Widgets
     formfield_overrides = {
         models.ManyToManyField: {'widget': forms.CheckboxSelectMultiple(attrs={'multiple': True})},
-        models.DateTimeField: {'widget': forms.SelectDateWidget()},
     }
 
 class SlideAdmin(admin.ModelAdmin):
@@ -55,6 +54,7 @@ class ComplexAdmin(admin.ModelAdmin):
     formfield_overrides = {
         map_fields.AddressField: {'widget': map_widgets.GoogleMapsAddressWidget},
         models.ManyToManyField: {'widget': forms.CheckboxSelectMultiple(attrs={'multiple': True})},
+        models.DateField: {'widget': forms.SelectDateWidget()},
     }
 
 admin.site.register(Country)
