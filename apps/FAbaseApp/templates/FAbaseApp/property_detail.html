@@ -122,86 +122,112 @@
                                     <div class="tab-pane fade-in active" id="tab-1" role="tabpanel">
                                         <div class="property-more-table">
                                             <table class="left-table">
-                                                <tbody>
-                                                    <tr>
-                                                        <td class="pt-name">قیمت</td>
-                                                        {% if property.tag == "FR" %}
-                                                          <td class="p-value">
-                                                            {% filter floatformat:"0"|intcomma %}
-                                                                {{property.price}}
-                                                            {% endfilter %} دلار/ماه
-                                                          </td>
-                                                        {% else %}
-                                                          <td class="p-value">
-                                                            {% filter floatformat:"0"|intcomma %}
-                                                                {{property.price}}
-                                                            {% endfilter %} دلار
-                                                          </td>
-                                                        {% endif %}
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="pt-name">نوع ملک</td>
-                                                        <td class="p-value">{{property.get_type_display}}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="pt-name">سن بنا</td>
-                                                        <td class="p-value">{{property.age}}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="pt-name">سرویس بهداشتی</td>
-                                                        <td class="p-value">{{property.bathroom}}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="pt-name">اتاق خواب</td>
-                                                        <td class="p-value">{{property.bedroom}}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="pt-name">پارکینگ</td>
-                                                        <td class="p-value">{{property.parking}}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="pt-name">مساحت</td>
-                                                        <td class="p-value">{{property.build_area}} متر مربع</td>
-                                                    </tr>
-                                                </tbody>
+                                              <tbody>
+                                                  <!-- Reference -->
+                                                  <tr>
+                                                      <td class="pt-name">کد ملک</td>
+                                                      <td class="p-value"># SET-00{{property.id}}</td>
+                                                  </tr>
+                                                  <!-- Gross Area -->
+                                                  <tr>
+                                                      <td class="pt-name">مساحت بنا</td>
+                                                      <td class="p-value">{{property.build_area_gross}} متر مربع</td>
+                                                  </tr>
+                                                  <!-- Building Age -->
+                                                  <tr>
+                                                      <td class="pt-name">سن بنا</td>
+                                                      <td class="p-value">{{property.complex.age}} سال</td>
+                                                  </tr>
+                                                  <!-- Contract Type -->
+                                                  <tr>
+                                                      <td class="pt-name">نوع معامله</td>
+                                                      {% if property.tag == "FR" %}
+                                                          <td class="p-value">اجاره</td>
+                                                      {% else %}
+                                                          <td class="p-value">خرید</td>
+                                                      {% endif %}
+                                                  </tr>
+                                                  <!-- Installment -->
+                                                  <tr>
+                                                      <td class="pt-name">پرداخت اقساط</td>
+                                                      {% if property.installment == False %}
+                                                          <td class="p-value">ندارد</td>
+                                                      {% else %}
+                                                          <td class="p-value">دارد</td>
+                                                      {% endif %}
+                                                  </tr>
+                                                  <!-- Rental Income -->
+                                                  <tr>
+                                                      <td class="pt-name">درآمد از اجاره</td>
+                                                      <td class="p-value">{{property.rental_income}}</td>
+                                                  </tr>
+                                                  <!-- Dues -->
+                                                  <tr>
+                                                      <td class="pt-name">شارژ ماهانه</td>
+                                                      <td class="p-value">{{property.dues}} دلار</td>
+                                                  </tr>
+                                              </tbody>
                                             </table>
                                             <table class="right-table">
-                                                <tbody>
-                                                    <tr>
-                                                        <td class="pt-name">Agent</td>
-                                                        <td class="p-value">Adam Smith</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="pt-name">کد ملک</td>
-                                                        <td dir="ltr" class="p-value"># SET-00{{property.id}}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="pt-name">نوع معامله</td>
-                                                        <td class="p-value">{{property.get_tag_display}}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="pt-name">Beds</td>
-                                                        <td class="p-value">4</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="pt-name">Garages</td>
-                                                        <td class="p-value">2</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="pt-name">Home area</td>
-                                                        <td class="p-value">1200 sqft</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="pt-name">Gara Size</td>
-                                                        <td class="p-value">200 sqft</td>
-                                                    </tr>
-                                                </tbody>
+                                              <tbody>
+                                                  <!-- Price -->
+                                                  <tr>
+                                                      <td class="pt-name bold-text">قیمت</td>
+                                                      {% if property.tag == "FR" %}
+                                                        <td class="p-value bold-text">
+                                                          {% filter floatformat:"0"|intcomma %}
+                                                              {{property.price}}
+                                                          {% endfilter %} دلار/ماه
+                                                        </td>
+                                                      {% else %}
+                                                        <td class="p-value bold-text">
+                                                          {% filter floatformat:"0"|intcomma %}
+                                                              {{property.price}}
+                                                          {% endfilter %} دلار
+                                                        </td>
+                                                      {% endif %}
+                                                  </tr>
+                                                  <!-- Net Area -->
+                                                  <tr>
+                                                      <td class="pt-name">مساحت بنای مفید</td>
+                                                      <td class="p-value">{{property.build_area}} متر مربع</td>
+                                                  </tr>
+                                                  <!-- Bedrooms -->
+                                                  <tr>
+                                                      <td class="pt-name">اتاق خواب</td>
+                                                      <td class="p-value">{{property.bedroom.description_FA}}</td>
+                                                  </tr>
+                                                  <!-- Floor -->
+                                                  <tr>
+                                                      <td class="pt-name">طبقه</td>
+                                                      <td class="p-value">{{property.floor}}</td>
+                                                  </tr>
+                                                  <!-- Bathroom -->
+                                                  <tr>
+                                                      <td class="pt-name">سرویس بهداشتی</td>
+                                                      <td class="p-value">{{property.bathroom}}</td>
+                                                  </tr>
+                                                  <!-- Parking Lots -->
+                                                  <tr>
+                                                      <td class="pt-name">پارگینگ</td>
+                                                      <td class="p-value">{{property.garage}}</td>
+                                                  </tr>
+                                                  <!-- Heating Type -->
+                                                  <tr>
+                                                      <td class="pt-name">نوع گرمایش</td>
+                                                      {% if property.heating_type == "CE" %}
+                                                          <td class="p-value">سیستم مرکزی</td>
+                                                      {% else %}
+                                                          <td class="p-value">سیستم پکیج</td>
+                                                      {% endif %}
+                                                  </tr>
+                                              </tbody>
                                             </table>
                                         </div>
                                         <!-- Features -->
                                         <ul class="listings-core-features d-flex align-items-center">
-                                          {% for feature in property.features_FA.all %}
-                                            <li><i class="fa fa-check" aria-hidden="true"></i>{{feature}}</li>
+                                          {% for feature in property.features.all %}
+                                            <li><i class="fa fa-check" aria-hidden="true"></i>{{feature.features_FA}}</li>
                                           {% endfor %}
                                         </ul>
                                     </div>

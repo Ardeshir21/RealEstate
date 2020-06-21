@@ -1607,6 +1607,9 @@ body {
 .pd-details-text .pd-details-tab .tab-content .property-more-table table tbody tr td.p-value {
 	color: #19191a;
 }
+.bold-text{
+    font-weight: 700;
+}
 .pd-details-text .pd-details-tab .tab-content .property-more-table .left-table {
 	width: 48%;
 	float: left;

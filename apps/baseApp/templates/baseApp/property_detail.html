@@ -47,7 +47,7 @@
                         <ul class="room-features">
                             <li>
                                 <i class="fa fa-arrows"></i>
-                                <p>{{property.build_area}} sq. m</p>
+                                <p>{{property.build_area}} m<sup>2</sup></p>
                             </li>
                             <li>
                                 <i class="fa fa-bed"></i>
@@ -122,77 +122,91 @@
                                         <div class="property-more-table">
                                             <table class="left-table">
                                                 <tbody>
+                                                    <!-- Price -->
                                                     <tr>
-                                                        <td class="pt-name">Price</td>
+                                                        <td class="pt-name bold-text">Price</td>
                                                         {% if property.tag == "FR" %}
-                                                          <td class="p-value">
+                                                          <td class="p-value bold-text">
                                                             {% filter floatformat:"0"|intcomma %}
                                                                 {{property.price}}
                                                             {% endfilter %} $/Month
                                                           </td>
                                                         {% else %}
-                                                          <td class="p-value">
+                                                          <td class="p-value bold-text">
                                                             {% filter floatformat:"0"|intcomma %}
                                                                 {{property.price}}
                                                             {% endfilter %} $
                                                           </td>
                                                         {% endif %}
                                                     </tr>
+                                                    <!-- Net Area -->
                                                     <tr>
-                                                        <td class="pt-name">Property Type</td>
-                                                        <td class="p-value">{{property.get_type_display}}</td>
+                                                        <td class="pt-name">Net Area</td>
+                                                        <td class="p-value">{{property.build_area}} m<sup>2</sup></td>
                                                     </tr>
-                                                    <tr>
-                                                        <td class="pt-name">Year Built</td>
-                                                        <td class="p-value">{{property.age}}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="pt-name">Bathrooms</td>
-                                                        <td class="p-value">{{property.bathroom}}</td>
-                                                    </tr>
+                                                    <!-- Bedrooms -->
                                                     <tr>
                                                         <td class="pt-name">Rooms</td>
-                                                        <td class="p-value">{{property.bedroom}}</td>
+                                                        <td class="p-value">{{property.bedroom.description}}</td>
                                                     </tr>
+                                                    <!-- Floor -->
                                                     <tr>
-                                                        <td class="pt-name">Parking lots</td>
-                                                        <td class="p-value">{{property.parking}}</td>
+                                                        <td class="pt-name">Floor</td>
+                                                        <td class="p-value">{{property.floor}}</td>
                                                     </tr>
+                                                    <!-- Bathroom -->
                                                     <tr>
-                                                        <td class="pt-name">Lot area</td>
-                                                        <td class="p-value">{{property.build_area}} sq. m</td>
+                                                        <td class="pt-name">Bathroom(s)</td>
+                                                        <td class="p-value">{{property.bathroom}}</td>
+                                                    </tr>
+                                                    <!-- Parking Lots -->
+                                                    <tr>
+                                                        <td class="pt-name">Parking lot(s)</td>
+                                                        <td class="p-value">{{property.garage}}</td>
+                                                    </tr>
+                                                    <!-- Heating Type -->
+                                                    <tr>
+                                                        <td class="pt-name">Heating Type</td>
+                                                        <td class="p-value">{{property.get_heating_type_display}}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
                                             <table class="right-table">
                                                 <tbody>
-                                                    <tr>
-                                                        <td class="pt-name">Agent</td>
-                                                        <td class="p-value">Adam Smith</td>
-                                                    </tr>
+                                                    <!-- Reference -->
                                                     <tr>
                                                         <td class="pt-name">Reference</td>
                                                         <td class="p-value"># SET-00{{property.id}}</td>
                                                     </tr>
+                                                    <!-- Gross Area -->
                                                     <tr>
-                                                        <td class="pt-name">Contract type</td>
+                                                        <td class="pt-name">Gross Area</td>
+                                                        <td class="p-value">{{property.build_area_gross}} m<sup>2</sup></td>
+                                                    </tr>
+                                                    <!-- Building Age -->
+                                                    <tr>
+                                                        <td class="pt-name">Buliding Age</td>
+                                                        <td class="p-value">{{property.complex.age}} years</td>
+                                                    </tr>
+                                                    <!-- Contract Type -->
+                                                    <tr>
+                                                        <td class="pt-name">Contract Type</td>
                                                         <td class="p-value">{{property.get_tag_display}}</td>
                                                     </tr>
+                                                    <!-- Installment -->
                                                     <tr>
-                                                        <td class="pt-name">Beds</td>
-                                                        <td class="p-value">4</td>
+                                                        <td class="pt-name">Installment</td>
+                                                        <td class="p-value">{{property.get_installment_display}}</td>
                                                     </tr>
+                                                    <!-- Rental Income -->
                                                     <tr>
-                                                        <td class="pt-name">Garages</td>
-                                                        <td class="p-value">2</td>
+                                                        <td class="pt-name">Rental Income</td>
+                                                        <td class="p-value">{{property.rental_income}}</td>
                                                     </tr>
+                                                    <!-- Dues -->
                                                     <tr>
-                                                        <td class="pt-name">Home area</td>
-                                                        <td class="p-value">1200 sqft</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="pt-name">Gara Size</td>
-                                                        <td class="p-value">200 sqft</td>
+                                                        <td class="pt-name">Dues</td>
+                                                        <td class="p-value">{{property.dues}}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -200,7 +214,7 @@
                                         <!-- Features -->
                                         <ul class="listings-core-features d-flex align-items-center">
                                           {% for feature in property.features.all %}
-                                            <li><i class="fa fa-check" aria-hidden="true"></i>{{feature}}</li>
+                                            <li><i class="fa fa-check" aria-hidden="true"></i>{{feature.features}}</li>
                                           {% endfor %}
                                         </ul>
                                     </div>
@@ -327,7 +341,7 @@
 
                             <!-- Space Range -->
                             <div class="slider-range form-group">
-                              <p>Area Range (Sq. Meter)</p>
+                              <p>Area Range (m<sup>2</sup>)</p>
                               <div id="slider_area" data-min={{spaceRange.build_area__min}} data-max={{spaceRange.build_area__max}}></div>
                               <input class="range-box-area" pattern="[0-9]" type="number" min={{spaceRange.build_area__min}} max={{spaceRange.build_area__max}} name="space_select" step="10" id="input-area-min">
                               <label>-</label> <input class="range-box-area" pattern="[0-9]" type="number" min={{spaceRange.build_area__min}} max={{spaceRange.build_area__max}} name="space_select" step="10" id="input-area-max">

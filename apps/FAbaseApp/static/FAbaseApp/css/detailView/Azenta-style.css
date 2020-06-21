@@ -1156,7 +1156,8 @@
 
 .property-sidebar h4 {
 	font-size: 22px;
-	font-weight: 600;
+	font-weight: 300;
+	font-family: IranSans-Bold;
 	color: #19191a;
 	margin-bottom: 34px;
 }
@@ -1172,18 +1173,20 @@
 	display: none;
 }
 .property-sidebar .sidebar-btn .bt-item input[type=radio]:checked+label {
-	background: #947054;
+	background: var(--main-color);
 	color: #ffffff;
 	font-weight: 300;
+	font-family: IranSans-Medium;
 }
 .property-sidebar .sidebar-btn label {
 	display: block;
 	font-size: 18px;
 	margin-bottom: 0;
 	font-weight: 300;
+	font-family: IranSans-Medium;
 	text-transform: uppercase;
 	background: #EBEBEB;
-	color: #947054;
+	color: var(--main-color);
 	text-align: center;
 	cursor: pointer;
 	padding: 14px 0 12px;
@@ -1461,17 +1464,20 @@
 	text-align: center;
 }
 .pd-hero-text .room-location {
-	font-size: 14px;
-  font-weight: 400;
+	font-size: 16px;
+  font-weight: 500;
+	font-family: sans-serif;
 	color: #aaaab3;
 }
 .pd-hero-text .room-location i {
 	color: #d5a253;
+	font-size: 25px;
 }
 .pd-hero-text h2 {
 	font-size: 44px;
 	color: #ffffff;
-	font-weight: 600;
+	font-weight: 300;
+	font-family: IranSans-Bold;
 	margin-bottom: 20px;
 }
 .pd-hero-text .room-price {
@@ -1482,6 +1488,7 @@
 	font-size: 18px;
   direction: rtl;
   font-weight: 400;
+	font-family: IranSans-Medium;
 	color: #aaaab3;
 	display: inline-block;
 	margin-right: 10px;
@@ -1509,6 +1516,7 @@
 .pd-hero-text .room-features li p {
 	font-size: 16px;
   font-weight: 300;
+	font-family: IranSans-Medium;
 	color: #ffffff;
 	margin-bottom: 0;
 	margin-top: 5px;
@@ -1576,7 +1584,8 @@
 .pd-details-text .pd-desc h4 {
 	font-size: 22px;
 	color: #19191a;
-	font-weight: 600;
+	font-weight: 300;
+	font-family: IranSans-Bold;
 	margin-bottom: 24px;
 }
 .pd-details-text .pd-desc p {
@@ -1628,7 +1637,11 @@
 .pd-details-text .pd-details-tab .tab-content .property-more-table table tbody tr td.p-value {
 	color: #19191a;
 	text-align: right;
-
+}
+.bold-text{
+	font-family: IranSans-Bold;
+	font-weight: 700;
+	font-size: 14;
 }
 .pd-details-text .pd-details-tab .tab-content .property-more-table .left-table {
 	width: 48%;
@@ -1658,7 +1671,8 @@
 .pd-details-text .property-map h4 {
 	font-size: 22px;
 	color: #19191a;
-	font-weight: 600;
+	font-weight: 300;
+	font-family: IranSans-Bold;
 	margin-bottom: 30px;
 	direction: rtl;
 	text-align: right;
@@ -2852,9 +2866,6 @@
 	.pd-hero-text .room-features li {
 		margin-right: 16px;
 		margin-bottom: 10px;
-	}
-	.pd-hero-text h2 {
-		font-size: 25px;
 	}
 	.pd-hero-section {
 		padding-top: 160px;

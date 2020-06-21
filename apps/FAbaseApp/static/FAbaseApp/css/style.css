@@ -70,7 +70,8 @@
   padding: 0; }
 
 body {
-  font-family: "IranSans-Medium", sans-serif;}
+  font-family: "IranSans-UltraLight", sans-serif;
+  font-weight: 300;}
 
 h1,
 h2,
@@ -79,7 +80,7 @@ h4,
 h5,
 h6 {
   color: #323232;
-  font-weight: 600;
+  font-family: IranSans-Bold;
   direction: rtl; }
 
 p {
@@ -459,7 +460,12 @@ img {
 .form-group .sidebar-btn .bt-item input[type=radio]:checked+label {
 	background: var(--main-color);
 	color: #ffffff;
-  font-weight: 300;
+	font-weight: 300;
+  font-size: 18px;
+	font-family: IranSans-Medium;
+}
+.range-label{
+  font-size: 13px;
 }
 .form-group .sidebar-btn label {
 	display: block;
@@ -522,6 +528,7 @@ img {
     .top-header-area .email-address a {
       color: #808080;
       font-size: 12px;
+      font-family: IranSans-Medium;
       position: relative;
       z-index: 1;
       top: -2px; }
@@ -544,7 +551,8 @@ img {
       padding: 0 60px;
       color: #ffffff;
       line-height: 45px;
-      font-size: 12px; }
+      font-size: 12px;
+      font-family: IranSans-Medium;}
 
 .main-header-area {
   width: 100%;
@@ -576,6 +584,7 @@ img {
     color: #ffffff;
     text-transform: uppercase;
     font-weight: 400;
+    font-family: IranSans-Medium;
     direction: rtl;}
     .main-header-area .classynav ul li a:hover{
       color: var(--forSale-tag-color);
@@ -700,6 +709,7 @@ img {
   .hero-slides-content h2 {
     color: #ffffff;
     font-size: 60px;
+    font-family: IranSans-Bold;
     margin-bottom: 0;
     padding: 10px 15px;
     text-transform: uppercase;
@@ -708,13 +718,16 @@ img {
     display: inline-block; }
     @media only screen and (min-width: 768px) and (max-width: 991px) {
       .hero-slides-content h2 {
-        font-size: 40px; } }
+        font-size: 40px;
+        font-family: IranSans-Bold; } }
     @media only screen and (max-width: 767px) {
       .hero-slides-content h2 {
-        font-size: 16px; } }
+        font-size: 16px;
+        font-family: IranSans-Bold; } }
     @media only screen and (min-width: 480px) and (max-width: 767px) {
       .hero-slides-content h2 {
-        font-size: 24px; } }
+        font-size: 24px;
+        font-family: IranSans-Bold; } }
 
 .hero-area .owl-prev,
 .hero-area .owl-next {
@@ -847,6 +860,7 @@ img {
         text-transform: uppercase;
         line-height: 45px;
         font-size: 18px;
+        font-family: IranSans-Medium;
         font-weight: 400; }
     .south-search-area .advanced-search-form .slider-range {
       flex: 0 0 50%;
@@ -918,8 +932,11 @@ img {
         text-align: center;
         margin-top: 10px;}
       .south-search-area .advanced-search-form label {
-        font-size: 15px;
+        font-weight: 300;
+        color: var(--main-color);
+        cursor: pointer;
         direction: rtl;
+        font-family: IranSans-Medium;
         color: #7d7d7d;
         text-align: center;}
     .south-search-area .advanced-search-form .more-filter a {
@@ -1525,6 +1542,7 @@ img {
       min-width: 33.3333333%;
       color: #323232;
       font-size: 15px;
+      font-family: IranSans-Medium;
       margin-bottom: 25px;
       text-align: right;
       direction: rtl;}
@@ -1543,7 +1561,7 @@ img {
         text-align: center;
         line-height: 27px;
         font-size: 12px;
-        margin-right: 10px; }
+        margin-left: 10px; }
   .listings-content .listings-btn-groups a:first-child {
     margin-bottom: 15px; }
   .listings-content .listings-btn-groups .south-btn {
