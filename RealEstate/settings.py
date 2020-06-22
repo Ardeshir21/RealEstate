@@ -54,6 +54,10 @@ ALLOWED_HOSTS = ['161.35.103.31',
                  'gammaturkey.com',
                  ]
 
+# for debug analysis
+# INTERNAL_IPS = [
+#     '127.0.0.1',
+# ]
 
 # Application definition
 
@@ -86,10 +90,17 @@ INSTALLED_APPS = [
     'django_google_maps',
     # for scss files usage
     'compressor',
+    # for debug analysis
+    # 'debug_toolbar',
 ]
 
 MIDDLEWARE = [
+    # Gzip Compression
+    'django.middleware.gzip.GZipMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    # for debug analysis
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
+
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
