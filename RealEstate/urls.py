@@ -30,7 +30,7 @@ urlpatterns = [
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path('robots.txt', include('robots.urls')),
     path('management-login-page/', admin.site.urls),
-    ]
+    ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
 # Fot Debug analysis
@@ -38,4 +38,4 @@ urlpatterns = [
 #     import debug_toolbar
 #     urlpatterns = [
 #         path('__debug__/', include(debug_toolbar.urls)),
-#     ] + urlpatterns + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+#     ] + urlpatterns
