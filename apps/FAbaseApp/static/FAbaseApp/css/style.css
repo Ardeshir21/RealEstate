@@ -51,7 +51,6 @@
 @import url(magnific-popup.css);
 @import url(font-awesome.min.css);
 @import url(themify-icons.css);
-@import url(nice-select.css);
 @import url(jquery-ui.min.css);
 @import url(bootstrap-toggle.css);
 
@@ -826,7 +825,9 @@ img {
     left: 0 !important;
     right: 0 !important;
     border-radius: 0; }
-
+    .nice-select .list:hover .option:not(:hover) {
+        background-color: transparent !important;
+    }
 .south-search-area {
   position: relative;
   z-index: 1; }
