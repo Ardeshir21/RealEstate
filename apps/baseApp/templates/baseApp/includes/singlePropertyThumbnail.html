@@ -37,7 +37,7 @@
   <!-- Property Content -->
   <div class="property-content">
     <a href="{% url "baseApp:propertyView" property.id %}"><h5>{{property.title}}</h5></a>
-    <p class="location"><img src="{% static "baseApp/img/icons/location.png" %}" alt="location icon">{{property.complex.region.name}}</p>
+    <p class="location"><i class="fas fa-map-marked-alt fa-2x"></i> {{property.complex.region.name}}</p>
     <p class="thumbnailText">Complex: <em>{{property.complex.name}}</em></p>
     <!-- <p class="thumbnailText">Created Date: <em>{{property.created |date:"M d, Y"}}</em></p> -->
     <div class="property-meta-data d-flex align-items-end justify-content-between">
@@ -46,17 +46,17 @@
       <div class="new-tag">
         <img src="{% static "baseApp/img/icons/new2.png" %}" alt="new">
       </div>
-      <div class="bathroom">
-        <img src="{% static "baseApp/img/icons/bathtub.png" %}" alt="bathroom">
-        <span>{{property.bathroom}}</span>
+      <div class="bedroom">
+        <i class="fas fa-bed fa-lg"></i>
+        <span>{{property.bedroom.number}}</span>
       </div>
       <div class="garage">
-        <img src="{% static "baseApp/img/icons/garage.png" %}" alt="garage">
+        <i class="fas fa-car fa-lg"></i>
         <span>{{property.garage}}</span>
       </div>
       <div class="space">
-        <img src="{% static "baseApp/img/icons/space.png" %}" alt="area">
-        <span>{{property.build_area}} Sq. m</span>
+        <i class="fas fa-expand-arrows-alt fa-lg"></i>
+        <span>{{property.build_area}} m<sup>2</sup></span>
       </div>
     </div>
   </div>

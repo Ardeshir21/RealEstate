@@ -1471,7 +1471,7 @@
 }
 .pd-hero-text .room-location i {
 	color: #d5a253;
-	font-size: 25px;
+	font-size: 28px;
 }
 .pd-hero-text h2 {
 	font-size: 44px;
@@ -1510,7 +1510,7 @@
 	margin-right: 0;
 }
 .pd-hero-text .room-features li i {
-	font-size: 24px;
+	font-size: 28px;
 	color: #d5a253;
 }
 .pd-hero-text .room-features li p {
@@ -1542,6 +1542,8 @@
 .pd-details-text .pd-details-social a {
 	display: inline-block;
 	font-size: 14px;
+	font-family: "Open Sans", sans-serif;
+	font-weight: 600;
 	color: #707079;
 	height: 40px;
 	width: 40px;

@@ -279,6 +279,7 @@
 }
 .pd-hero-text .room-location i {
 	color: #d5a253;
+	font-size: 28px;
 }
 .pd-hero-text h2 {
 	font-size: 44px;
@@ -290,7 +291,7 @@
 	margin-bottom: 34px;
 }
 .pd-hero-text .room-price span {
-	font-size: 14px;
+	font-size: 18px;
 	color: #aaaab3;
 	display: inline-block;
 	margin-right: 10px;
@@ -312,7 +313,7 @@
 	margin-right: 0;
 }
 .pd-hero-text .room-features li i {
-	font-size: 24px;
+	font-size: 28px;
 	color: #d5a253;
 }
 .pd-hero-text .room-features li p {
