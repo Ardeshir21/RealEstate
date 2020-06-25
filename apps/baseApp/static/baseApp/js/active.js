@@ -59,7 +59,7 @@
             margin: 0,
             loop: true,
             nav: true,
-            navText: ['<i class="fa fa-angle-left"></i>', '<i class="fa fa-angle-right"></i>'],
+            navText: ['<i class="fa fa-angle-left fa-lg"></i>', '<i class="fa fa-angle-right fa-lg"></i>'],
             dots: true,
             autoplay: true,
             autoplayTimeout: 5000,
@@ -110,7 +110,7 @@
             loop: true,
             center: true,
             nav: true,
-            navText: ['<i class="ti-angle-left"></i>', '<i class="ti-angle-right"></i>'],
+            navText: ['<i class="far fa-angle-left fa-lg"></i>', '<i class="far fa-angle-right fa-lg"></i>'],
             dots: false,
             autoplay: true,
             autoplayTimeout: 5000,
@@ -133,7 +133,7 @@
             autoplayTimeout: 5000,
             smartSpeed: 1000,
             nav: true,
-            navText: ['<i class="ti-angle-left"></i>', '<i class="ti-angle-right"></i>']
+            navText: ['<i class="far fa-angle-left fa-lg"></i>', '<i class="far fa-angle-right fa-lg"></i>']
         });
     }
 
@@ -150,7 +150,7 @@
         $.scrollUp({
             scrollSpeed: 1000,
             easingType: 'easeInOutQuart',
-            scrollText: '<i class="fa fa-angle-up" aria-hidden="true"></i>'
+            scrollText: '<i class="fal fa-angle-double-up" aria-hidden="true"></i>'
         });
     }
 
