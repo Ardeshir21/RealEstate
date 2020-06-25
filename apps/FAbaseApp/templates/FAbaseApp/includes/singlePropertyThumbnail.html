@@ -37,7 +37,7 @@
   <!-- Property Content -->
   <div class="property-content">
     <a href="{% url "FAbaseApp:propertyView" property.id %}"><h5>{{property.title_FA}}</h5></a>
-    <p class="location"><i class="fas fa-map-marked-alt fa-2x"></i> {{property.complex.region.name}}</p>
+    <p class="location"><i class="fad fa-map-pin fa-2x"></i> {{property.complex.region.name}}</p>
     <p class="thumbnailText">نام آپارتمان: <em>{{property.complex.name}}</em></p>
     <!-- <p class="thumbnailText">Created Date: <em>{{property.created |date:"M d, Y"}}</em></p> -->
     <div class="property-meta-data d-flex align-items-end justify-content-between">
@@ -47,15 +47,15 @@
         <img src="{% static "FAbaseApp/img/icons/new2.png" %}" alt="new">
       </div>
       <div class="bedroom">
-        <i class="fas fa-bed fa-lg"></i>
+        <i class="fad fa-bed fa-lg"></i>
         <span>{{property.bedroom.number}}</span>
       </div>
       <div class="garage">
-        <i class="fas fa-car fa-lg"></i>
+        <i class="fad fa-garage-car fa-lg"></i>
         <span>{{property.garage}}</span>
       </div>
       <div class="space">
-        <i class="fas fa-expand-arrows-alt fa-lg"></i>
+        <i class="fad fa-arrows-alt fa-lg"></i>
         <span>{{property.build_area}} متر مربع</span>
       </div>
     </div>

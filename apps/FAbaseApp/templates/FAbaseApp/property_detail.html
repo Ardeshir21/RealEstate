@@ -26,7 +26,7 @@
             <div class="row">
                 <div class="col-lg-8 offset-lg-2">
                     <div class="pd-hero-text">
-                        <p class="room-location"><i class="fas fa-map-marker-alt fa-lg"></i> {{property.complex.region.name}}</p>
+                        <p class="room-location"><i class="fad fa-location fa-lg"></i> {{property.complex.region.name}}</p>
                         <h2>{{property.title_FA}}</h2>
                         <div class="room-price">
                             <span>قیمت: </span>
@@ -45,22 +45,22 @@
                             {% endif %}
                         </div>
                         <ul class="room-features">
-                            <li>
-                                <i class="fas fa-expand-arrows-alt fa-lg"></i>
-                                <p>{{property.build_area}} متر مربع</p>
-                            </li>
-                            <li>
-                                <i class="fas fa-bed fa-lg"></i>
-                                <p>{{property.bedroom.description_FA}}</p>
-                            </li>
-                            <li>
-                                <i class="fas fa-bath fa-lg"></i>
-                                <p>{{property.bathroom}} سرویس بهداشتی</p>
-                            </li>
-                            <li>
-                                <i class="fas fa-car fa-lg"></i>
-                                <p>{{property.garage}} پارکینگ</p>
-                            </li>
+                          <li>
+                              <i class="fad fa-arrows-alt fa-lg"></i>
+                              <p>{{property.build_area}} متر مربع</p>
+                          </li>
+                          <li>
+                              <i class="fad fa-bed fa-lg"></i>
+                              <p>{{property.bedroom}}</p>
+                          </li>
+                          <li>
+                              <i class="fad fa-bath fa-lg"></i>
+                              <p>{{property.bathroom}} سرویس بهداشتی</p>
+                          </li>
+                          <li>
+                              <i class="fad fa-garage-car fa-lg"></i>
+                              <p>{{property.garage}} پارگینگ</p>
+                          </li>
                         </ul>
                     </div>
                 </div>
@@ -79,11 +79,11 @@
 
                         <!-- Share Buttons -->
                         <div class="pd-details-social">
-                            <a href="#"><i class="fab fa-telegram-plane fa-lg"></i></a>
-                            <a href="#" id='URLcopy' title="Copy URL" data-clipboard-text="{{request.build_absolute_uri}}"><i class="fas fa-copy fa-lg"></i></a>
-                            <a href="#"><i class="fas fa-star fa-lg"></i></a>
-                            <a href="#"><i class="fas fa-print fa-lg"></i></a>
-                            <a href="#"><i class="fas fa-cloud-download-alt fa-lg"></i></a>
+                          <a href="#" id='URLcopy' title="Copy URL" data-clipboard-text="{{request.build_absolute_uri}}"><i class="fal fa-copy fa-lg"></i></a>
+                          <a href="#"><i class="fab fa-telegram-plane fa-lg"></i></a>
+                          <a href="#"><i class="fab fa-whatsapp fa-lg"></i></a>
+                          <a href="#"><i class="fal fa-print fa-lg"></i></a>
+                          <a href="#"><i class="fas fa-cloud-download-alt fa-lg"></i></a>
                         </div>
 
                         <!-- Property Picture Slider -->
@@ -449,14 +449,14 @@
 
 
     <!-- Js Plugins -->
-    <script src="{% static "FAbaseApp/js/detailView/jquery-3.3.1.min.js" %}"></script>
-    <script src="{% static "FAbaseApp/js/detailView/jquery.magnific-popup.min.js" %}"></script>
-    <script src="{% static "FAbaseApp/js/detailView/jquery.nice-select.min.js"" %}></script>
-    <script src="{% static "FAbaseApp/js/detailView/jquery.slicknav.js" %}"></script>
-    <script src="{% static "FAbaseApp/js/detailView/owl.carousel.min.js" %}"></script>
-    <script src="{% static "FAbaseApp/js/detailView/main.js" %}"></script>
-    <script src="{% static "FAbaseApp/js/clipboard.min.js" %}"></script>
-    <script src="{% static "FAbaseApp/js/nouislider.min.js" %}" ></script>
+    <script src="{% static "baseApp/js/detailView/jquery-3.3.1.min.js" %}"></script>
+    <script src="{% static "baseApp/js/detailView/jquery.magnific-popup.min.js" %}"></script>
+    <script src="{% static "baseApp/js/detailView/jquery.nice-select.min.js"" %}></script>
+    <script src="{% static "baseApp/js/detailView/jquery.slicknav.js" %}"></script>
+    <script src="{% static "baseApp/js/detailView/owl.carousel.min.js" %}"></script>
+    <script src="{% static "baseApp/js/detailView/main.js" %}"></script>
+    <script src="{% static "baseApp/js/clipboard.min.js" %}"></script>
+    <script src="{% static "baseApp/js/nouislider.min.js" %}" ></script>
 
     <!-- Slider Settings -->
     <script type="text/javascript">
