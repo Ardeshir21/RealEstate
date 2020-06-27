@@ -9,7 +9,7 @@
 .SumoSelect .hidden { display:none; }
 .SumoSelect .search-txt{display:none;outline:none;}
 .SumoSelect .no-match{display:none;padding: 6px;}
-.SumoSelect.open .search-txt{display: inline-block;position: absolute;top: 0;left: 0;width: 100%;margin: 0;padding: 5px 8px;border: none;-webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;border-radius: 5px;}
+.SumoSelect.open .search-txt{display: inline-block; font-family: "Open Sans"; position: absolute;top: 0;left: 0;width: 100%;margin: 0;padding: 5px 8px;border: none;-webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;border-radius: 5px;}
 .SumoSelect.open>.search>span, .SumoSelect.open>.search>label{visibility:hidden; float: left;}
 
 /*this is applied on that hidden select. DO NOT USE display:none; or visiblity:hidden; and Do not override any of these properties. */
@@ -23,7 +23,7 @@
     .SumoSelect > .CaptionCont { position: relative; border: 1px solid #ccc; height: 34px; width: 100%; background-color: #fff;border-radius:4px;margin:0; font-size: 14px; }
         .SumoSelect > .CaptionCont > span { display: block; padding-right: 30px; position: relative; bottom:3px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;cursor:default;}
             /*placeholder style*/
-            .SumoSelect > .CaptionCont > span.placeholder { color: #8e8e8e; font-weight: 500; float:left; position:absolute; bottom:2px;}
+            .SumoSelect > .CaptionCont > span.placeholder { color: #8e8e8e; font-weight: 500; float:left; font-family: "Open Sans"; position:absolute; bottom:2px;}
 
         .SumoSelect > .CaptionCont > label { position: absolute; top: 7px; right: 0; bottom: 0; width: 30px;}
             .SumoSelect > .CaptionCont > label > i { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAYAAABy6+R8AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3wMdBhAJ/fwnjwAAAGFJREFUKM9jYBh+gBFKuzEwMKQwMDB8xaOWlYGB4T4DA0MrsuapDAwM//HgNwwMDDbYTJuGQ8MHBgYGJ1xOYGNgYJiBpuEpAwODHSF/siDZ+ISBgcGClEDqZ2Bg8B6CkQsAPRga0cpRtDEAAAAASUVORK5CYII=');
@@ -53,7 +53,7 @@
             .SumoSelect > .optWrapper > .options li.opt:hover { background-color: #E4E4E4; }
             .SumoSelect > .optWrapper > .options li.opt.sel, .SumoSelect .select-all.sel{background-color: #a1c0e4;}
 
-            .SumoSelect > .optWrapper > .options li label { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; display: block;cursor: pointer; margin-bottom: 0;}
+            .SumoSelect > .optWrapper > .options li label { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; text-align: left; display: block;cursor: pointer; margin-bottom: 0;}
             .SumoSelect > .optWrapper > .options li span { display: none; }
             .SumoSelect > .optWrapper > .options li.group > label {cursor: default;padding: 8px 6px;font-weight: bold;}
 
@@ -98,7 +98,7 @@
 
     /**Select all button**/
     .SumoSelect .select-all{border-radius: 3px 3px 0 0;position: relative;border-bottom: 1px solid #ddd;background-color: #fff;padding: 5px 0 3px 35px;height: 40px;cursor: pointer; text-align: left;}
-    .SumoSelect .select-all > label, .SumoSelect .select-all > span i{cursor: pointer;}
+    .SumoSelect .select-all > label, .SumoSelect .select-all > span i{cursor: pointer; font-family: "Open Sans";}
     .SumoSelect .select-all.partial > span i{background-color:#ccc;}
 
 

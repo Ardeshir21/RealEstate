@@ -59,7 +59,7 @@
             margin: 0,
             loop: true,
             nav: true,
-            navText: ['<i class="fa fa-angle-left fa-lg"></i>', '<i class="fa fa-angle-right fa-lg"></i>'],
+            navText: ['<i class="far fa-angle-left fa-lg"></i>', '<i class="far fa-angle-right fa-lg"></i>'],
             dots: true,
             autoplay: true,
             autoplayTimeout: 5000,

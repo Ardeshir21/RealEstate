@@ -574,7 +574,8 @@ img {
       color: var(--forSale-tag-color);
     }
   .main-header-area .nav-brand {
-    line-height: 1; }
+    line-height: 1;
+    width: 200px;}
     @media only screen and (min-width: 992px) and (max-width: 1199px) {
       .main-header-area .nav-brand {
         margin-right: 0; } }
