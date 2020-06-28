@@ -19,11 +19,19 @@ TAG_CHOICES = [('FS', 'For Sale'),
 HEATING_TYPES = [('CE', 'Central'),
                 ('CO', 'Combi')]
 
-COMPLEX_FEATURES_CATEGORY = [('GENERAL', 'General'),
+COMPLEX_FEATURES_CATEGORY = [('TOP', 'Top'),
+                            ('GENERAL', 'General'),
                             ('TECHNICAL', 'Technical'),
-                            ('SPORT', 'Sport'),
-                            ('TOP', 'Top'),
-                            ('LOCATION', 'Location')]
+                            ('SPORT', 'Sport')
+                            ]
+
+MEASURE_TYPES = [('K', 'KM'),
+                ('S', 'STEP'),
+                ('M', 'MIN')]
+
+MEASURE_TYPES_FA = {'K': 'کیلومتر',
+                    'S': 'قدم',
+                    'M': 'دقیقه'}
 
 PAGE_CHOICES = [('HOME', 'Homepage'),
                 ('PROPERTY_SEARCH', 'Property Search'),
@@ -81,6 +89,13 @@ class Region(models.Model):
     def __str__(self):
         return self.name
 
+class Location(models.Model):
+    name = models.CharField(max_length=150, unique=True)
+    name_FA = models.CharField(max_length=150, unique=True, blank=True, null=True)
+    icon_code = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return self.name
 
 class ComplexFeatures(models.Model):
     category = models.CharField(max_length=150, choices=COMPLEX_FEATURES_CATEGORY, default='GENERAL')
@@ -104,6 +119,7 @@ class Complex(models.Model):
     build_area = models.PositiveIntegerField(default=0)
     description = RichTextUploadingField(null=True, blank=True)
     description_FA = RichTextUploadingField(null=True, blank=True)
+    near_locations = models.ManyToManyField(Location, through='Distance', blank=True, null=True)
     # address = map_fields.AddressField(max_length=200)
     # geolocation = map_fields.GeoLocationField(max_length=100)
 
@@ -112,6 +128,24 @@ class Complex(models.Model):
 
     class Meta():
         verbose_name_plural = "Complexes"
+
+class Distance(models.Model):
+    location = models.ForeignKey(Location, on_delete=models.CASCADE)
+    complex = models.ForeignKey(Complex, related_name='distances', on_delete=models.CASCADE)
+    distance = models.DecimalField(max_digits=6, decimal_places=1, default=1.0)
+    measure = models.CharField(max_length=10, choices=MEASURE_TYPES, default='K')
+    measure_FA = models.CharField(max_length=10, blank=True, null=True)
+
+    def __str__(self):
+        return '{} to {}: {}'.format(self.complex,self.location, self.distance)
+
+    def save(self, *args, **kwargs):
+            self.measure_FA = MEASURE_TYPES_FA[self.measure]
+            super(Distance, self).save(*args, **kwargs)
+
+    class Meta():
+        verbose_name_plural = "Distances"
+
 
 class AssetFeatures(models.Model):
     features = models.CharField(max_length=150, unique=True)

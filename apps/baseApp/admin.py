@@ -4,7 +4,7 @@ from django.db import models
 from django_google_maps import widgets as map_widgets
 from django_google_maps import fields as map_fields
 from .models import (Country, City, Region,
-                    Complex,
+                    Complex, Location, Distance,
                     ComplexFeatures,
                     Bedroom,
                     Asset, AssetImages, AssetFeatures,
@@ -50,20 +50,31 @@ class AssetImagesAdmin(admin.ModelAdmin):
     list_display = ['asset', 'image']
     list_editable = ['image']
 
+class DistanceInline(admin.TabularInline):
+    model = Distance
+
 class ComplexAdmin(admin.ModelAdmin):
     formfield_overrides = {
         map_fields.AddressField: {'widget': map_widgets.GoogleMapsAddressWidget},
         models.ManyToManyField: {'widget': forms.CheckboxSelectMultiple(attrs={'multiple': True})},
         models.DateField: {'widget': forms.SelectDateWidget()},
     }
+    # other Inlines
+    inlines = [
+        DistanceInline,
+    ]
 
-admin.site.register(Country)
+
+
 admin.site.register(AssetFeatures)
 admin.site.register(City)
 admin.site.register(Region, RegionAdmin)
 admin.site.register(Complex, ComplexAdmin)
 admin.site.register(ComplexFeatures)
-admin.site.register(Bedroom)
+admin.site.register(Location)
 admin.site.register(Asset, AssetAdmin)
 admin.site.register(Slide, SlideAdmin)
-admin.site.register(AssetImages, AssetImagesAdmin)
+# admin.site.register(AssetImages, AssetImagesAdmin)
+# admin.site.register(Distance)
+# admin.site.register(Bedroom)
+# admin.site.register(Country)

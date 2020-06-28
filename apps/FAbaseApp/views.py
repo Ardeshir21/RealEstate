@@ -20,7 +20,10 @@ ASSET_TYPES = [('FL', 'واحد مسکونی'),
                 ('OF', 'دفتر تجاری'),
                 ('ST', 'مغازه')]
 
-
+COMPLEX_FEATURES_CATEGORY = {'GENERAL': 'عمومی',
+                            'TECHNICAL': 'فنی',
+                            'SPORT': 'ورزشی',
+                            'TOP': 'ویژه'}
 
 
 # Here is the Extra Context ditionary which is used in get_context_data of Views classes
@@ -268,6 +271,14 @@ class AssetSingleView(generic.DetailView):
         context.update(get_extra_context())
         context['slideContent'] = models.Slide.objects.get(useFor__exact='PROPERTY_PAGE', active__exact=True)
         context['assets_all'] = models.Asset.objects.all()
+        # Categorize the features to be used in template
+        # create a dictionary of Categories with a list of related features
+        complex_features = {}
+        categories = [i['category'] for i in self.object.complex.features.values('category')]
+        for category in categories:
+            complex_features[COMPLEX_FEATURES_CATEGORY[category]] = [i['features_FA'] for i in self.object.complex.features.values('features_FA').filter(category=category)]
+        # this value is a dictionary itself >>> {'GENERAL': ['Elevator'], 'SPORT': ['Gym', 'Pool'], 'TOP': ['Supermarket']}
+        context['apartment_features'] = complex_features
         return context
 
 # About Us

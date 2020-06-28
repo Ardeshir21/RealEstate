@@ -589,7 +589,8 @@ img {
       color: var(--forSale-tag-color);
     }
   .main-header-area .nav-brand {
-    line-height: 1; }
+    line-height: 1;
+    width: 200px;}
     @media only screen and (min-width: 992px) and (max-width: 1199px) {
       .main-header-area .nav-brand {
         margin-right: 0; } }
@@ -1533,37 +1534,27 @@ img {
     @media only screen and (max-width: 767px) {
       .listings-content .property-meta-data img {
         margin-right: 0; } }
-  .listings-core-features {
-    padding: 20px;
-    -ms-flex-wrap: wrap;
-    flex-wrap: wrap; }
-    .listings-core-features li {
-      -webkit-box-flex: 0;
-      -ms-flex: 0 0 33.3333333%;
-      flex: 0 0 33.3333333%;
-      min-width: 33.3333333%;
-      color: #323232;
-      font-size: 15px;
-      font-family: IranSans-Medium;
-      margin-bottom: 25px;
-      text-align: right;
-      direction: rtl;}
-      @media only screen and (max-width: 767px) {
-        .listings-content .listings-core-features li {
-          -webkit-box-flex: 0;
-          -ms-flex: 0 0 100%;
-          flex: 0 0 100%;
-          min-width: 100%; } }
-      .listings-core-features li i {
-        width: 27px;
-        height: 27px;
-        background-color: var(--main-color);
-        color: #ffffff;
-        border-radius: 50%;
-        text-align: center;
-        line-height: 27px;
-        font-size: 12px;
-        margin-left: 10px; }
+
+  .listings-core-features li i {
+    width: 23px;
+    height: 23px;
+    background-color: var(--main-color);
+    color: #ffffff;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 23px;
+    font-size: 12px;
+    margin-left: 10px; }
+    @media only screen and (max-width: 1199px) {
+      .listings-core-features li {
+        font-size: 14px;
+        }
+      .listings-core-features li i{
+        width: 19px;
+        height: 19px;
+        line-height: 19px;
+        font-size: 11px;
+      }}
   .listings-content .listings-btn-groups a:first-child {
     margin-bottom: 15px; }
   .listings-content .listings-btn-groups .south-btn {
@@ -2015,7 +2006,25 @@ img {
         color: #ffffff; }
   .south-tabs-content .tab-content h6 {
     font-size: 18px; }
-
+  .feature-box{
+    margin: 30px 15px 15px 30px;
+    direction: rtl;
+    text-align: right;
+  }
+  .single-feature{
+    text-align: center;
+  }
+  .single-feature i{
+    color: var(--forSale-tag-color);
+  }
+  .single-feature h6{
+    font-size: 16px;
+    direction: rtl;
+  }
+  .single-feature h5{
+    font-size: 18px;
+    direction: rtl;
+  }
 /* Loaders CSS */
 .single-pie-bar {
   position: relative;
