@@ -576,9 +576,9 @@ img {
   .main-header-area .nav-brand {
     line-height: 1;
     width: 200px;}
-    @media only screen and (min-width: 992px) and (max-width: 1199px) {
+    @media only screen and (max-width: 992px) {
       .main-header-area .nav-brand {
-        margin-right: 0; } }
+        width: 150px; } }
   .main-header-area .classynav ul {
     -webkit-transition-duration: 500ms;
     transition-duration: 500ms; }
