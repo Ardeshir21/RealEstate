@@ -1619,7 +1619,18 @@ img {
 /* :: 20.0 Blog Area CSS */
 .single-blog-area {
   position: relative;
-  z-index: 1; }
+  z-index: 1;}
+
+  .single-blog-area p, .single-blog-area p span {
+    font-family: IranSans-UltraLight;
+  }
+  .single-blog-area ol li span, .single-blog-area ul li span, .single-blog-area h5 span, .single-blog-area h6 span{
+    font-family: IranSans-Medium;
+  }
+  .single-blog-area h1 span, .single-blog-area h2 span, .single-blog-area h3 span{
+    font-family: IranSans-Bold;
+  }
+
   .single-blog-area .blog-post-thumbnail {
     position: relative;
     z-index: 1; }
