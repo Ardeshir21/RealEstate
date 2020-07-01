@@ -286,33 +286,30 @@
                         </div>
                         <!-- CONTACT FORM -->
                         <div class="property-contactus">
-                            <h4>Contact Us</h4>
+                            <h4>تماس با ما</h4>
                             <div class="row">
+                                <!-- FORM -->
+                                <div class="col-lg-6 offset-lg-1">
+                                  <div class="contact-form">
+                                    {% include "FAbaseApp/includes/contactForm.html" %}
+                                  </div>
+                                </div>
+                                <!-- Contact Details -->
                                 <div class="col-lg-5">
                                     <div class="agent-desc">
-                                        <img src="" alt="">
+                                        <img src="{% static "baseApp/img/core-img/hotline.jpg" %}" alt="Hotline">
                                         <div class="agent-title">
-                                            <h5>Adam Smith</h5>
-                                            <span>Saler Marketing</span>
+                                            <h5>مشاورین گاما</h5>
+                                            <span>تیم فروش</span>
                                         </div>
                                         <div class="agent-social">
-                                            <a href="#"><i class="fa fa-facebook"></i></a>
-                                            <a href="#"><i class="fa fa-twitter"></i></a>
-                                            <a href="#"><i class="fa fa-google-plus"></i></a>
-                                            <a href="#"><i class="fa fa-envelope"></i></a>
+                                          <a href="#"><i class="fab fa-facebook-square fa-2x"></i></a>
+                                          <a href="#"><i class="fab fa-telegram fa-2x"></i></a>
+                                          <a href="#"><i class="fab fa-whatsapp-square fa-2x"></i></a>
+                                          <a href="#"><i class="fas fa-envelope-square fa-2x"></i></a>
                                         </div>
-                                        <p>In today’s net-savvy world it has become common for any business to have a
-                                            website which they use mostly for advertising their products and services.
-                                        </p>
+                                        <p>برای کسب اطلاعات بیشتر در مورد ملک یا برای هر گونه پرسش فرم تماس با ما را پر بفرمایید</p>
                                     </div>
-                                </div>
-                                <div class="col-lg-6 offset-lg-1">
-                                    <form action="#" class="agent-contact-form">
-                                        <input type="text" placeholder="Name*">
-                                        <input type="text" placeholder="Email">
-                                        <textarea placeholder="Messages"></textarea>
-                                        <button type="submit" class="site-btn">Send Message</button>
-                                    </form>
                                 </div>
                             </div>
                         </div>

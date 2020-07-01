@@ -1850,7 +1850,8 @@ img {
 .leave-comment-area .comment-form .form-control,
 .leave-comment-area .contact-form .form-control,
 .south-contact-area .comment-form .form-control,
-.south-contact-area .contact-form .form-control {
+.south-contact-area .contact-form .form-control,
+.contact-form .form-control {
   width: 100%;
   height: 43px;
   background-color: transparent;
@@ -1863,7 +1864,8 @@ img {
 .leave-comment-area .comment-form textarea.form-control,
 .leave-comment-area .contact-form textarea.form-control,
 .south-contact-area .comment-form textarea.form-control,
-.south-contact-area .contact-form textarea.form-control {
+.south-contact-area .contact-form textarea.form-control,
+.contact-form textarea.form-control {
   height: 200px !important; }
 .leave-comment-area .comment-form button[type=submit],
 .leave-comment-area .contact-form button[type=submit],

@@ -1719,25 +1719,37 @@
 	font-size: 22px;
 	color: #19191a;
 	font-weight: 600;
+	direction: rtl;
+	text-align: right;
 	margin-bottom: 30px;
 }
 .pd-details-text .property-contactus .agent-desc img {
 	min-width: 100%;
 	margin-bottom: 16px;
+	direction: rtl;
+	text-align: right;
 }
 .pd-details-text .property-contactus .agent-desc .agent-title {
 	margin-bottom: 10px;
+	direction: rtl;
+	text-align: right;
 }
 .pd-details-text .property-contactus .agent-desc .agent-title h5 {
 	color: #252525;
 	font-weight: 600;
+	direction: rtl;
+	text-align: right;
 }
 .pd-details-text .property-contactus .agent-desc .agent-title span {
 	font-size: 12px;
 	color: #aaaab3;
+	direction: rtl;
+	text-align: right;
 }
 .pd-details-text .property-contactus .agent-desc .agent-social {
 	margin-bottom: 8px;
+	direction: rtl;
+	text-align: right;
 }
 .pd-details-text .property-contactus .agent-desc .agent-social a {
 	display: inline-block;
@@ -1748,6 +1760,8 @@
 .pd-details-text .property-contactus .agent-desc p {
 	font-size: 14px;
 	line-height: 24px;
+	direction: rtl;
+	text-align: right;
 }
 .pd-details-text .property-contactus .agent-contact-form input {
 	width: 100%;

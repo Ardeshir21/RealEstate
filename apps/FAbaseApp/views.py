@@ -258,11 +258,15 @@ class AssetFilterView(generic.ListView):
         return context
 
 # The Single Property View
-class AssetSingleView(generic.DetailView):
+class AssetSingleView(generic.edit.FormMixin, generic.DetailView):
     # Because this is a DetailView, it will use get() method on the model and return only the property with requested pk
     context_object_name = 'property'
     template_name = 'FAbaseApp/property_detail.html'
     model = models.Asset
+    # This is for Form
+    form_class = forms.ContactForm
+    def get_success_url(self):
+            return reverse('baseApp:propertyView', kwargs={'pk': self.object.pk})
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -271,6 +275,7 @@ class AssetSingleView(generic.DetailView):
         context.update(get_extra_context())
         context['slideContent'] = models.Slide.objects.get(useFor__exact='PROPERTY_PAGE', active__exact=True)
         context['assets_all'] = models.Asset.objects.all()
+        context['form'] = self.get_form()
         # Categorize the features to be used in template
         # create a dictionary of Categories with a list of related features
         complex_features = {}
@@ -280,6 +285,19 @@ class AssetSingleView(generic.DetailView):
         # this value is a dictionary itself >>> {'GENERAL': ['Elevator'], 'SPORT': ['Gym', 'Pool'], 'TOP': ['Supermarket']}
         context['apartment_features'] = complex_features
         return context
+
+    # Form POST
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_valid(self, form):
+        form.send_email()
+        return super(AssetSingleView, self).form_valid(form)
 
 # About Us
 class ContactView(generic.edit.FormView):

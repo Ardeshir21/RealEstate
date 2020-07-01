@@ -75,7 +75,6 @@
                 <!-- PROPERTY CONTENT -->
                 <div class="col-lg-9">
                     <div class="pd-details-text">
-
                         <!-- Share Buttons -->
                         <div class="pd-details-social">
                           <a href="#" id='URLcopy' title="Copy URL" data-clipboard-text="{{request.build_absolute_uri}}"><i class="fal fa-copy fa-lg"></i></a>
@@ -84,7 +83,6 @@
                           <a href="#"><i class="fal fa-print fa-lg"></i></a>
                           <a href="#"><i class="fas fa-cloud-download-alt fa-lg"></i></a>
                         </div>
-
                         <!-- Property Picture Slider -->
                         <div class="single-listings-sliders owl-carousel" data-ride="carousel">
                           {% for picture in property.images.all %}
@@ -274,12 +272,13 @@
                         <div class="property-contactus">
                             <h4>Contact Us</h4>
                             <div class="row">
+                                <!-- Contact Details -->
                                 <div class="col-lg-5">
                                     <div class="agent-desc">
-                                        <img src="" alt="">
+                                        <img src="{% static "baseApp/img/core-img/hotline.jpg" %}" alt="Hotline">
                                         <div class="agent-title">
-                                            <h5>Adam Smith</h5>
-                                            <span>Saler Marketing</span>
+                                            <h5>GAMMA Agency</h5>
+                                            <span>Sales Team</span>
                                         </div>
                                         <div class="agent-social">
                                           <a href="#"><i class="fab fa-facebook-square fa-2x"></i></a>
@@ -292,19 +291,16 @@
                                         </p>
                                     </div>
                                 </div>
+                                <!-- FORM -->
                                 <div class="col-lg-6 offset-lg-1">
-                                    <form action="#" class="agent-contact-form">
-                                        <input type="text" placeholder="Name*">
-                                        <input type="text" placeholder="Email">
-                                        <textarea placeholder="Messages"></textarea>
-                                        <button type="submit" class="site-btn">Send Message</button>
-                                    </form>
+                                  <div class="contact-form">
+                                    {% include "baseApp/includes/contactForm.html" %}
+                                  </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
                 <!-- SIDE FILTER BAR -->
                 <div class="col-lg-3 text-center">
                     <div class="property-sidebar">
@@ -418,8 +414,6 @@
                         </div>
                     </div>
                 </div>
-
-
             </div>
         </div>
     </section>
