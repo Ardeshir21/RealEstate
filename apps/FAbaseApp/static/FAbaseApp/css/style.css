@@ -1247,7 +1247,7 @@ img {
 .footer-widget-area p {
   color: #7d7d7d;
   margin-bottom: 0;
-  font-weight: 400;
+    font-family: IranSans-Medium;
   direction: rtl;
   text-align: right;}
 .footer-widget-area .weekly-office-hours ul li {
@@ -1270,6 +1270,7 @@ img {
     display: block;
     font-size: 14px;
     font-weight: 400;
+    direction: ltr;
     padding-left: 40px;
     line-height: 1.8; }
     .footer-widget-area .address h6 img {
@@ -1277,6 +1278,9 @@ img {
       top: 4px;
       z-index: 10;
       left: 0; }
+    .footer-widget-area .address a h6:hover{
+      color: #FFFFFF;
+    }
 .footer-widget-area .useful-links-nav {
   -ms-flex-wrap: wrap;
   flex-wrap: wrap; }

@@ -42,7 +42,7 @@
         <div class="top-header-area">
             <div class="h-100 d-md-flex justify-content-between align-items-center">
                 <div class="email-address">
-                    <a href="mailto:contact@gammaturkey.com">contact@gammaturkey.com</a>
+                    <a href="{% url "FAbaseApp:about_us" %}">تماس با ما</a>
                 </div>
                 <div class="phone-number d-flex">
                     <div class="icon">
@@ -158,9 +158,9 @@
                             </div>
                             <!-- Address -->
                             <div class="address">
-                                <h6><img src="{% static "baseApp/img/icons/phone-call.png" %}" alt=""> +45 677 8993000 223</h6>
-                                <h6><img src="{% static "baseApp/img/icons/envelope.png" %}" alt=""> office@template.com</h6>
-                                <h6><img src="{% static "baseApp/img/icons/location.png" %}" alt=""> Main Str. no 45-46, b3, 56832, Los Angeles, CA</h6>
+                                <h6><img src="{% static "baseApp/img/icons/phone-call.png" %}" alt=""> +90 (535) 683 23 20</h6>
+                                <a href="{% url "baseApp:about_us" %}"><h6><img src="{% static "baseApp/img/icons/envelope.png" %}" alt="">فرم تماس با ما</h6></a>
+                                <h6><img src="{% static "baseApp/img/icons/location.png" %}" alt=""> ترکیه، استانبول</h6>
                             </div>
                         </div>
                     </div>
