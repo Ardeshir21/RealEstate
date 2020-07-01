@@ -1575,7 +1575,7 @@ img {
 /* :: 20.0 Blog Area CSS */
 .single-blog-area {
   position: relative;
-  z-index: 1; }
+  z-index: 1;}
   .single-blog-area .blog-post-thumbnail {
     position: relative;
     z-index: 1; }

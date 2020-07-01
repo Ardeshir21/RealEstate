@@ -263,7 +263,6 @@ CKEDITOR_CONFIGS = {
             {'name': 'tools', 'items': ['Maximize', 'ShowBlocks']}
         ],
 
-
         'toolbar': 'YourCustomToolbarConfig',  # put selected toolbar config here
         # 'toolbarGroups': [{ 'name': 'document', 'groups': [ 'mode', 'document', 'doctools' ] }],
         'height': 300,

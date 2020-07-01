@@ -211,15 +211,25 @@
                                             </table>
                                         </div>
                                         <!-- Features -->
+                                        <h4 class="mt-30">Facilities</h4>
                                         <div class="feature-box">
-                                          <h4>Facilities</h4>
                                           <ul class="listings-core-features row align-items-center">
                                             {% for feature in property.features.all %}
                                               <li class="col-6 col-sm-4 col-md-3 mb-15"><i class="fa fa-check fa-xm" aria-hidden="true"></i>{{feature.features}}</li>
                                             {% endfor %}
                                           </ul>
                                         </div>
-
+                                        <!-- Near Locations -->
+                                        <h4 class="mt-30">Near Places</h4>
+                                        <div class="feature-box row">
+                                          {% for dis in property.complex.distances.all %}
+                                              <div class="single-feature col-6 col-sm-4 col-md-3 mb-15">
+                                                <i class="{{dis.location.icon_code}} fa-3x"></i>
+                                                <h5>{{dis.location.name}}</h5>
+                                                <h6>{{dis.distance}} {{dis.get_measure_display}}</h6>
+                                              </div>
+                                          {% endfor %}
+                                        </div>
                                     </div>
                                     <!-- Apartment TAB 2 -->
                                     <div class="tab-pane fade" id="tab-2" role="tabpanel">
@@ -238,17 +248,6 @@
                                             </ul>
                                           {% endfor %}
                                         </div>
-                                        <!-- Near Locations -->
-                                        <h4 class="mt-30">Near Places</h4>
-                                        <div class="feature-box row">
-                                          {% for dis in property.complex.distances.all %}
-                                              <div class="single-feature col-6 col-sm-4 col-md-3 mb-15">
-                                                <i class="{{dis.location.icon_code}} fa-3x"></i>
-                                                <h5>{{dis.location.name}}</h5>
-                                                <h6>{{dis.distance}} {{dis.get_measure_display}}</h6>
-                                              </div>
-                                          {% endfor %}
-                                        </div>
                                     </div>
                                     <!-- Region TAB 3 -->
                                     <div class="tab-pane fade" id="tab-3" role="tabpanel">
@@ -263,12 +262,12 @@
                         <div class="property-map">
                             <h4>Map</h4>
                             <div class="map-inside">
-                                <iframe
-                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2942.5524090066037!2d-71.10245469994108!3d42.47980730490846!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89e3748250c43a43%3A0xe1b9879a5e9b6657!2sWinter%20Street%20Public%20Parking%20Lot!5e0!3m2!1sen!2sbd!4v1577299251173!5m2!1sen!2sbd"
-                                    height="320" style="border:0;" allowfullscreen=""></iframe>
-                                <div class="icon">
-                                    <i class="fa fa-home"></i>
-                                </div>
+                              <iframe
+                                width="450"
+                                height="400"
+                                frameborder="0" style="border:0"
+                                src="https://www.google.com/maps/embed/v1/place?q=place_id:{{property.complex.location_id}}&key=AIzaSyCDL1Wg5qvLEXIR_2S1upMB04z0jptzVYA" allowfullscreen>
+                              </iframe>
                             </div>
                         </div>
                         <!-- CONTACT FORM -->
@@ -283,10 +282,10 @@
                                             <span>Saler Marketing</span>
                                         </div>
                                         <div class="agent-social">
-                                            <a href="#"><i class="fa fa-facebook"></i></a>
-                                            <a href="#"><i class="fa fa-twitter"></i></a>
-                                            <a href="#"><i class="fa fa-google-plus"></i></a>
-                                            <a href="#"><i class="fa fa-envelope"></i></a>
+                                          <a href="#"><i class="fab fa-facebook-square fa-2x"></i></a>
+                                          <a href="#"><i class="fab fa-telegram fa-2x"></i></a>
+                                          <a href="#"><i class="fab fa-whatsapp-square fa-2x"></i></a>
+                                          <a href="#"><i class="fas fa-envelope-square fa-2x"></i></a>
                                         </div>
                                         <p>In today’s net-savvy world it has become common for any business to have a
                                             website which they use mostly for advertising their products and services.

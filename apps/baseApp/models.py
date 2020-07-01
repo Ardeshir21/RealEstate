@@ -117,6 +117,9 @@ class Complex(models.Model):
     completion_date = models.DateField(blank=True, null=True)
     features = models.ManyToManyField(ComplexFeatures, blank=True, null=True)
     build_area = models.PositiveIntegerField(default=0)
+    location_id = models.CharField(max_length=150, default='ChIJawhoAASnyhQR0LABvJj-zOE',
+                                help_text="https://developers.google.com/places/place-id")
+
     description = RichTextUploadingField(null=True, blank=True)
     description_FA = RichTextUploadingField(null=True, blank=True)
     near_locations = models.ManyToManyField(Location, through='Distance', blank=True, null=True)
@@ -132,7 +135,7 @@ class Complex(models.Model):
 class Distance(models.Model):
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
     complex = models.ForeignKey(Complex, related_name='distances', on_delete=models.CASCADE)
-    distance = models.DecimalField(max_digits=6, decimal_places=1, default=1.0)
+    distance = models.DecimalField(max_digits=6, decimal_places=0, default=1.0)
     measure = models.CharField(max_length=10, choices=MEASURE_TYPES, default='K')
     measure_FA = models.CharField(max_length=10, blank=True, null=True)
 
