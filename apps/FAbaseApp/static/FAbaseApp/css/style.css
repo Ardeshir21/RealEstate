@@ -1627,21 +1627,21 @@ img {
 
   .single-blog-area p {
     font-family: IranSans-UltraLight;
-    font-size: 13px;
+    font-size: 17px;
     text-align: right;
   }
   .single-blog-area ol li, .single-blog-area h5, .single-blog-area h6{
     font-family: IranSans-Medium;
-    font-size: 16px;
+    font-size: 20px;
     text-align: right;
   }
   .single-blog-area h1 {
     font-family: IranSans-Bold;
-    font-size: 24px;
+    font-size: 26px;
   }
   .single-blog-area h2 {
     font-family: IranSans-Bold;
-    font-size: 22;
+    font-size: 24px;
   }
   .single-blog-area h3 {
     font-family: IranSans-Bold;
