@@ -260,7 +260,6 @@ class AssetSingleView(generic.edit.FormMixin, generic.DetailView):
             complex_features[category] = [i['features'] for i in self.object.complex.features.values('features').filter(category=category)]
         # this value is a dictionary itself >>> {'GENERAL': ['Elevator'], 'SPORT': ['Gym', 'Pool'], 'TOP': ['Supermarket']}
         context['apartment_features'] = complex_features
-
         return context
 
     # Form POST
@@ -273,7 +272,7 @@ class AssetSingleView(generic.edit.FormMixin, generic.DetailView):
             return self.form_invalid(form)
 
     def form_valid(self, form):
-        form.send_email()
+        form.send_email(current_url=self.request.build_absolute_uri())
         return super(AssetSingleView, self).form_valid(form)
 
 # About Us

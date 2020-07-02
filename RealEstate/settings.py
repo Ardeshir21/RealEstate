@@ -18,7 +18,8 @@ import os
 # It returns the secrets_dict which can be used in the main code
 # This file is different in Server and my local PC
 secret_file = 'RealEstateKEYS.txt'
-secrets = ['SECRET_KEY', 'DEBUG' , 'DATABASE_NAME', 'DATABASE_USERNAME', 'DATABASE_PASSWORD']
+secrets = ['SECRET_KEY', 'DEBUG' , 'DATABASE_NAME', 'DATABASE_USERNAME', 'DATABASE_PASSWORD',
+ 'EMAIL_HOST', 'EMAIL_HOST_USER', 'EMAIL_HOST_PASSWORD']
 SECRETS_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 filepath = os.path.join(SECRETS_DIR, secret_file)
 secrets_dict = {}
@@ -137,6 +138,12 @@ ROBOTS_SITEMAP_URLS = [
 ]
 ROBOTS_USE_SCHEME_IN_HOST = True
 ROBOTS_USE_HOST = False
+
+# Email settings
+EMAIL_HOST = secrets_dict['EMAIL_HOST']
+EMAIL_PORT = 587
+EMAIL_HOST_USER = secrets_dict['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = secrets_dict['EMAIL_HOST_PASSWORD']
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
