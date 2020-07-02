@@ -1625,14 +1625,27 @@ img {
   position: relative;
   z-index: 1;}
 
-  .single-blog-area p, .single-blog-area p span {
+  .single-blog-area p {
     font-family: IranSans-UltraLight;
+    font-size: 13px;
+    text-align: right;
   }
-  .single-blog-area ol li span, .single-blog-area ul li span, .single-blog-area h5 span, .single-blog-area h6 span{
+  .single-blog-area ol li, .single-blog-area h5, .single-blog-area h6{
     font-family: IranSans-Medium;
+    font-size: 16px;
+    text-align: right;
   }
-  .single-blog-area h1 span, .single-blog-area h2 span, .single-blog-area h3 span{
+  .single-blog-area h1 {
     font-family: IranSans-Bold;
+    font-size: 24px;
+  }
+  .single-blog-area h2 {
+    font-family: IranSans-Bold;
+    font-size: 22;
+  }
+  .single-blog-area h3 {
+    font-family: IranSans-Bold;
+    font-size: 20px;
   }
 
   .single-blog-area .blog-post-thumbnail {
