@@ -3,6 +3,7 @@ from django.views import generic
 from . import models, forms
 from apps.blogApp import models as blogAppModel
 from django.db.models import Max, Min, Q
+from django.contrib import messages
 from django.urls import reverse_lazy, reverse
 
 
@@ -238,6 +239,7 @@ class AssetSingleView(generic.edit.FormMixin, generic.DetailView):
     context_object_name = 'property'
     template_name = 'baseApp/property_detail.html'
     model = models.Asset
+
     # This is for Form
     form_class = forms.ContactForm
     def get_success_url(self):
@@ -272,6 +274,7 @@ class AssetSingleView(generic.edit.FormMixin, generic.DetailView):
             return self.form_invalid(form)
 
     def form_valid(self, form):
+        messages.add_message(self.request, messages.INFO, 'Hello world.')
         form.send_email(current_url=self.request.build_absolute_uri())
         return super(AssetSingleView, self).form_valid(form)
 

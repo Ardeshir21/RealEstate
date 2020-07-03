@@ -80,8 +80,8 @@
                         <!-- Share Buttons -->
                         <div class="pd-details-social">
                           <a href="#" id='URLcopy' title="Copy URL" data-clipboard-text="{{request.build_absolute_uri}}"><i class="fal fa-copy fa-lg"></i></a>
-                          <a href="#"><i class="fab fa-telegram-plane fa-lg"></i></a>
-                          <a href="#"><i class="fab fa-whatsapp fa-lg"></i></a>
+                          <a href="https://t.me/share/url?url={{request.build_absolute_uri}}"><i class="fab fa-telegram-plane fa-lg"></i></a>
+                          <a href="https://wa.me/?text={{request.build_absolute_uri}}"><i class="fab fa-whatsapp fa-lg"></i></a>
                           <a href="#"><i class="fal fa-print fa-lg"></i></a>
                           <a href="#"><i class="fas fa-cloud-download-alt fa-lg"></i></a>
                         </div>
@@ -157,8 +157,12 @@
                                                   </tr>
                                                   <!-- Rental Income -->
                                                   <tr>
+                                                    {% if property.tag == "FS" %}
                                                       <td class="pt-name">درآمد از اجاره</td>
-                                                      <td class="p-value">{{property.rental_income}}</td>
+                                                    {% else %}
+                                                      <td class="pt-name">ضمانت اولیه</td>
+                                                    {% endif %}
+                                                    <td class="p-value">{{property.rental_income}}</td>
                                                   </tr>
                                                   <!-- Dues -->
                                                   <tr>
@@ -304,9 +308,8 @@
                                         </div>
                                         <div class="agent-social">
                                           <a href="#"><i class="fab fa-facebook-square fa-2x"></i></a>
-                                          <a href="#"><i class="fab fa-telegram fa-2x"></i></a>
-                                          <a href="#"><i class="fab fa-whatsapp-square fa-2x"></i></a>
-                                          <a href="#"><i class="fas fa-envelope-square fa-2x"></i></a>
+                                          <a href="https://t.me/contact2121"><i class="fab fa-telegram fa-2x"></i></a>
+                                          <a href="https://wa.me/905356832320"><i class="fab fa-whatsapp-square fa-2x"></i></a>
                                         </div>
                                         <p>برای کسب اطلاعات بیشتر در مورد ملک یا برای هر گونه پرسش فرم تماس با ما را پر بفرمایید</p>
                                     </div>

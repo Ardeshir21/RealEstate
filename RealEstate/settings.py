@@ -81,7 +81,6 @@ INSTALLED_APPS = [
 
     # for templates to sperate digits
     'django.contrib.humanize',
-
     # for models phone number field
     'phonenumber_field',
     # for models Text editor
