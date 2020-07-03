@@ -10,28 +10,41 @@ class ContactForm(forms.Form):
                             )
     message = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'پیغام شما',
                                                             'class': 'form-control'}))
-    sender_email = forms.EmailField(
+    client_email = forms.EmailField(
                                 widget=forms.EmailInput(attrs={'placeholder': 'someone@example.com',
                                                                 'class': 'form-control',
                                                                 'style': 'direction: ltr;'})
                                 )
-    sender_phone = PhoneNumberField(required=False,
+    client_phone = PhoneNumberField(required=False,
                                     widget=forms.TextInput(attrs={'placeholder': '+989123456789',
                                                                     'class': 'form-control',
                                                                     'style': 'direction: ltr;'})
                                     )
 
-    cc_myself = forms.BooleanField(required=False)
-
-    def send_email(self):
+    def send_email(self, current_url):
         name = self.cleaned_data['name']
         message = self.cleaned_data['message']
-        sender_email = self.cleaned_data['sender_email']
-        sender_phone = self.cleaned_data['sender_phone']
-        cc_myself = self.cleaned_data['cc_myself']
-        recipients = ['examples21@gmail.com']
-        if cc_myself:
-            recipients.append(sender_email)
+        client_email = self.cleaned_data['client_email']
+        client_phone = self.cleaned_data['client_phone']
+        recipients = ['contact@gammaturkey.com', client_email]
+        mail_subject = 'Gamma Turkey Received Your Message - {}'.format(name)
 
-        # send_mail('HELLO', message, sender_email, recipients)
+        message_edited = '''{} عزیز،
+
+از تماس شما با ما سپاس گذاریم.
+پیام زیر با موفقیت به دست ما رسید. تیم گاما بزودی به شما تماس خواهند گرفت.
+
+___________________________________________
+آدرس فرم تماس با ما: {}
+{} - شماره تلفن: {} - آدرس ایمیل {}
+
+{}
+
+___________________________________________
+با تشکر
+تیم مشاورین گاما
+https://www.gammaturkey.com
+'''
+        message_edited = message_edited.format(name, current_url, name,client_phone, client_email, message)
+        send_mail(mail_subject, message_edited, 'contact@gammaturkey.com', recipients)
         pass

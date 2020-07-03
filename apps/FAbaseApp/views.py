@@ -266,7 +266,7 @@ class AssetSingleView(generic.edit.FormMixin, generic.DetailView):
     # This is for Form
     form_class = forms.ContactForm
     def get_success_url(self):
-            return reverse('baseApp:propertyView', kwargs={'pk': self.object.pk})
+            return reverse('FAbaseApp:propertyView', kwargs={'pk': self.object.pk})
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -296,7 +296,7 @@ class AssetSingleView(generic.edit.FormMixin, generic.DetailView):
             return self.form_invalid(form)
 
     def form_valid(self, form):
-        form.send_email()
+        form.send_email(current_url=self.request.build_absolute_uri())
         return super(AssetSingleView, self).form_valid(form)
 
 # About Us
