@@ -212,7 +212,10 @@
                                                       {% else %}
                                                         <td class="pt-name">Deposit</td>
                                                       {% endif %}
-                                                      <td class="p-value">{{property.rental_income}}</td>
+                                                      <td class="p-value">{% filter floatformat:"0"|intcomma %}
+                                                                            {{property.rental_income}}
+                                                                          {% endfilter %}
+                                                      </td>
                                                     </tr>
                                                     <!-- Dues -->
                                                     <tr>

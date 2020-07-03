@@ -39,6 +39,7 @@
     <a href="{% url "FAbaseApp:propertyView" property.id %}"><h5>{{property.title_FA}}</h5></a>
     <p class="location"><i class="fad fa-map-pin fa-2x"></i> {{property.complex.region.name}}</p>
     <p class="thumbnailText">نام آپارتمان: <em>{{property.complex.name}}</em></p>
+    <p class="thumbnailText"><em style="font-size: 11px;">{{property.created|date:"N j, Y"}}</em></p>
     <!-- <p class="thumbnailText">Created Date: <em>{{property.created |date:"M d, Y"}}</em></p> -->
     <div class="property-meta-data d-flex align-items-end justify-content-between">
 

@@ -180,7 +180,7 @@ class AssetFilterView(generic.ListView):
                 result =  result.order_by('-price')
             if orderby_query == 'date-newest':
                 result =  result.order_by('-created')
-            if orderby_query == 'price-oldest':
+            if orderby_query == 'date-oldest':
                 result =  result.order_by('created')
         return result
 
