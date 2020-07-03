@@ -141,9 +141,10 @@ ROBOTS_USE_HOST = False
 
 # Email settings
 EMAIL_HOST = secrets_dict['EMAIL_HOST']
-EMAIL_PORT = 587
+EMAIL_PORT = 465
 EMAIL_HOST_USER = secrets_dict['EMAIL_HOST_USER']
 EMAIL_HOST_PASSWORD = secrets_dict['EMAIL_HOST_PASSWORD']
+EMAIL_USE_SSL = True
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
