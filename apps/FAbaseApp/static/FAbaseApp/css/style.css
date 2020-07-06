@@ -1628,6 +1628,13 @@ img {
   .single-blog-area p {
     font-family: IranSans-UltraLight;
     font-size: 17px;
+    text-indent: 25px;
+  }
+  .single-blog-area ul {
+    margin-right: 18px;
+  }
+  .single-blog-area ol {
+    margin-right: 45px;
   }
   .single-blog-area ul li {
     font-family: IranSans-Medium;
@@ -1646,31 +1653,100 @@ img {
     font-family: IranSans-Bold;
     font-size: 26px;
     line-height: 3;
+    margin-right: 18px;
   }
   .single-blog-area h2 {
     font-family: IranSans-Bold;
     font-size: 21px;
     line-height: 3;
+    margin-right: 18px;
   }
   .single-blog-area h3 {
     font-family: IranSans-Bold;
     font-size: 19px;
     line-height: 3;
+    margin-right: 18px;
   }
   .single-blog-area h4 {
     font-family: IranSans-Medium;
     font-size: 16px;
     line-height: 2;
+    margin-right: 18px;
   }
   .single-blog-area h5 {
     font-family: IranSans-Medium;
     font-size: 13px;
     line-height: 2;
+    margin-right: 18px;
   }
   .single-blog-area h6 {
     font-family: IranSans-Medium;
     font-size: 11px;
     line-height: 1;
+    margin-right: 18px;
+  }
+
+  @media only screen and (max-width: 575px) {
+    .single-blog-area p {
+      font-family: IranSans-UltraLight;
+      font-size: 14px;
+      text-indent: 22px;
+    }
+    .single-blog-area ul {
+      margin-right: 15px;
+    }
+    .single-blog-area ol {
+      margin-right: 40px;
+    }
+    .single-blog-area ul li {
+      font-family: IranSans-Medium;
+      font-size: 13px;
+      font-weight: 400;
+      list-style: inside;
+    }
+    .single-blog-area ol li {
+      font-family: IranSans-Medium;
+      font-size: 13px;
+      font-weight: 400;
+      list-style: inherit;
+    }
+
+    .single-blog-area h1 {
+      font-family: IranSans-Bold;
+      font-size: 23px;
+      line-height: 2;
+      margin-right: 18px;
+    }
+    .single-blog-area h2 {
+      font-family: IranSans-Bold;
+      font-size: 18px;
+      line-height: 2;
+      margin-right: 15px;
+    }
+    .single-blog-area h3 {
+      font-family: IranSans-Bold;
+      font-size: 16px;
+      line-height: 2;
+      margin-right: 15px;
+    }
+    .single-blog-area h4 {
+      font-family: IranSans-Medium;
+      font-size: 13px;
+      line-height: 1;
+      margin-right: 13px;
+    }
+    .single-blog-area h5 {
+      font-family: IranSans-Medium;
+      font-size: 10px;
+      line-height: 1;
+      margin-right: 15px;
+    }
+    .single-blog-area h6 {
+      font-family: IranSans-Medium;
+      font-size: 8px;
+      line-height: 1;
+      margin-right: 15px;
+    }
   }
 
   .single-blog-area .blog-post-thumbnail {
