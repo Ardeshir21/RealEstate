@@ -1623,12 +1623,16 @@ img {
 .single-blog-area {
   position: relative;
   z-index: 1;
-  text-align: right;}
+  text-align: justify;;}
 
   .single-blog-area p {
     font-family: IranSans-UltraLight;
     font-size: 17px;
     text-indent: 25px;
+  }
+  .single-blog-area p img {
+    position: relative;
+    left: 25px;
   }
   .single-blog-area ul {
     margin-right: 18px;
@@ -1648,7 +1652,6 @@ img {
     font-weight: 400;
     list-style: inherit;
   }
-
   .single-blog-area h1 {
     font-family: IranSans-Bold;
     font-size: 26px;
@@ -1690,7 +1693,11 @@ img {
     .single-blog-area p {
       font-family: IranSans-UltraLight;
       font-size: 14px;
-      text-indent: 22px;
+      text-indent: 21px;
+    }
+    .single-blog-area p img {
+      position: relative;
+      left: 21px;
     }
     .single-blog-area ul {
       margin-right: 15px;
