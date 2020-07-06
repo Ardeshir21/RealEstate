@@ -81,7 +81,6 @@ h6 {
   direction: rtl; }
 
 p {
-  color: #7d7d7d;
   font-size: 14px;
   direction: rtl;
   line-height: 2;
@@ -1623,29 +1622,55 @@ img {
 /* :: 20.0 Blog Area CSS */
 .single-blog-area {
   position: relative;
-  z-index: 1;}
+  z-index: 1;
+  text-align: right;}
 
   .single-blog-area p {
     font-family: IranSans-UltraLight;
     font-size: 17px;
-    text-align: right;
   }
-  .single-blog-area ol li, .single-blog-area h5, .single-blog-area h6{
+  .single-blog-area ul li {
     font-family: IranSans-Medium;
-    font-size: 20px;
-    text-align: right;
+    font-size: 16px;
+    font-weight: 400;
+    list-style: inside;
   }
+  .single-blog-area ol li {
+    font-family: IranSans-Medium;
+    font-size: 16px;
+    font-weight: 400;
+    list-style: inherit;
+  }
+
   .single-blog-area h1 {
     font-family: IranSans-Bold;
     font-size: 26px;
+    line-height: 3;
   }
   .single-blog-area h2 {
     font-family: IranSans-Bold;
-    font-size: 24px;
+    font-size: 21px;
+    line-height: 3;
   }
   .single-blog-area h3 {
     font-family: IranSans-Bold;
-    font-size: 20px;
+    font-size: 19px;
+    line-height: 3;
+  }
+  .single-blog-area h4 {
+    font-family: IranSans-Medium;
+    font-size: 16px;
+    line-height: 2;
+  }
+  .single-blog-area h5 {
+    font-family: IranSans-Medium;
+    font-size: 13px;
+    line-height: 2;
+  }
+  .single-blog-area h6 {
+    font-family: IranSans-Medium;
+    font-size: 11px;
+    line-height: 1;
   }
 
   .single-blog-area .blog-post-thumbnail {
