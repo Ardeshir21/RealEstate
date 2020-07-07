@@ -50,7 +50,7 @@
                                   {% endif %}
 
                                   {% if Qdetail.Qprices == "no filter" %}{% else %}
-                                    <h6 class="searchDetails font-line-height">بازه قیمت (دلار): <small>{% filter floatformat:"0"|intcomma %} {{Qdetail.Qprices.min}} {% endfilter %} &nbsp الی  &nbsp {% filter floatformat:"0"|intcomma %} {{Qdetail.Qprices.max}} {% endfilter %}</small></h6>
+                                    <h6 class="searchDetails font-line-height">بازه قیمت (لیر): <small>{% filter floatformat:"0"|intcomma %} {{Qdetail.Qprices.min}} {% endfilter %} &nbsp الی  &nbsp {% filter floatformat:"0"|intcomma %} {{Qdetail.Qprices.max}} {% endfilter %}</small></h6>
                                   {% endif %}
 
                                   {% if Qdetail.Qspace == "no filter" %}{% else %}

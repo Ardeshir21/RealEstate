@@ -49,7 +49,7 @@
                                   {% endif %}
 
                                   {% if Qdetail.Qprices == "no filter" %}{% else %}
-                                    <h6 class="searchDetails">Price Range ($):<small>{% filter floatformat:"0"|intcomma %} {{Qdetail.Qprices.min}} {% endfilter %} &nbsp to  &nbsp {% filter floatformat:"0"|intcomma %} {{Qdetail.Qprices.max}} {% endfilter %}</small></h6>
+                                    <h6 class="searchDetails">Price Range (TL):<small>{% filter floatformat:"0"|intcomma %} {{Qdetail.Qprices.min}} {% endfilter %} &nbsp to  &nbsp {% filter floatformat:"0"|intcomma %} {{Qdetail.Qprices.max}} {% endfilter %}</small></h6>
                                   {% endif %}
 
                                   {% if Qdetail.Qspace == "no filter" %}{% else %}

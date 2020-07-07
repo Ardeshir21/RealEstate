@@ -23,13 +23,13 @@
       <p>
         {% filter floatformat:"0"|intcomma %}
         {{property.price}}
-        {% endfilter %} دلار/ماه
+        {% endfilter %} لیر/ماه
       </p>
       {% else %}
       <p>
         {% filter floatformat:"0"|intcomma %}
         {{property.price}}
-        {% endfilter %} دلار
+        {% endfilter %} لیر
       </p>
       {% endif %}
     </div>

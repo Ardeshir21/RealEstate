@@ -23,13 +23,13 @@
       <p>
         {% filter floatformat:"0"|intcomma %}
         {{property.price}}
-        {% endfilter %} $/Month
+        {% endfilter %} TL/Month
       </p>
       {% else %}
       <p>
         {% filter floatformat:"0"|intcomma %}
         {{property.price}}
-        {% endfilter %} $
+        {% endfilter %} TL
       </p>
       {% endif %}
     </div>

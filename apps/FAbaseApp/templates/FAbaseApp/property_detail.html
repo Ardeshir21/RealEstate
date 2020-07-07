@@ -34,13 +34,13 @@
                               <p>
                                 {% filter floatformat:"0"|intcomma %}
                                     {{property.price}}
-                                {% endfilter %} دلار/ماه
+                                {% endfilter %} لیر/ماه
                               </p>
                             {% else %}
                               <p>
                                 {% filter floatformat:"0"|intcomma %}
                                     {{property.price}}
-                                {% endfilter %} دلار
+                                {% endfilter %} لیر
                               </p>
                             {% endif %}
                         </div>
@@ -170,7 +170,7 @@
                                                   <!-- Dues -->
                                                   <tr>
                                                       <td class="pt-name">شارژ ماهانه</td>
-                                                      <td class="p-value">{{property.dues}} دلار</td>
+                                                      <td class="p-value">{{property.dues}} لیر</td>
                                                   </tr>
                                               </tbody>
                                             </table>
@@ -183,13 +183,13 @@
                                                         <td class="p-value bold-text">
                                                           {% filter floatformat:"0"|intcomma %}
                                                               {{property.price}}
-                                                          {% endfilter %} دلار/ماه
+                                                          {% endfilter %} لیر/ماه
                                                         </td>
                                                       {% else %}
                                                         <td class="p-value bold-text">
                                                           {% filter floatformat:"0"|intcomma %}
                                                               {{property.price}}
-                                                          {% endfilter %} دلار
+                                                          {% endfilter %} لیر
                                                         </td>
                                                       {% endif %}
                                                   </tr>
@@ -390,7 +390,7 @@
 
                             <!-- Price Range -->
                             <div class="slider-range form-group">
-                              <p>بازه قیمت (دلار)</p>
+                              <p>بازه قیمت (لیر)</p>
                               <div id="slider_price" data-min={{priceRange.price__min}} data-max={{priceRange.price__max}}></div>
                               <input class="range-box-price" pattern="[0-9]" type="number" min={{priceRange.price__min}} max={{priceRange.price__max}} name="price_select" step="5000" id="input-price-min">
                               <label>-</label> <input class="range-box-price" pattern="[0-9]" type="number" min={{priceRange.price__min}} max={{priceRange.price__max}} name="price_select" step="5000" id="input-price-max">

@@ -43,13 +43,13 @@
                               <p>
                                 {% filter floatformat:"0"|intcomma %}
                                     {{property.price}}
-                                {% endfilter %} $/Month
+                                {% endfilter %} TL/Month
                               </p>
                             {% else %}
                               <p>
                                 {% filter floatformat:"0"|intcomma %}
                                     {{property.price}}
-                                {% endfilter %} $
+                                {% endfilter %} TL
                               </p>
                             {% endif %}
                         </div>
@@ -136,13 +136,13 @@
                                                           <td class="p-value bold-text">
                                                             {% filter floatformat:"0"|intcomma %}
                                                                 {{property.price}}
-                                                            {% endfilter %} $/Month
+                                                            {% endfilter %} TL/Month
                                                           </td>
                                                         {% else %}
                                                           <td class="p-value bold-text">
                                                             {% filter floatformat:"0"|intcomma %}
                                                                 {{property.price}}
-                                                            {% endfilter %} $
+                                                            {% endfilter %} TL
                                                           </td>
                                                         {% endif %}
                                                     </tr>
@@ -385,7 +385,7 @@
 
                             <!-- Price Range -->
                             <div class="slider-range form-group">
-                              <p>Price Range ($)</p>
+                              <p>Price Range (TL)</p>
                               <div id="slider_price" data-min={{priceRange.price__min}} data-max={{priceRange.price__max}}></div>
                               <input class="range-box-price" pattern="[0-9]" type="number" min={{priceRange.price__min}} max={{priceRange.price__max}} name="price_select" step="5000" id="input-price-min">
                               <label>-</label> <input class="range-box-price" pattern="[0-9]" type="number" min={{priceRange.price__min}} max={{priceRange.price__max}} name="price_select" step="5000" id="input-price-max">
