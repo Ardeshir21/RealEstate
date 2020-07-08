@@ -1789,7 +1789,7 @@ img {
           color: #aaa8a8;
           direction: rtl;
           text-align: right;
-          display: inline-block; }
+          }
           .single-blog-area .post-content .post-meta small {
               font-weight: 500;
               font-size: 12px;

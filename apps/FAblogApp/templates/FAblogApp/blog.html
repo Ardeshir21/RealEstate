@@ -37,7 +37,7 @@
                                 <p>22 فروردین 1399 |
                                    <small><i class="fa fa-eye"></i> {{post.view}}</small>
                                 </p>
-                                <p>By <a href="#">{{post.author}}</a> | در
+                                <p>نویسنده: <a href="#">{{post.author}}</a> | در
                                   {% for category in post.categories.all %}
                                     <a href="{% url 'FAblogApp:category_list' category=category.slug %}">{{category}}, </a>
                                   {% endfor %}
