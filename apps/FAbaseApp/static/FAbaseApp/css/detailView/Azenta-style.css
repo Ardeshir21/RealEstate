@@ -2880,15 +2880,24 @@
 		margin-bottom: 10px;
 	}
 	.pd-hero-text .room-features li {
-		margin-right: 16px;
+		margin-right: 5px;
 		margin-bottom: 10px;
 	}
 	.pd-hero-section {
-		padding-top: 160px;
+		padding-top: 170px;
 	}
-	.bd-hero-text h2 {
-		font-size: 30px;
-		line-height: 36px;
+	.pd-hero-text h2 {
+		font-size: 23px;
+		line-height: 26px;
+	}
+	.pd-hero-text .room-location i {
+		font-size: 21px;
+	}
+	.pd-hero-text .room-features li i {
+		font-size: 21px;
+	}
+	.pd-hero-text .room-features li p {
+		font-size: 13px;
 	}
 	.single-hero-item {
 		padding-top: 125px;
