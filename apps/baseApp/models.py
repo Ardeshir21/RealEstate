@@ -1,12 +1,15 @@
 from django.db import models
 from django.urls import reverse_lazy, reverse
 from ckeditor_uploader.fields import RichTextUploadingField
-# from django_google_maps import fields as map_fields
-
+from django.utils import timezone
 
 # Variables
 YES_NO_CHOICES = [(True, 'Yes'), (False, 'No')]
 
+LANGUAGE_LIST = [
+    ('EN',"English"),
+    ('FA',"Farsi")
+]
 
 ASSET_TYPES = [('FL', 'Flat'),
                 ('VI', 'Villa'),
@@ -39,7 +42,8 @@ PAGE_CHOICES = [('HOME', 'Homepage'),
                 ('BLOG_HOME', 'Blog Homepage'),
                 ('BLOG_SEARCH', 'Blog Search'),
                 ('BLOG_CATEGORY', 'Blog Categories'),
-                ('BLOG_POST', 'Blog Post')]
+                ('BLOG_POST', 'Blog Post'),
+                ('FAQ_PAGE', 'FAQ Page')]
 # Models
 class Country(models.Model):
 
@@ -196,14 +200,21 @@ class Asset(models.Model):
                                 help_text='Thumbnail Image 1600x1200')
     title = models.CharField(max_length=150, default='Comfortable Apartment')
     title_FA = models.CharField(max_length=150, default='آپارتمانی راحت', blank=True, null=True)
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
+    created = models.DateField(editable=False)
+    updated = models.DateField(editable=False, null=True)
 
     def __str__(self):
         return 'Reference: {}'.format(self.id)
 
     class Meta():
         ordering  = ['-created']
+
+    def save(self, *args, **kwargs):
+        ''' On save, update timestamps '''
+        if not self.id:
+            self.created = timezone.now()
+        self.updated = timezone.now()
+        return super(Asset, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
         return reverse('baseApp:propertyView', args=(self.id,))
@@ -229,3 +240,25 @@ class Slide(models.Model):
 
     def __str__(self):
             return self.title
+
+class FAQ(models.Model):
+    language = models.CharField(max_length=20, choices=LANGUAGE_LIST, default='EN')
+    question = models.CharField(max_length=300, unique=True)
+    answer = RichTextUploadingField(help_text='Full images can be 730px wide', null=True, blank=True)
+    active = models.BooleanField(choices=YES_NO_CHOICES, default=True)
+    created = models.DateField(editable=False)
+    updated = models.DateField(editable=False)
+
+    def __str__(self):
+            return self.question
+
+    class Meta():
+        verbose_name_plural = "FAQs"
+        ordering = ['created']
+
+    def save(self, *args, **kwargs):
+        ''' On save, update timestamps '''
+        if not self.id:
+            self.created = timezone.now()
+        self.updated = timezone.now()
+        return super(FAQ, self).save(*args, **kwargs)

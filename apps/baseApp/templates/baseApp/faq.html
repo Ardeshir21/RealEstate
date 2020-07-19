@@ -1,0 +1,93 @@
+{% extends "baseApp/base.html" %}
+{% load static %}
+{% load humanize %}
+{% load my_tags %}
+
+
+{% block head_title %}
+<!-- Title  -->
+<title>Gamma Turkey - Real Estate Agency | FAQ</title>
+<!-- Data Table -->
+<link rel="stylesheet" type="text/css" href="{% static "baseApp/DataTables/datatables.min.css" %}"/>
+{% endblock head_title %}
+
+<!-- The main content of the page -->
+{% block body_content %}
+
+  <!-- ##### WideImage Area Start ##### -->
+  {% include "baseApp/includes/wideImage.html" %}
+
+  <!-- {% for question in questions %}
+    <h5>{{question.question}}</h5>
+    <p>{{question.answer|safe}}</p>
+  {% endfor %} -->
+
+<div class="container">
+  <table id="example" class="display" style="width:100%">
+          <thead>
+              <tr>
+                  <th></th>
+                  <th>Name</th>
+                  <th>Position</th>
+                  <th>Office</th>
+                  <th>Salary</th>
+              </tr>
+          </thead>
+          <tbody>
+            <tr>
+                <td></td>
+                <td>Tiger Nixon</td>
+                <td>System Architect</td>
+                <td>Edinburgh</td>
+                <td>61</td>
+            </tr>
+          </tbody>
+    </table>
+</div>
+{% endblock body_content %}
+
+
+{% block body_JS %}
+  <!-- Data Tables -->
+  <script src="{% static "baseApp/DataTables/datatables.min.js" %}"></script>
+  <script type="text/javascript">
+  function format ( ) {
+      // `d` is the original data object for the row
+      return 'aksdjhkajdhkadjakjsd';
+  }
+  $(document).ready(function() {
+      var table = $('#example').DataTable( {
+          "columns": [
+              {
+                  "className":      'details-control',
+                  "orderable":      false,
+                  "data":           null,
+                  "defaultContent": ''
+              },
+              { "data": 'DDD' },
+              { "data": "SSS" },
+              { "data": "HHH" },
+              { "data": "TTT" }
+          ],
+          "order": [[1, 'asc']]
+      } );
+
+      // Add event listener for opening and closing details
+      $('#example tbody').on('click', 'td.details-control', function () {
+          var tr = $(this).closest('tr');
+          var row = table.row( tr );
+
+          if ( row.child.isShown() ) {
+              // This row is already open - close it
+              row.child.hide();
+              tr.removeClass('shown');
+          }
+          else {
+              // Open this row
+              row.child( format() ).show();
+              tr.addClass('shown');
+          }
+      } );
+  } );
+  </script>
+{% endblock body_JS %}

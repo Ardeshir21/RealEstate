@@ -274,7 +274,9 @@ class AssetSingleView(generic.edit.FormMixin, generic.DetailView):
             return self.form_invalid(form)
 
     def form_valid(self, form):
+        # This for success message. See Django Documentation
         messages.add_message(self.request, messages.INFO, 'Hello world.')
+        # This is a custom function in forms.py
         form.send_email(current_url=self.request.build_absolute_uri())
         return super(AssetSingleView, self).form_valid(form)
 
@@ -310,6 +312,22 @@ def error_500(request):
         data = {}
         # The html file should be in templates folder not the subfolders
         return render(request,'baseApp/500.html', data)
+
+# FAQ - faq.html
+class FAQView(generic.ListView):
+    context_object_name = 'questions'
+    queryset = models.FAQ.objects.filter(language='EN').order_by('-created')
+    template_name = 'baseApp/faq.html'
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Append extraContext
+        context.update(get_extra_context())
+        context['slideContent'] = models.Slide.objects.get(useFor__exact='FAQ_PAGE', active__exact=True)
+        context['pageTitle'] = 'FAQ'
+        return context
+
 # FORMS are here
 # from . import forms
 

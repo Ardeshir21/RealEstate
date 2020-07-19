@@ -14,6 +14,7 @@ urlpatterns = [
     path('properties/', views.AssetFilterView.as_view(), name='properties'),
     path('properties/<int:pk>/', views.AssetSingleView.as_view(), name='propertyView'),
     path('about-us/', views.ContactView.as_view(), name='about_us'),
+    path('FAQ/', views.FAQView.as_view(), name='faq'),
 
     # This is for sitemap.xml
     path('RealSiteMap.xml', sitemap, {'sitemaps': sitemaps_dict},
