@@ -263,6 +263,7 @@ class AssetSingleView(generic.edit.FormMixin, generic.DetailView):
     context_object_name = 'property'
     template_name = 'FAbaseApp/property_detail.html'
     model = models.Asset
+    
     # This is for Form
     form_class = forms.ContactForm
     def get_success_url(self):
@@ -307,8 +308,8 @@ class ContactView(generic.edit.FormView):
 
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.
-        # It should return an HttpResponse.
-        form.send_email()
+        # current_url = resolve(request.path_info).url_name
+        form.send_email(current_url=self.request.build_absolute_uri())
         return super().form_valid(form)
 
     # Calls get_form() and adds the result to the context data with the name ‘form’.
