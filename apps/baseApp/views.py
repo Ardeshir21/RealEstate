@@ -277,6 +277,7 @@ class AssetSingleView(generic.edit.FormMixin, generic.DetailView):
         # This for success message. See Django Documentation
         messages.add_message(self.request, messages.INFO, 'Hello world.')
         # This is a custom function in forms.py
+        # It may also work:      current_url = resolve(request.path_info).url_name
         form.send_email(current_url=self.request.build_absolute_uri())
         return super(AssetSingleView, self).form_valid(form)
 
@@ -288,8 +289,8 @@ class ContactView(generic.edit.FormView):
 
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.
-        # It should return an HttpResponse.
-        form.send_email()
+        # current_url = resolve(request.path_info).url_name
+        form.send_email(current_url=self.request.build_absolute_uri())
         return super().form_valid(form)
 
     # Calls get_form() and adds the result to the context data with the name ‘form’.
