@@ -263,7 +263,7 @@ class AssetSingleView(generic.edit.FormMixin, generic.DetailView):
     context_object_name = 'property'
     template_name = 'FAbaseApp/property_detail.html'
     model = models.Asset
-    
+
     # This is for Form
     form_class = forms.ContactForm
     def get_success_url(self):
@@ -304,7 +304,7 @@ class AssetSingleView(generic.edit.FormMixin, generic.DetailView):
 class ContactView(generic.edit.FormView):
     template_name = 'FAbaseApp/about_us.html'
     form_class = forms.ContactForm
-    success_url = reverse_lazy('FAbaseApp:index')
+    success_url = reverse_lazy('FAbaseApp:about_us') 
 
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.

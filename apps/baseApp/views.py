@@ -285,7 +285,7 @@ class AssetSingleView(generic.edit.FormMixin, generic.DetailView):
 class ContactView(generic.edit.FormView):
     template_name = 'baseApp/about_us.html'
     form_class = forms.ContactForm
-    success_url = reverse_lazy('baseApp:index')
+    success_url = reverse_lazy('baseApp:about_us')
 
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.
