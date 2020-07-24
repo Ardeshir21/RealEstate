@@ -45,6 +45,6 @@ ___________________________________________
 تیم مشاورین گاما
 https://www.gammaturkey.com
 '''
-        message_edited = message_edited.format(name, current_url, name,client_phone, client_email, message)
+        message_edited = message_edited.format(name, current_url, name, client_phone, client_email, message)
         send_mail(mail_subject, message_edited, 'contact@gammaturkey.com', recipients)
         pass

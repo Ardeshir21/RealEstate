@@ -134,3 +134,118 @@
     <!-- ##### Editor Area End ##### -->
 
 {% endblock body_content %}
+
+
+{% block body_JS %}
+  <!-- Region selection buttons for Search area -->
+  <script type="text/javascript">
+
+        $(function () {
+            $('.button-checkbox').each(function () {
+
+                // Settings
+                var $widget = $(this),
+                    $button = $widget.find('button'),
+                    $checkbox = $widget.find('input:checkbox'),
+                    color = $button.data('color'),
+                    settings = {
+                        on: {
+                            icon: 'glyphicon glyphicon-check'
+                        },
+                        off: {
+                            icon: 'glyphicon glyphicon-unchecked'
+                        }
+                    };
+
+                // Event Handlers
+                $button.on('click', function () {
+                    $checkbox.prop('checked', !$checkbox.is(':checked'));
+                    $checkbox.triggerHandler('change');
+                    updateDisplay();
+                });
+                $checkbox.on('change', function () {
+                    updateDisplay();
+                });
+
+                // Actions
+                function updateDisplay() {
+                    var isChecked = $checkbox.is(':checked');
+
+                    // Set the button's state
+                    $button.data('state', (isChecked) ? "on" : "off");
+
+                    // Set the button's icon
+                    $button.find('.state-icon')
+                        .removeClass()
+                        .addClass('state-icon ' + settings[$button.data('state')].icon);
+
+                    // Update the button's color
+                    if (isChecked) {
+                        $button
+                            .removeClass('btn-default')
+                            .addClass('btn-' + color + ' active');
+                    }
+                    else {
+                        $button
+                            .removeClass('btn-' + color + ' active')
+                            .addClass('btn-default');
+                    }
+                }
+
+                // Initialization
+                function init() {
+
+                    updateDisplay();
+
+                    // Inject the icon if applicable
+                    if ($button.find('.state-icon').length == 0) {
+                        $button.prepend('<i class="state-icon ' + settings[$button.data('state')].icon + '"></i> ');
+                    }
+                }
+                init();
+            });
+        });
+  // </script>
+  <!-- Menu with checkbox for Search area -->
+  <script src="{% static "baseApp/js/jquery.sumoselect.js" %}"></script>
+  <script type="text/javascript">
+      $(document).ready(function () {
+          window.asd = $('.SlectBox').SumoSelect({ csvDispCount: 3, selectAll:true, captionFormatAllSelected: "Yeah, OK, so everything." });
+          window.test = $('.testsel').SumoSelect({okCancelInMulti:true, captionFormatAllSelected: "Yeah, OK, so everything." });
+
+          window.testSelAll = $('.testSelAll').SumoSelect({okCancelInMulti:true, selectAll:true });
+
+          window.testSelAll2 = $('.testSelAll2').SumoSelect({selectAll:true});
+
+          window.testSelAlld = $('.SlectBox-grp').SumoSelect({okCancelInMulti:true, selectAll:true, isClickAwayOk:true });
+
+          window.sb = $('.SlectBox-grp-src').SumoSelect({ csvDispCount: 3, search: true, searchText:'Enter here.', selectAll:true });
+          window.searchSelAll = $('.search-box-sel-all').SumoSelect({ csvDispCount: 3, selectAll:true, search: true, searchText:'Enter here.', okCancelInMulti:true });
+          window.searchSelAll = $('.search-box-open-up').SumoSelect({ csvDispCount: 3, selectAll:true, search: false, searchText:'Enter here.', up:true });
+          window.Search = $('.search-box-custom-fn').SumoSelect({ csvDispCount: 3, search: true, searchText:'Enter here.', searchFn: function(haystack, needle) {
+            var re = RegExp('^' + needle.replace(/([^\w\d])/gi, '\\$1'), 'i');
+            return !haystack.match(re);
+          } });
+
+          window.groups_eg_g = $('.groups_eg_g').SumoSelect({selectAll:true, search:true });
+
+
+          $('.SlectBox').on('sumo:opened', function(o) {
+            console.log("dropdown opened", o)
+          });
+
+      });
+  </script>
+  <!-- This is for search area button to remove empty GET request items before submitting -->
+  <script type="text/javascript">
+  $("#advancedButton").click(function(){
+      $("input").each(function(){
+          if($(this).val() == '') {
+              $(this).remove();
+          }
+      });
+      $("#advanceSearch").submit();
+  });
+</script>
+
+{% endblock body_JS %}
