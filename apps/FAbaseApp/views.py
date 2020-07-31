@@ -44,7 +44,7 @@ def get_extra_context():
         # Apartments Unqiue names
         'apartments': models.Complex.objects.all(),
         # Default page for FAQ section.
-        'navbar_FAQ': 'همه'
+        'navbar_FAQ': 'all'
         }
     return extraContext
 
@@ -331,18 +331,13 @@ class FAQCategoryView(generic.ListView):
     context_object_name = 'questions'
     model = models.FAQ
     template_name = 'FAbaseApp/faq-category.html'
-    paginate_by = 15
 
     def get_queryset(self, **kwargs):
         result = super(FAQCategoryView, self).get_queryset()
 
-        if self.kwargs['category'] == 'همه':
-            result= result.filter(language='FA', active=True).order_by('-created')
-            return result
-        else:
-            # Categories -- For filtering based on the categories
-            result= result.filter(language='FA', categories__slug=self.kwargs['category'], active=True).order_by('-created')
-            return result
+        # Categories -- For filtering based on the categories
+        result= result.filter(language='FA', categories__slug=self.kwargs['category'], active=True).order_by('-created')
+        return result
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -351,19 +346,16 @@ class FAQCategoryView(generic.ListView):
         context.update(get_extra_context())
 
         # Get current category Model Object
-        if self.kwargs['category'] == 'همه': # for showing ALl questions
-            context['slideContent'] = models.Slide.objects.get(useFor__exact='FAQ_SEARCH', active__exact=True)
-            context['FAQCategory'] = 'تمام پرسش ها'
-
-        else: # for showing current category questions
-            currentFAQ_catergory = models.FAQCategories.objects.get(slug=self.kwargs['category'])
-            context['FAQCategory'] = currentFAQ_catergory.category
-            context['slideContent'] = currentFAQ_catergory
-
+        context['slideContent'] = models.Slide.objects.get(useFor__exact='FAQ_PAGE', active__exact=True)
         context['pageTitle'] = ''
         # All category objects filtered by Language
         context['all_categories'] = models.FAQCategories.objects.filter(category_lang='FA')
         return context
+
+    # This is for AJAX call
+    def post(self, request, *args, **kwargs):
+        questions_query = self.get_queryset()
+        return render(request, 'FAbaseApp/includes/questions.html', {'questions': questions_query})
 
 class FAQSearch(generic.ListView):
     context_object_name = 'questions'

@@ -1,14 +1,20 @@
+<!-- This template the same as blogApp/searchResult, but without its static files -->
 {% extends "FAbaseApp/base.html" %}
 {% load static %}
 {% load humanize %}
 {% load my_tags %}
 
 
-
 {% block head_title %}
 <!-- Title  -->
-<title> سرمایه گذاری گاما - پرسش های متداول</title>
+<title>مشاور سرمایه گذاری گاما - راهنمای ترکیه</title>
 {% endblock head_title %}
+
+{% block head %}
+<!-- load stylesheets -->
+<link rel="stylesheet" href="{% static "baseApp/css/templatemo-style.css" %}">
+{% endblock head %}
+
 
 
 
@@ -16,89 +22,64 @@
 
   <!-- ##### WideImage Area Start ##### -->
   <!-- Add category specific picture using Views.py for this part -->
-  {% include "FAbaseApp/includes/wideImage.html" %}
+  {% include "baseApp/includes/wideImage.html" %}
 
-  <!-- Results -->
+
   <section class="south-blog-area section-padding-100">
-      <div class="container">
-          <!-- FAQ -->
-          <div class="row">
-              <!-- Results Column -->
-              <div class="col-12 col-lg-8">
-                <div class="page-wrapper">
-                    <div class="blog-list clearfix">
-                      <!-- Result Count and Sort Button -->
-                      <div class="col-sm mb-50">
-                          <h1 style="text-align: center;">{{FAQCategory}}</h1>
-                      </div>
+          <div class="tm-page-wrap mx-auto">
+              <div class="tm-container-outer" id="tm-section-3">
+                  <ul class="nav nav-pills tm-tabs-links">
+                    {% for category in all_categories %}
+                      <li class="tm-tab-link-li" id='categories-list'>
+                          <a href="#C{{category.slug}}" id={{category.slug}} data-toggle="tab" class="tm-tab-link">
+                              <i class="{{category.icon_code}} .img-fluid big-icon"></i>
+                              {{category.category}}
+                          </a>
+                      </li>
+                    {% endfor %}
+                  </ul>
 
-                      <div class="mb-20" id="accordion" role="tablist" aria-multiselectable="true">
-                        {% for question in questions %}
-                                <!-- single accordian area -->
-                                <div class="panel single-accordion">
-                                    <!-- Title -->
-                                    <h6><a role="button" class="collapsed" aria-expanded="false" aria-controls="{{question.id}}" data-toggle="collapse" data-parent="#accordion" href="#{{question.id}}">{{question.question}}
-                                            <span class="accor-open"><i class="fa fa-plus" aria-hidden="true"></i></span>
-                                            <span class="accor-close"><i class="fa fa-minus" aria-hidden="true"></i></span>
-                                        </a>
-                                    </h6>
-                                    <!-- Content -->
-                                    <div id="{{question.id}}" class="accordion-content collapse">
-                                        <p>
-                                          {{question.answer|safe}}
-                                        </p>
-                                    </div>
-                                </div>
-                        {% endfor %}
+                  <!-- Contents -->
+                  <div class="tab-content">
+                      <!-- Single TAB -->
+                    {% for category in all_categories %}
+                      <div class="tab-pane fade" id="C{{category.slug}}">
+                          <div class="tm-recommended-place-wrap" id='{{category.slug}}-questions'>
+                            <!-- Questions -->
+                            <!-- This part is loaded via AJAX and includes/questions.html -->
+                          </div>
                       </div>
-                    </div><!-- end blog-list -->
-                </div><!-- end page-wrapper -->
-              </div>
-              <!-- Side Bar -->
-              <div class="col-12 col-lg-4">
-                <div class="blog-sidebar-area">
-                  <!-- Search Widget -->
-                  <div class="search-widget-area mb-70 ml-30">
-                      <form action="{% url 'FAbaseApp:faq_search' %}" method="GET">
-                          <input type="search" name="s" id="search" placeholder="جستجوی کلید واژه">
-                          <button type="submit"><i class="fa fa-search"></i></button>
-                      </form>
-                  </div>
-                  <!-- Catagories Widget -->
-                  <div class="south-catagories-card mb-70 ml-30">
-                      <h5>دسته بندی</h5>
-                      <ul class="catagories-menu">
-                        {% for category in all_categories %}
-                          <li><a href="{% url 'FAbaseApp:faq' category=category.slug %}">{{category.category}}</a></li>
-                        {% endfor %}
-                      </ul>
-                  </div>
-                  <!-- Featured Properties -->
-                  <div class="featured-properties-slides owl-carousel">
-                    {% for property in featuredProperties %}
-                      <!-- Single Property Thumbnail -->
-                          {% include "FAbaseApp/includes/singlePropertyThumbnail.html" %}
                     {% endfor %}
                   </div>
-                </div>
               </div>
           </div>
-          <!-- Paginate  -->
-          {% include "FAbaseApp/includes/paginator.html" %}
-      </div>
   </section>
 {% endblock body_content %}
 
-
 {% block body_JS %}
-<!-- Change the style of selected category link -->
-<script type="text/javascript">
-    $(document).ready(function() {
-      $(".catagories-menu [href]").each(function() {
-          if (this.href == window.location.href) {
-              $(this).addClass("selected");
-          }
-      });
-    });
-</script>
+    <script type="text/javascript">
+        $('#categories-list a').on('click', function(){
+          var currentCategoryID= $(this).attr('id');
+
+          $.ajax({
+              type:"POST",
+              url: '/FAQ/' + currentCategoryID + '/',
+              data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+              },
+              success: function(data){
+                $('#'+currentCategoryID+'-questions').html(data);
+
+                // Change id for accordions in way that the become unique
+                $.each($('.single-accordion'), function(){
+                  var oldQuestionID = $(this).find('a').attr('aria-controls');
+                  var newQuestionID = oldQuestionID + '-' + currentCategoryID;
+                  $(this).find('#single-question').attr('aria-controls', newQuestionID);
+                  $(this).find('#single-question').attr('href', '#' + newQuestionID);
+                  $(this).find('.accordion-content').attr('id', newQuestionID);
+                });
+              }
+           });
+        });
+    </script>
 {% endblock body_JS %}

@@ -314,7 +314,6 @@ class FAQCategoryView(generic.ListView):
     context_object_name = 'questions'
     model = models.FAQ
     template_name = 'baseApp/faq-category.html'
-    paginate_by = 15
 
     def get_queryset(self, **kwargs):
         result = super(FAQCategoryView, self).get_queryset()
@@ -330,15 +329,7 @@ class FAQCategoryView(generic.ListView):
         context.update(get_extra_context())
 
         # Get current category Model Object
-        # if self.kwargs['category'] == 'all': # for showing ALl questions
         context['slideContent'] = models.Slide.objects.get(useFor__exact='FAQ_PAGE', active__exact=True)
-        context['FAQCategory'] = 'All Questions'
-
-        # else: # for showing current category questions
-        #     currentFAQ_catergory = models.FAQCategories.objects.get(slug=self.kwargs['category'])
-        #     context['FAQCategory'] = currentFAQ_catergory.category
-        #     context['slideContent'] = currentFAQ_catergory
-
         context['pageTitle'] = ''
         # All category objects filtered by Language
         context['all_categories'] = models.FAQCategories.objects.filter(category_lang='EN')
