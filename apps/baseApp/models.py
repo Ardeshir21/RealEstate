@@ -43,7 +43,8 @@ PAGE_CHOICES = [('HOME', 'Homepage'),
                 ('BLOG_SEARCH', 'Blog Search'),
                 ('BLOG_CATEGORY', 'Blog Categories'),
                 ('BLOG_POST', 'Blog Post'),
-                ('FAQ_PAGE', 'FAQ Page')]
+                ('FAQ_PAGE', 'FAQ Page'),
+                ('FAQ_SEARCH', 'FAQ Search')]
 # Models
 class Country(models.Model):
 
@@ -154,7 +155,6 @@ class Distance(models.Model):
     class Meta():
         verbose_name_plural = "Distances"
 
-
 class AssetFeatures(models.Model):
     features = models.CharField(max_length=150, unique=True)
     features_FA = models.CharField(max_length=150, unique=True, null=True, blank=True)
@@ -172,7 +172,6 @@ class Bedroom(models.Model):
 
     def __str__(self):
         return self.description
-
 
 class Asset(models.Model):
     complex = models.ForeignKey(Complex, related_name='complexes', on_delete=models.CASCADE)
@@ -229,7 +228,6 @@ class AssetImages(models.Model):
         verbose_name_plural = "Asset Images"
         ordering = ['display_order']
 
-
 class Slide(models.Model):
     image = models.ImageField(upload_to='baseApp/slider/', blank=True, null=True,
                                 help_text='Slider Image 1920x1280')
@@ -241,8 +239,30 @@ class Slide(models.Model):
     def __str__(self):
             return self.title
 
+class FAQCategories(models.Model):
+    category = models.CharField(max_length=100, unique=True)
+    category_lang = models.CharField(max_length=10, choices=LANGUAGE_LIST, default='EN')
+    icon_code = models.CharField(max_length=100, blank=True, null=True)
+    slug = models.SlugField(max_length=150, unique=True, blank=True, null=True, allow_unicode=True,
+                                help_text="The name of the page as it will appear in URLs e.g http://domain.com/FAQ/[category-slug]/")
+    class Meta():
+        verbose_name_plural = "FAQ Categories"
+        ordering = ['category']
+
+    def __str__(self):
+        return self.category
+
+    def save(self, *args, **kwargs):
+        ##### Because of FA language I use the blogApp/Admin.py to make slug.
+        # self.slug = slugify(self.category)
+        return super(FAQCategories, self).save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse('baseApp:faq', args=[self.slug])
+
 class FAQ(models.Model):
     language = models.CharField(max_length=20, choices=LANGUAGE_LIST, default='EN')
+    categories = models.ManyToManyField(FAQCategories, related_name='categories', null=True)
     question = models.CharField(max_length=300, unique=True)
     answer = RichTextUploadingField(help_text='Full images can be 730px wide', null=True, blank=True)
     active = models.BooleanField(choices=YES_NO_CHOICES, default=True)

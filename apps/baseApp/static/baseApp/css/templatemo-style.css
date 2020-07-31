@@ -1,0 +1,129 @@
+/*
+
+Journey Template
+http://www.templatemo.com/tm-511-journey
+
+Primary color (light blue)  : #69c6ba
+Highlight color (pink)		: #c66995
+--------------------------------------
+
+*/
+body {
+	font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+	font-size: 13px;
+	font-weight: 300;
+    background: #e6e6e6;
+}
+
+a, button { transition: all 0.3s ease; }
+a:hover,
+a:focus {
+	text-decoration: none;
+	outline: none;
+}
+
+p:last-child { margin-bottom: 0; }
+
+.tm-page-wrap {
+    max-width: 1400px;
+}
+
+.tm-container-outer {
+    max-width: 1400px;
+    margin: 0 auto;
+		padding-bottom: 50px;
+}
+
+.tm-content-box { box-shadow: 0 0 3px rgba(0, 0, 0, 0.15); }
+
+
+.btn-primary {
+    background: #69c6ba;
+    border: none;
+    border-radius: 0;
+    outline: none;
+}
+
+/* Tabs */
+.tm-tabs-links {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: stretch;
+    -webkit-align-items: stretch;
+    -ms-flex-align: stretch;
+    align-items: stretch;
+    -webkit-box-pack: space-evenly;
+    -webkit-justify-content: space-evenly;
+    -ms-flex-pack: space-evenly;
+    justify-content: space-evenly;
+    background: #69c6ba;
+}
+
+.tm-tab-link {
+    padding: 30px 25px;
+    text-align: center;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    text-transform: uppercase;
+    color: white;
+    font-weight: 400;
+    font-size: 0.9rem;
+    height: 100%;
+}
+
+.tm-tab-link:hover { color: white; }
+
+.tm-tab-link-li {
+    background: transparent;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 1 auto;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    transition: all 0.3s ease;
+}
+.tm-tab-link-li a {
+	background-color: var(--forSale-tag-color);
+}
+.tm-tab-link.active,
+.tm-tab-link:hover {
+	background: var(--main-color);
+}
+
+.tab-pane {
+    max-width: 1250px;
+    margin: 60px auto;
+}
+
+.tab-content{
+	margin: 0px 20px 0px 20px;
+}
+
+.big-icon{
+	font-size: 55px;
+	margin-bottom: 5px;
+}
+@media screen and (max-width: 1080px) {
+    .tm-tab-link-li { width: 25%; }
+}
+
+@media screen and (max-width: 576px){
+			.tm-tab-link-li a { font-size: 10px;}
+			.big-icon {font-size: 35px;}
+}

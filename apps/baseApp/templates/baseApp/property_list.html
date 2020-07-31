@@ -37,15 +37,15 @@
                                 <div class="col-12 col-lg-12">
                                   <!-- These IFs are for not showing the empty requests -->
                                   {% if Qdetail.QdealType == "no filter" %}{% else %}
-                                    <h6 class="searchDetails">Deal Type: <small>{{Qdetail.QdealType}}</small></h6>
+                                    <h6 class="searchDetails">Deal Type: <small style="text-transform: capitalize;">{{Qdetail.QdealType}}</small></h6>
                                   {% endif %}
 
                                   {% if Qdetail.Qregions == "no filter" %}{% else %}
-                                    <h6 class="searchDetails">Regions: {% for r in Qdetail.Qregions %} <small>{{r}}</small> {% endfor %}</h6>
+                                    <h6 class="searchDetails">Regions: {% for r in Qdetail.Qregions %} <small style="text-transform: capitalize;">{{r}}</small> {% endfor %}</h6>
                                   {% endif %}
 
                                   {% if Qdetail.QpropertyTypes == "no filter" %}{% else %}
-                                    <h6 class="searchDetails">Property Type: {% for p in Qdetail.QpropertyTypes %}<small>{{p}}</small>{% endfor %}</h6>
+                                    <h6 class="searchDetails">Property Type: {% for p in Qdetail.QpropertyTypes %}<small style="text-transform: capitalize;">{{p}}</small>{% endfor %}</h6>
                                   {% endif %}
 
                                   {% if Qdetail.Qprices == "no filter" %}{% else %}
@@ -57,7 +57,7 @@
                                   {% endif %}
 
                                   {% if Qdetail.Qroom == "no filter" %}{% else %}
-                                    <h6 class="searchDetails">Number of Bedrooms: {% for r in Qdetail.Qroom %} <small>{{r}}</small> {% endfor %}</h6>
+                                    <h6 class="searchDetails">Number of Bedrooms: {% for r in Qdetail.Qroom %} <small style="text-transform: capitalize;">{{r}}</small> {% endfor %}</h6>
                                   {% endif %}
 
                                 </div>

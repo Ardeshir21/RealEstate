@@ -14,7 +14,12 @@ urlpatterns = [
     path('properties/', views.AssetFilterView.as_view(), name='properties'),
     path('properties/<int:pk>/', views.AssetSingleView.as_view(), name='propertyView'),
     path('about-us/', views.ContactView.as_view(), name='about_us'),
-    path('FAQ/', views.FAQView.as_view(), name='faq'),
+    path('FAQ/<slug:category>/', views.FAQCategoryView.as_view(), name='faq'),
+    path('FAQsearch/', views.FAQSearch.as_view(), name='faq_search'),
+
+
+    # AJAX test
+    path('ajaxtest/', views.AJAX_TEST.as_view(), name='ajax_test'),
 
     # This is for sitemap.xml
     path('RealSiteMap.xml', sitemap, {'sitemaps': sitemaps_dict},

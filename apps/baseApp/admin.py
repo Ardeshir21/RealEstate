@@ -6,7 +6,7 @@ from .models import (Country, City, Region,
                     ComplexFeatures,
                     Bedroom,
                     Asset, AssetImages, AssetFeatures,
-                    FAQ,
+                    FAQ, FAQCategories,
                     Slide)
 
 
@@ -19,7 +19,6 @@ class AssetImagesInline(admin.TabularInline):
     # formfield_overrides = {
     #     models.ImageField: {'widget': forms.ClearableFileInput(attrs={'multiple': True})},
     # }
-
 
 class AssetAdmin(admin.ModelAdmin):
 
@@ -52,11 +51,6 @@ class AssetImagesAdmin(admin.ModelAdmin):
 class DistanceInline(admin.TabularInline):
     model = Distance
 
-class FAQAdmin(admin.ModelAdmin):
-    list_display = ['id', 'question', 'active']
-    list_editable = ['active']
-    search_fields = ['question']
-
 class ComplexAdmin(admin.ModelAdmin):
     formfield_overrides = {
         models.ManyToManyField: {'widget': forms.CheckboxSelectMultiple(attrs={'multiple': True})},
@@ -66,6 +60,21 @@ class ComplexAdmin(admin.ModelAdmin):
     inlines = [
         DistanceInline,
     ]
+
+
+class FAQAdmin(admin.ModelAdmin):
+    list_display = ['id', 'question', 'active']
+    list_editable = ['active']
+    search_fields = ['question']
+
+    # Using Widgets
+    formfield_overrides = {
+        models.ManyToManyField: {'widget': forms.CheckboxSelectMultiple(attrs={'multiple': True})},
+    }
+
+class FAQCategoriesAdmin(admin.ModelAdmin):
+    list_display = ['id', 'category', 'slug']
+    prepopulated_fields = {"slug": ("category",)}
 
 
 
@@ -78,6 +87,7 @@ admin.site.register(Location)
 admin.site.register(Asset, AssetAdmin)
 admin.site.register(FAQ, FAQAdmin)
 admin.site.register(Slide, SlideAdmin)
+admin.site.register(FAQCategories, FAQCategoriesAdmin)
 # admin.site.register(AssetImages, AssetImagesAdmin)
 # admin.site.register(Distance)
 # admin.site.register(Bedroom)

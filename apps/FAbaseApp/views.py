@@ -42,7 +42,9 @@ def get_extra_context():
         # Blog models for FA Posts
         'blogPosts': blogAppModel.Post.objects.filter(status=True, language='FA', featured=True),
         # Apartments Unqiue names
-        'apartments': models.Complex.objects.all()
+        'apartments': models.Complex.objects.all(),
+        # Default page for FAQ section.
+        'navbar_FAQ': 'همه'
         }
     return extraContext
 
@@ -304,7 +306,7 @@ class AssetSingleView(generic.edit.FormMixin, generic.DetailView):
 class ContactView(generic.edit.FormView):
     template_name = 'FAbaseApp/about_us.html'
     form_class = forms.ContactForm
-    success_url = reverse_lazy('FAbaseApp:about_us') 
+    success_url = reverse_lazy('FAbaseApp:about_us')
 
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.
@@ -320,4 +322,76 @@ class ContactView(generic.edit.FormView):
         context.update(get_extra_context())
         context['slideContent'] = models.Slide.objects.get(useFor__exact='PROPERTY_PAGE', active__exact=True)
         context['pageTitle'] = 'درباره ما'
+        return context
+
+# FAQ - faq-category.html
+# The FAQ part has only a List of questions per category. There is no detail view for each question.
+class FAQCategoryView(generic.ListView):
+
+    context_object_name = 'questions'
+    model = models.FAQ
+    template_name = 'FAbaseApp/faq-category.html'
+    paginate_by = 15
+
+    def get_queryset(self, **kwargs):
+        result = super(FAQCategoryView, self).get_queryset()
+
+        if self.kwargs['category'] == 'همه':
+            result= result.filter(language='FA', active=True).order_by('-created')
+            return result
+        else:
+            # Categories -- For filtering based on the categories
+            result= result.filter(language='FA', categories__slug=self.kwargs['category'], active=True).order_by('-created')
+            return result
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Append extraContext
+        context.update(get_extra_context())
+
+        # Get current category Model Object
+        if self.kwargs['category'] == 'همه': # for showing ALl questions
+            context['slideContent'] = models.Slide.objects.get(useFor__exact='FAQ_SEARCH', active__exact=True)
+            context['FAQCategory'] = 'تمام پرسش ها'
+
+        else: # for showing current category questions
+            currentFAQ_catergory = models.FAQCategories.objects.get(slug=self.kwargs['category'])
+            context['FAQCategory'] = currentFAQ_catergory.category
+            context['slideContent'] = currentFAQ_catergory
+
+        context['pageTitle'] = ''
+        # All category objects filtered by Language
+        context['all_categories'] = models.FAQCategories.objects.filter(category_lang='FA')
+        return context
+
+class FAQSearch(generic.ListView):
+    context_object_name = 'questions'
+    template_name = 'FAbaseApp/faq-category.html'
+    model = models.FAQ
+    paginate_by = 15
+
+    def get_queryset(self, **kwargs):
+        result = super(FAQSearch, self).get_queryset()
+
+        # Get the GET content >>> name='s'
+        keyword = self.request.GET.get('s')
+        if not(keyword==None or keyword==''):
+            # Content Search -- For filtering based on the Text Search
+            result= result.filter(Q(question__icontains=keyword) | Q(answer__icontains=keyword), language='FA', active=True).order_by('-created')
+
+        return result
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Append extraContext
+        context.update(get_extra_context())
+
+        # Get current category Model Object
+        context['slideContent'] = models.Slide.objects.get(useFor__exact='FAQ_SEARCH', active__exact=True)
+        context['pageTitle'] = 'جستجوی پرسش ها'
+        context['FAQCategory'] = 'نتیجه جستجوی: «{}»'.format(self.request.GET.get('s'))
+        # All category objects filtered by Language
+        context['all_categories'] = models.FAQCategories.objects.filter(category_lang='FA')
         return context

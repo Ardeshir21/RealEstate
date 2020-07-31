@@ -5,7 +5,9 @@ from apps.blogApp import models as blogAppModel
 from django.db.models import Max, Min, Q
 from django.contrib import messages
 from django.urls import reverse_lazy, reverse
-
+from django.http import HttpResponse, JsonResponse
+from django.core import serializers
+import json
 
 
 # Here is the Extra Context ditionary which is used in get_context_data of Views classes
@@ -24,7 +26,9 @@ def get_extra_context():
         # Blog models with EN language filter
         'blogPosts': blogAppModel.Post.objects.filter(status=True, language='EN', featured=True),
         # Apartments Unqiue names
-        'apartments': models.Complex.objects.all()
+        'apartments': models.Complex.objects.all(),
+        # Default page for FAQ section.
+        'navbar_FAQ': 'all'
         }
     return extraContext
 
@@ -303,6 +307,84 @@ class ContactView(generic.edit.FormView):
         context['pageTitle'] = 'ABOUT US'
         return context
 
+# FAQ - faq-category.html
+# The FAQ part has only a List of questions per category.
+class FAQCategoryView(generic.ListView):
+
+    context_object_name = 'questions'
+    model = models.FAQ
+    template_name = 'baseApp/faq-category.html'
+    paginate_by = 15
+
+    def get_queryset(self, **kwargs):
+        result = super(FAQCategoryView, self).get_queryset()
+
+        # Categories -- For filtering based on the categories
+        result= result.filter(language='EN', categories__slug=self.kwargs['category'], active=True).order_by('-created')
+        return result
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Append extraContext
+        context.update(get_extra_context())
+
+        # Get current category Model Object
+        # if self.kwargs['category'] == 'all': # for showing ALl questions
+        context['slideContent'] = models.Slide.objects.get(useFor__exact='FAQ_SEARCH', active__exact=True)
+        context['FAQCategory'] = 'All Questions'
+
+        # else: # for showing current category questions
+        #     currentFAQ_catergory = models.FAQCategories.objects.get(slug=self.kwargs['category'])
+        #     context['FAQCategory'] = currentFAQ_catergory.category
+        #     context['slideContent'] = currentFAQ_catergory
+
+        context['pageTitle'] = ''
+        # All category objects filtered by Language
+        context['all_categories'] = models.FAQCategories.objects.filter(category_lang='EN')
+        return context
+
+    # This is for AJAX call
+    def post(self, request, *args, **kwargs):
+        questions_query = self.get_queryset()
+        return render(request, 'baseApp/includes/questions.html', {'questions': questions_query})
+
+class FAQSearch(generic.ListView):
+    context_object_name = 'questions'
+    template_name = 'baseApp/faq-category.html'
+    model = models.FAQ
+    paginate_by = 15
+
+    def get_queryset(self, **kwargs):
+        result = super(FAQSearch, self).get_queryset()
+
+        # Get the GET content >>> name='s'
+        keyword = self.request.GET.get('s')
+        if not(keyword==None or keyword==''):
+            # Content Search -- For filtering based on the Text Search
+            result= result.filter(Q(question__icontains=keyword) | Q(answer__icontains=keyword), language='EN', active=True).order_by('-created')
+
+        return result
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Append extraContext
+        context.update(get_extra_context())
+
+        # Get current category Model Object
+        context['slideContent'] = models.Slide.objects.get(useFor__exact='FAQ_SEARCH', active__exact=True)
+        context['pageTitle'] = 'SEARCH FAQ'
+        context['FAQCategory'] = 'Search Result for: "{}"'.format(self.request.GET.get('s'))
+        # All category objects filtered by Language
+        context['all_categories'] = models.FAQCategories.objects.filter(category_lang='EN')
+        return context
+
+# AJAX TEST
+class AJAX_TEST(generic.TemplateView):
+    template_name = 'baseApp/AJAX-test.html'
+
+
 # Error Pages
 def error_404(request, exception):
         data = {}
@@ -313,22 +395,6 @@ def error_500(request):
         data = {}
         # The html file should be in templates folder not the subfolders
         return render(request,'baseApp/500.html', data)
-
-# FAQ - faq.html
-class FAQView(generic.ListView):
-    context_object_name = 'questions'
-    queryset = models.FAQ.objects.filter(language='EN').order_by('-created')
-    template_name = 'baseApp/faq.html'
-
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
-        context = super().get_context_data(**kwargs)
-        # Append extraContext
-        context.update(get_extra_context())
-        context['slideContent'] = models.Slide.objects.get(useFor__exact='FAQ_PAGE', active__exact=True)
-        context['pageTitle'] = 'FAQ'
-        return context
-
 # FORMS are here
 # from . import forms
 

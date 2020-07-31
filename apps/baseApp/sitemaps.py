@@ -17,7 +17,7 @@ class StaticSitemap(Sitemap):
 # Asset sitemap EN
 class AssetSitemap(Sitemap):
     changefreq = "daily"
-    priority = 0.9
+    priority = 0.7
     protocol = 'https'
 
     def items(self):
@@ -29,7 +29,7 @@ class AssetSitemap(Sitemap):
 # Asset sitemap FA
 class AssetFaSitemap(Sitemap):
     changefreq = "daily"
-    priority = 0.9
+    priority = 0.7
     protocol = 'https'
 
     def items(self):
@@ -40,3 +40,30 @@ class AssetFaSitemap(Sitemap):
 
     def location(self, item):
         return reverse('FAbaseApp:propertyView', args=(item.id,))
+
+# Posts EN
+class PostSitemap(Sitemap):
+    changefreq = "weekly"
+    priority = 0.8
+    protocol = 'https'
+
+    def items(self):
+        return Post.objects.all()
+
+    def lastmod(self, item):
+        return item.updated_on
+
+# Posts EN
+class PostSitemap(Sitemap):
+    changefreq = "weekly"
+    priority = 0.8
+    protocol = 'https'
+
+    def items(self):
+        return Post.objects.all()
+
+    def lastmod(self, item):
+        return item.updated_on
+
+    def location(self, item):
+        return reverse('FAblogApp:post_detail', args=(item.slug,))

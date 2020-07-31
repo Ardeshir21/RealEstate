@@ -948,6 +948,11 @@ img {
       display: none; }
 
 /* :: 11.0 Single Property Area CSS */
+.catagories-menu .selected{
+  font-family: IranSans-Medium;
+  border-bottom: 1px dotted;
+}
+
 .single-featured-property {
   position: relative;
   z-index: 1;

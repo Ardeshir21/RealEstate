@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>AJAX TEST PAGE</title>
+  </head>
+  <body>
+
+    <h1>Welcome to AJAX practice!</h1>
+
+    <form class="" action="" method="post">
+      <button type="button" id='all' name="button">Click Me 1</button>
+      <button type="button" id='investment-and-property' name="button">Click Me 2</button>
+    </form>
+
+    <div class="question-part">
+      <!-- The content of this div is loaded via AJAX from includes/questions.html -->
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
+
+
+    <script type="text/javascript">
+        $('button').on('click', function(){
+          var currentID= $(this).attr('id');
+          console.log(currentID);
+
+          $.ajax({
+              type:"POST",
+              url: '/FAQ/' + currentID + '/',
+              data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+              },
+              success: function(data){
+                // console.log(data)
+                $('.question-part').html(data);
+                }
+           });
+        });
+    </script>
+
+
+
+  </body>
+</html>

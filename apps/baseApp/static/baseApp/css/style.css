@@ -1822,6 +1822,18 @@ img {
     margin-bottom: 100px; } }
 
 /* :: 21.0 Contact Area CSS */
+.catagories-menu .selected{
+  font-weight: 700;
+  border-bottom: 1px dotted;
+}
+
+.external-btn {
+  position: relative;
+  right: 30px;
+  top: 38px;
+}
+
+
 .contact-heading {
   margin-bottom: 90px; }
   .contact-heading h6 {
@@ -1872,23 +1884,21 @@ img {
   background-color: #ffffff;
   border: 0 solid transparent;
   border-radius: 4px;
-  box-shadow: 0 0 0 transparent;
-  margin-bottom: 15px; }
+  box-shadow: 0 0 0 transparent;}
 .single-accordion:last-of-type {
   margin-bottom: 0; }
 .single-accordion h6 {
   margin-bottom: 0;
-  text-transform: uppercase; }
+ }
   .single-accordion h6 a {
     background-color: var(--main-color);
     border-radius: 0;
     color: #ffffff;
     display: block;
-    margin: 0;
     padding: 15px 60px 15px 15px;
+    margin-bottom: 10px;
     position: relative;
     font-size: 14px;
-    text-transform: uppercase;
     font-weight: 500;
     border: 2px solid transparent; }
     .single-accordion h6 a span {
@@ -1904,7 +1914,9 @@ img {
     .single-accordion h6 a.collapsed {
       border: 2px solid var(--main-color);
       background-color: transparent;
-      color: #000000; }
+      color: #000000;
+      margin-bottom: 10px;
+      }
       .single-accordion h6 a.collapsed span.accor-close {
         opacity: 0;
         -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
@@ -1915,10 +1927,28 @@ img {
         filter: alpha(opacity=100); }
 .single-accordion .accordion-content {
   border-top: 0 solid transparent;
-  box-shadow: none; }
+  box-shadow: none;
+  margin-bottom: 12px;}
   .single-accordion .accordion-content p {
     padding: 20px 15px 5px;
     margin-bottom: 0; }
+  .single-accordion .accordion-content a {
+    /* These are technically the same, but use both */
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+
+    -ms-word-break: break-all;
+    /* This is the dangerous one in WebKit, as it breaks things wherever */
+    word-break: break-all;
+    /* Instead use this non-standard one: */
+    word-break: break-word;
+
+    /* Adds a hyphen where the word breaks, if supported (No Blink) */
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+  }
 
     .single-accordion .accordion-content .searchDetails small{
       margin-left: 10px;

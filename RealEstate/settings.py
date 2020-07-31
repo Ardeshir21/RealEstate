@@ -46,7 +46,7 @@ SECRET_KEY = secrets_dict['SECRET_KEY']
 DEBUG = bool(secrets_dict['DEBUG'])
 
 # This helps to get the errors even if the DEBUG is False
-DEBUG_PROPAGATE_EXCEPTIONS = True
+# DEBUG_PROPAGATE_EXCEPTIONS = True
 
 ALLOWED_HOSTS = ['161.35.103.31',
                  'localhost',
@@ -86,8 +86,6 @@ INSTALLED_APPS = [
     # for models Text editor
     'ckeditor',
     'ckeditor_uploader',
-    # for Google Map and Address Fields
-    'django_google_maps',
     # for scss files usage
     'compressor',
     # for debug analysis
@@ -229,9 +227,6 @@ MEDIA_URL = '/media/'
 # The root for uploaded files using CKeditor
 CKEDITOR_UPLOAD_PATH = "uploads/"
 CKEDITOR_RESTRICT_BY_DATE = False
-
-# GOOGLE MAP API
-GOOGLE_MAPS_API_KEY = ''
 
 # CKeditor configurations
 CKEDITOR_CONFIGS = {
