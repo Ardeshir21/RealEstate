@@ -331,7 +331,7 @@ class FAQCategoryView(generic.ListView):
 
         # Get current category Model Object
         # if self.kwargs['category'] == 'all': # for showing ALl questions
-        context['slideContent'] = models.Slide.objects.get(useFor__exact='FAQ_SEARCH', active__exact=True)
+        context['slideContent'] = models.Slide.objects.get(useFor__exact='FAQ_PAGE', active__exact=True)
         context['FAQCategory'] = 'All Questions'
 
         # else: # for showing current category questions
