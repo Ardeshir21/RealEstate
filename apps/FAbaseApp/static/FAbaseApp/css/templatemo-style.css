@@ -97,6 +97,8 @@ p:last-child { margin-bottom: 0; }
 }
 .tm-tab-link-li a {
 	background-color: var(--forSale-tag-color);
+  font-family: IranSans-Bold;
+  font-size: 16px;
 }
 .tm-tab-link.active,
 .tm-tab-link:hover {
@@ -121,6 +123,6 @@ p:last-child { margin-bottom: 0; }
 }
 
 @media screen and (max-width: 576px){
-			.tm-tab-link-li a { font-size: 10px;}
+			.tm-tab-link-li a { font-size: 11px;}
 			.big-icon {font-size: 35px;}
 }

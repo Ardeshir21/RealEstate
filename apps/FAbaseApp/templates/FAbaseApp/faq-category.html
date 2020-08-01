@@ -12,7 +12,7 @@
 
 {% block head %}
 <!-- load stylesheets -->
-<link rel="stylesheet" href="{% static "baseApp/css/templatemo-style.css" %}">
+<link rel="stylesheet" href="{% static "FAbaseApp/css/templatemo-style.css" %}">
 {% endblock head %}
 
 
@@ -22,7 +22,7 @@
 
   <!-- ##### WideImage Area Start ##### -->
   <!-- Add category specific picture using Views.py for this part -->
-  {% include "baseApp/includes/wideImage.html" %}
+  {% include "FAbaseApp/includes/wideImage.html" %}
 
 
   <section class="south-blog-area section-padding-100">
@@ -63,7 +63,7 @@
 
           $.ajax({
               type:"POST",
-              url: '/FAQ/' + currentCategoryID + '/',
+              url: '/fa/FAQ/' + currentCategoryID + '/',
               data: {
                 'csrfmiddlewaretoken': '{{ csrf_token }}'
               },
