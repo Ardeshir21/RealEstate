@@ -2114,10 +2114,15 @@ img {
   border-top: 0 solid transparent;
   box-shadow: none;
   text-align: right;}
-  .single-accordion .accordion-content p {
+  .single-accordion .accordion-content p,
+  .single-accordion .accordion-content h1, .single-accordion .accordion-content h2,
+  .single-accordion .accordion-content h3, .single-accordion .accordion-content h4,
+  .single-accordion .accordion-content h5, .single-accordion .accordion-content h6 {
     padding: 20px 15px 5px;
     margin-bottom: 0; }
-
+    .single-accordion .accordion-content a {
+      padding: 5px 5px 5px;
+      margin-bottom: 0; }
     .single-accordion .accordion-content .searchDetails small{
       margin-left: 10px;
       color: var(--main-color);
