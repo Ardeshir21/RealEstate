@@ -1638,6 +1638,8 @@ img {
   .single-blog-area p img {
     position: relative;
     left: 25px;
+    margin-top: 25px;
+    margin-bottom: 25px;
   }
   .single-blog-area ul {
     margin-right: 18px;
@@ -1662,6 +1664,8 @@ img {
     font-size: 26px;
     line-height: 3;
     margin-right: 18px;
+    margin-bottom: 35px;
+    margin-top: 35px;
   }
   .single-blog-area h2 {
     font-family: IranSans-Bold;
@@ -1694,7 +1698,7 @@ img {
     margin-right: 18px;
   }
 
-  @media only screen and (max-width: 575px) {
+@media only screen and (max-width: 575px) {
     .single-blog-area p {
       font-family: IranSans-UltraLight;
       font-size: 14px;
@@ -1703,6 +1707,8 @@ img {
     .single-blog-area p img {
       position: relative;
       left: 21px;
+      margin-top: 15px;
+      margin-bottom: 15px;
     }
     .single-blog-area ul {
       margin-right: 15px;
@@ -1728,6 +1734,8 @@ img {
       font-size: 23px;
       line-height: 2;
       margin-right: 18px;
+      margin-top: 25px;
+      margin-bottom: 25px;
     }
     .single-blog-area h2 {
       font-family: IranSans-Bold;
