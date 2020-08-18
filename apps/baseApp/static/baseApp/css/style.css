@@ -1719,6 +1719,10 @@ img {
   z-index: 1;
   overflow-x: hidden; }
 
+.single-accordion .accordion-content li {
+  list-style: disc;
+}
+
 .blog-sidebar-area .featured-properties-slides {
   position: relative;
   z-index: 1; }
