@@ -81,7 +81,7 @@ class FAQCategoriesSitemap(Sitemap):
 # FAQ FA
 class FAQCategoriesFaSitemap(Sitemap):
     changefreq = "weekly"
-    priority = 0.7
+    priority = 0.9
     protocol = 'https'
 
     def items(self):
