@@ -7,6 +7,10 @@ app_name = 'baseApp'
 sitemaps_dict = {'Static_sitemap': sitemaps.StaticSitemap,
                 'Asset_sitemap': sitemaps.AssetSitemap,
                 'AssetFa_sitemap': sitemaps.AssetFaSitemap,
+                'Post_sitemap': sitemaps.PostSitemap,
+                'PostFa_sitemap': sitemaps.PostFaSitemap,
+                'FAQ_sitemap': sitemaps.FAQCategoriesSitemap,
+                'FAQFa_sitemap': sitemaps.FAQCategoriesFaSitemap
                 }
 
 urlpatterns = [
