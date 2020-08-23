@@ -1615,7 +1615,8 @@ img {
       margin-bottom: 5px; }
       .single-blog-area .post-content .post-meta p {
         color: #aaa8a8;
-        font-size: 12px; }
+        font-size: 12px;
+        text-indent: 0px;}
         .single-blog-area .post-content .post-meta p a {
           font-size: 12px;
           color: #aaa8a8;
