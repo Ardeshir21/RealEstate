@@ -1634,6 +1634,7 @@ img {
     font-family: IranSans-UltraLight;
     font-size: 17px;
     text-indent: 25px;
+    margin-bottom: 1rem;
   }
   .single-blog-area p img {
     position: relative;
@@ -1643,9 +1644,11 @@ img {
   }
   .single-blog-area ul {
     margin-right: 40px;
+    margin-bottom: 1rem;
   }
   .single-blog-area ol {
     margin-right: 45px;
+    margin-bottom: 1rem;
   }
   .single-blog-area ul li {
     font-family: IranSans-Medium;
