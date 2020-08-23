@@ -46,11 +46,13 @@
 @import url(/static/baseApp/css/bootstrap.min.css);
 @import url(/static/baseApp/css/animate.css);
 @import url(/static/baseApp/css/owl.carousel.css);
-@import url(/static/baseApp/css/classy-nav.min.css);
 @import url(/static/baseApp/css/magnific-popup.css);
 @import url(/static/baseApp/css/font-awesome.min.css);
 @import url(/static/baseApp/css/jquery-ui.min.css);
 @import url(/static/baseApp/css/bootstrap-toggle.css);
+
+/* FA CSS Files --- read them from FAbaseApp */
+@import url(/static/FAbaseApp/css/classy-nav.min.css);
 
 /* :: 3.0 Base CSS */
 /* This Part is for setting the main color theme for whole project */
@@ -583,7 +585,8 @@ img {
     font-weight: 400;
     font-size: 16px;
     font-family: IranSans-Medium;
-    direction: rtl;}
+    direction: rtl;
+    text-align: right;}
     .main-header-area .classynav ul li a:hover{
       color: var(--forSale-tag-color);
     }
