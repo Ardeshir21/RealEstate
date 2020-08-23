@@ -1642,7 +1642,7 @@ img {
     margin-bottom: 25px;
   }
   .single-blog-area ul {
-    margin-right: 18px;
+    margin-right: 40px;
   }
   .single-blog-area ol {
     margin-right: 45px;
@@ -1650,8 +1650,7 @@ img {
   .single-blog-area ul li {
     font-family: IranSans-Medium;
     font-size: 16px;
-    font-weight: 400;
-    list-style: inside;
+    list-style: disc;
   }
   .single-blog-area ol li {
     font-family: IranSans-Medium;
@@ -1699,7 +1698,6 @@ img {
   }
 
   .single-blog-area blockquote {
-    /* Negate theme styles */
     border: 0;
     margin: 50px;
     padding: 0;

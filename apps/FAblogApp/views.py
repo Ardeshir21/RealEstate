@@ -17,7 +17,7 @@ from django.db.models import Q
 def get_extra_context():
     extraContext = {
         'featuredProperties': baseAppModel.Asset.objects.filter(featured=True),
-        'categories': models.PostCategories.objects.filter(category_lang='FA'),
+        'blogCategories': models.PostCategories.objects.filter(category_lang='FA'),
         # Default page for FAQ section.
         'navbar_FAQ': 'all'
         }

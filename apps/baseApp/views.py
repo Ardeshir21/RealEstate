@@ -23,8 +23,10 @@ def get_extra_context():
         'priceRange': models.Asset.objects.aggregate(Min('price'), Max('price')),
         # Featured part of the page
         'featuredProperties': models.Asset.objects.filter(featured=True),
-        # Blog models with EN language filter
+        # Blog models with EN language and being Featured filter
         'blogPosts': blogAppModel.Post.objects.filter(status=True, language='EN', featured=True),
+        # Blog Categories with EN language filter
+        'blogCategories': blogAppModel.PostCategories.objects.filter(category_lang='EN'),
         # Apartments Unqiue names
         'apartments': models.Complex.objects.all(),
         # Default page for FAQ section.
@@ -335,7 +337,7 @@ class FAQCategoryView(generic.ListView):
         context['all_categories'] = models.FAQCategories.objects.filter(category_lang='EN')
         return context
 
-    # This is for AJAX call
+    # This is for AJAX call -- We ignore using AJAX because of Google Crawling and SEO
     def post(self, request, *args, **kwargs):
         questions_query = self.get_queryset()
         return render(request, 'baseApp/includes/questions.html', {'questions': questions_query})

@@ -1628,8 +1628,71 @@ img {
       margin-bottom: 0px; }
 
 
+        .single-blog-area p {
+          font-size: 15px;
+          text-indent: 25px;
+          font-weight: normal;
+        }
+        .single-blog-area p img {
+          position: relative;
+          left: 25px;
+          margin-top: 25px;
+          margin-bottom: 25px;
+        }
+        .single-blog-area ul {
+          margin-left: 40px;
+          color: #7d7d7d;
+        }
+        .single-blog-area ol {
+          margin-right: 45px;
+          color: #7d7d7d;
+        }
+        .single-blog-area ul li {
+          font-size: 16px;
+          font-weight: 400;
+          list-style: disc;
+          color: #7d7d7d;
+        }
+        .single-blog-area ol li {
+          font-size: 16px;
+          font-weight: 400;
+          list-style: inherit;
+          color: #7d7d7d;
+        }
+        .single-blog-area h1 {
+          font-size: 26px;
+          line-height: 3;
+          margin-right: 18px;
+          margin-bottom: 35px;
+          margin-top: 35px;
+        }
+        .single-blog-area h2 {
+          font-size: 21px;
+          line-height: 3;
+          margin-right: 18px;
+        }
+        .single-blog-area h3 {
+          font-size: 19px;
+          line-height: 3;
+          margin-right: 18px;
+        }
+        .single-blog-area h4 {
+          font-size: 16px;
+          line-height: 2;
+          margin-right: 18px;
+        }
+        .single-blog-area h5 {
+          font-size: 13px;
+          line-height: 2;
+          margin-right: 18px;
+        }
+        .single-blog-area h6 {
+          font-size: 11px;
+          line-height: 1;
+          margin-right: 18px;
+        }
+
   .single-blog-area blockquote {
-    /* Negate theme styles */
     border: 0;
     margin: 50px;
     padding: 0;

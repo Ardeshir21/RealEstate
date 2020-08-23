@@ -113,7 +113,13 @@
                                 <li><a href="{% url "baseApp:about_us" %}">About Us</a></li>
                                 <li><a href="{% url "baseApp:properties" %}">Properties</a></li>
                                 <li><a href="{% url "baseApp:faq" category=navbar_FAQ %}">FAQ</a></li>
-                                <li><a href="{% url "blogApp:all_posts" %}">Blog</a></li>
+                                <li><a href="{% url "blogApp:all_posts" %}">Blog</a>
+                                  <ul class="dropdown">
+                                    {% for category in blogCategories %}
+                                      <li><a href="{% url "blogApp:category_list" category=category.slug %}">{{category.category}}</a></li>
+                                    {% endfor %}
+                                  </ul>
+                                </li>
                                 <!-- <li><a href="#">Mega Menu</a>
                                     <div class="megamenu">
                                         <ul class="single-mega cn-col-4">
