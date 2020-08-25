@@ -354,7 +354,7 @@ class FAQCategoryView(generic.ListView):
         context['all_categories'] = models.FAQCategories.objects.filter(category_lang='FA')
         return context
 
-    # This is for AJAX call
+    # This is for AJAX call -- We ignore using AJAX because of Google Crawling and SEO
     def post(self, request, *args, **kwargs):
         questions_query = self.get_queryset()
         return render(request, 'FAbaseApp/includes/questions.html', {'questions': questions_query})

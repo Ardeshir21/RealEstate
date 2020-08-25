@@ -1787,6 +1787,7 @@ img {
 
 .single-accordion .accordion-content li {
   list-style: disc;
+  margin-left: 65px;
 }
 
 .blog-sidebar-area .featured-properties-slides {
@@ -2051,9 +2052,9 @@ img {
 .single-accordion .accordion-content {
   border-top: 0 solid transparent;
   box-shadow: none;
+  padding: 35px;
   margin-bottom: 12px;}
   .single-accordion .accordion-content p {
-    padding: 20px 15px 5px;
     margin-bottom: 0; }
   .single-accordion .accordion-content a {
     /* These are technically the same, but use both */

@@ -1,17 +1,19 @@
+<!-- The id in each tag should be the same in order to link them together.
+Here we use "category" + "question ID" to make them unique.  -->
 
 <div class="mb-20" id="accordion" role="tablist" aria-multiselectable="true">
   {% for question in questions %}
           <!-- single accordian area -->
           <div class="panel single-accordion">
               <!-- Title -->
-              <h6><a role="button" id='single-question' class="collapsed" aria-expanded="false" aria-controls="{{question.id}}" data-toggle="collapse" data-parent="#accordion" href="#{{question.id}}">{{question.question}}
+              <h6><a role="button" id='single-question' class="collapsed" aria-expanded="false" aria-controls="{{category.slug}}-{{question.id}}" data-toggle="collapse" data-parent="#accordion" href="#{{category.slug}}-{{question.id}}">{{question.question}}
                       <span class="accor-open"><i class="fa fa-plus" aria-hidden="true"></i></span>
                       <span class="accor-close"><i class="fa fa-minus" aria-hidden="true"></i></span>
                   </a>
               </h6>
               <!-- Content -->
               <!-- The {{category.slug}} is used for making the id unique. It's value comes from another for loop in main HTMLs.  -->
-              <div id="{{question.id}}" class="accordion-content collapse">
+              <div id="{{category.slug}}-{{question.id}}" class="accordion-content collapse">
                   <p>
                     {{question.answer|safe}}
                   </p>
