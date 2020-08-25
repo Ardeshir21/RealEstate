@@ -1,0 +1,120 @@
+<!-- This template the same as blogApp/searchResult, but without its static files -->
+{% extends "baseApp/base.html" %}
+{% load static %}
+{% load humanize %}
+{% load my_tags %}
+
+
+{% block head_title %}
+<!-- Title  -->
+<title>Gamma Turkey - Real Estate Agency | FAQ</title>
+{% endblock head_title %}
+
+{% block head %}
+<!-- load stylesheets -->
+<link rel="stylesheet" href="{% static "baseApp/css/templatemo-style.css" %}">
+{% endblock head %}
+
+
+
+
+{% block body_content %}
+
+  <!-- ##### WideImage Area Start ##### -->
+  <!-- Add category specific picture using Views.py for this part -->
+  {% include "baseApp/includes/wideImage.html" %}
+
+
+  <section class="south-blog-area section-padding-100">
+          <div class="tm-page-wrap mx-auto">
+              <div class="tm-container-outer" id="tm-section-3">
+                  <ul class="nav nav-pills tm-tabs-links">
+                    {% for category in all_categories %}
+                      <li class="tm-tab-link-li" id='categories-list'>
+                          <a href="#C{{category.slug}}" id={{category.slug}} data-toggle="tab" class="tm-tab-link">
+                              <i class="{{category.icon_code}} .img-fluid big-icon"></i>
+                              {{category.category}}
+                          </a>
+                      </li>
+                    {% endfor %}
+                  </ul>
+
+                  <!-- Contents -->
+                  <div class="tab-content">
+                      <!-- Single TAB -->
+                    {% for category in all_categories %}
+                      <div class="tab-pane fade" id="C{{category.slug}}">
+                          <div class="tm-recommended-place-wrap" id='{{category.slug}}-questions'>
+                            <!-- Questions -->
+                            <!-- This part is loaded via AJAX and includes/questions.html -->
+                          </div>
+                      </div>
+                    {% endfor %}
+                  </div>
+              </div>
+          </div>
+  </section>
+{% endblock body_content %}
+
+{% block body_JS %}
+    <script type="text/javascript">
+        // This is for AJAX call when the specific page loaded
+        // $('#categories-list a').on('click', function(){
+        //   var currentCategoryID= $(this).attr('id');
+        $(document).ready(function(){
+          var currentCategoryID= window.location.href.split('/')[4];
+
+          $.ajax({
+              type:"POST",
+              url: '/FAQ/' + currentCategoryID + '/',
+              data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+              },
+              success: function(data){
+                $('#'+currentCategoryID+'-questions').html(data);
+
+                // Change id for accordions in way that the become unique
+                $.each($('.single-accordion'), function(){
+                  var oldQuestionID = $(this).find('a').attr('aria-controls');
+                  var newQuestionID = oldQuestionID + '-' + currentCategoryID;
+                  $(this).find('#single-question').attr('aria-controls', newQuestionID);
+                  $(this).find('#single-question').attr('href', '#' + newQuestionID);
+                  $(this).find('.accordion-content').attr('id', newQuestionID);
+                });
+              }
+           });
+        });
+
+        // This function activate the current category based on the current SLUG
+        var currentSlug = window.location.href.split('/')[4];
+        console.log(currentSlug)
+        $('#' + currentSlug).addClass("active show");
+        $('#C' + currentSlug).addClass("active show");
+
+        // This is for AJAX call when categories are clicked
+        $('#categories-list a').on('click', function(){
+          var currentCategoryID= $(this).attr('id');
+
+          $.ajax({
+              type:"POST",
+              url: '/FAQ/' + currentCategoryID + '/',
+              data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+              },
+              success: function(data){
+                $('#'+currentCategoryID+'-questions').html(data);
+
+                // Change id for accordions in way that the become unique
+                $.each($('.single-accordion'), function(){
+                  var oldQuestionID = $(this).find('a').attr('aria-controls');
+                  var newQuestionID = oldQuestionID + '-' + currentCategoryID;
+                  $(this).find('#single-question').attr('aria-controls', newQuestionID);
+                  $(this).find('#single-question').attr('href', '#' + newQuestionID);
+                  $(this).find('.accordion-content').attr('id', newQuestionID);
+                });
+              }
+           });
+        });
+    </script>
+
+{% endblock body_JS %}

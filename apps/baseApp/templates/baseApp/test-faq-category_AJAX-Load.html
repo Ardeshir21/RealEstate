@@ -58,7 +58,9 @@
 
 {% block body_JS %}
     <script type="text/javascript">
-        $('#categories-list a').on('click', function(){
+
+      $(window).ready(function(){
+        $.each($('#categories-list a'), function(){
           var currentCategoryID= $(this).attr('id');
 
           $.ajax({
@@ -78,8 +80,17 @@
                   $(this).find('#single-question').attr('href', '#' + newQuestionID);
                   $(this).find('.accordion-content').attr('id', newQuestionID);
                 });
-              }
-           });
-        });
+              } // success end
+           }); // AJAX ending
+         }); // Each end
+       }); // Ready end
     </script>
+
+    <!-- This function activate the current category based on the current SLUG -->
+    <script type="text/javascript">
+      var currentSlug = window.location.href.split('/')[4];
+      console.log(currentSlug[4])
+      $('#' + currentSlug).addClass("active show");
+    </script>
+
 {% endblock body_JS %}

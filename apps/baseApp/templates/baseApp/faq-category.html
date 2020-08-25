@@ -25,13 +25,13 @@
   {% include "baseApp/includes/wideImage.html" %}
 
 
-  <section class="south-blog-area section-padding-100">
+  <section id="CategoryArea" class="south-blog-area section-padding-100">
           <div class="tm-page-wrap mx-auto">
               <div class="tm-container-outer" id="tm-section-3">
                   <ul class="nav nav-pills tm-tabs-links">
                     {% for category in all_categories %}
                       <li class="tm-tab-link-li" id='categories-list'>
-                          <a href="#C{{category.slug}}" id={{category.slug}} data-toggle="tab" class="tm-tab-link">
+                          <a href="{% url "baseApp:faq" category=category.slug %}#CategoryArea" id={{category.slug}} class="tm-tab-link">
                               <i class="{{category.icon_code}} .img-fluid big-icon"></i>
                               {{category.category}}
                           </a>
@@ -46,7 +46,7 @@
                       <div class="tab-pane fade" id="C{{category.slug}}">
                           <div class="tm-recommended-place-wrap" id='{{category.slug}}-questions'>
                             <!-- Questions -->
-                            <!-- This part is loaded via AJAX and includes/questions.html -->
+                            {% include "baseApp/includes/questions.html" %}
                           </div>
                       </div>
                     {% endfor %}
@@ -57,34 +57,12 @@
 {% endblock body_content %}
 
 {% block body_JS %}
-    <script type="text/javascript">
-
-      $(window).ready(function(){
-        $.each($('#categories-list a'), function(){
-          var currentCategoryID= $(this).attr('id');
-
-          $.ajax({
-              type:"POST",
-              url: '/FAQ/' + currentCategoryID + '/',
-              data: {
-                'csrfmiddlewaretoken': '{{ csrf_token }}'
-              },
-              success: function(data){
-                $('#'+currentCategoryID+'-questions').html(data);
-
-                // Change id for accordions in way that the become unique
-                $.each($('.single-accordion'), function(){
-                  var oldQuestionID = $(this).find('a').attr('aria-controls');
-                  var newQuestionID = oldQuestionID + '-' + currentCategoryID;
-                  $(this).find('#single-question').attr('aria-controls', newQuestionID);
-                  $(this).find('#single-question').attr('href', '#' + newQuestionID);
-                  $(this).find('.accordion-content').attr('id', newQuestionID);
-                });
-              } // success end
-           }); // AJAX ending
-         }); // Each end
-       }); // Ready end
-    </script>
-
+  <script type="text/javascript">
+      // This function activate the current category based on the current SLUG
+      var currentSlug = window.location.href.split('/')[4];
+      console.log(currentSlug)
+      $('#' + currentSlug).addClass("active show");
+      $('#C' + currentSlug).addClass("active show");
+  </script>
 
 {% endblock body_JS %}

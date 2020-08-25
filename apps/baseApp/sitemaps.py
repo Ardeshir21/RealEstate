@@ -44,7 +44,7 @@ class AssetFaSitemap(Sitemap):
 
 # Posts EN
 class PostSitemap(Sitemap):
-    changefreq = "weekly"
+    changefreq = "daily"
     priority = 0.7
     protocol = 'https'
 
@@ -56,7 +56,7 @@ class PostSitemap(Sitemap):
 
 # Posts FA
 class PostFaSitemap(Sitemap):
-    changefreq = "weekly"
+    changefreq = "daily"
     priority = 0.7
     protocol = 'https'
 
@@ -71,7 +71,7 @@ class PostFaSitemap(Sitemap):
 
 # FAQ EN
 class FAQCategoriesSitemap(Sitemap):
-    changefreq = "weekly"
+    changefreq = "daily"
     priority = 0.9
     protocol = 'https'
 
@@ -80,7 +80,7 @@ class FAQCategoriesSitemap(Sitemap):
 
 # FAQ FA
 class FAQCategoriesFaSitemap(Sitemap):
-    changefreq = "weekly"
+    changefreq = "daily"
     priority = 0.9
     protocol = 'https'
 
