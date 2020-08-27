@@ -54,7 +54,7 @@ class CategoryListView(generic.ListView):
         context.update(get_extra_context())
 
         # This title is different for this view
-        context['slideContent'] = baseAppModel.Slide.objects.get(useFor__exact='BLOG_CATEGORY', active__exact=True)
+        context['slideContent'] = models.PostCategories.objects.get(slug=self.kwargs['category'])
         context['pageTitle'] = models.PostCategories.objects.get(slug=self.kwargs['category']).category
         # result counte
         context['resultCount'] = len(self.get_queryset())
@@ -77,8 +77,9 @@ class PostDetail(generic.DetailView):
         # Append shared extraContext
         context.update(get_extra_context())
 
-        # This title is different for this view
-        context['slideContent'] = baseAppModel.Slide.objects.get(useFor__exact='BLOG_POST', active__exact=True)
+        # This view have no pageTitle
+        # Get the first PostCategories object of the current post 
+        context['slideContent'] = self.get_object().categories.first()
 
         return context
 

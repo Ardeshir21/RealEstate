@@ -22,6 +22,8 @@ FEATURED_STATUS = [
 class PostCategories(models.Model):
     category = models.CharField(max_length=100, unique=True)
     category_lang = models.CharField(max_length=10, choices=LANGUAGE_LIST, default='EN')
+    image = models.ImageField(upload_to='blogApp/categories/', blank=True, null=True,
+                                help_text="Banner Image 1920x1280")
     slug = models.SlugField(max_length=150, unique=True, blank=True, null=True, allow_unicode=True,
                                 help_text="The name of the page as it will appear in URLs e.g http://domain.com/blog/category/[my-slug]/")
     class Meta():
