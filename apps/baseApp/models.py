@@ -117,6 +117,7 @@ class ComplexFeatures(models.Model):
 class Complex(models.Model):
 
     name = models.CharField(max_length=150, unique=True)
+    hide_name = models.BooleanField(choices=YES_NO_CHOICES, default=False)
     region = models.ForeignKey(Region, related_name='regions', on_delete=models.CASCADE)
     age = models.PositiveIntegerField(default=0)
     completion_date = models.DateField(blank=True, null=True)

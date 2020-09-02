@@ -9,29 +9,29 @@
     <!-- TAG -->
     <div class="tag">
       {% if property.tag == "FR" %}
-      <div class="tag rentTag">
-        <span>{{property.get_tag_display}}</span>
-      </div>
+        <div class="tag rentTag">
+          <span>{{property.get_tag_display}}</span>
+        </div>
       {% else %}
-      <div class="tag saleTag">
-        <span>{{property.get_tag_display}}</span>
-      </div>
+        <div class="tag saleTag">
+          <span>{{property.get_tag_display}}</span>
+        </div>
       {% endif %}
     </div>
     <!-- PRICE -->
     <div class="list-price">
       {% if property.tag == "FR" %}
-      <p>
-        {% filter floatformat:"0"|intcomma %}
-        {{property.price}}
-        {% endfilter %} TL/Month
-      </p>
+        <p>
+          {% filter floatformat:"0"|intcomma %}
+          {{property.price}}
+          {% endfilter %} TL/Month
+        </p>
       {% else %}
-      <p>
-        {% filter floatformat:"0"|intcomma %}
-        {{property.price}}
-        {% endfilter %} TL
-      </p>
+        <p>
+          {% filter floatformat:"0"|intcomma %}
+          {{property.price}}
+          {% endfilter %} TL
+        </p>
       {% endif %}
     </div>
   </div>
@@ -39,7 +39,13 @@
   <div class="property-content">
     <a href="{% url "baseApp:propertyView" property.id %}"><h5>{{property.title}}</h5></a>
     <p class="location"><i class="fad fa-map-pin fa-2x"></i> {{property.complex.region.name}}</p>
-    <p class="thumbnailText">Complex: <em>{{property.complex.name}}</em></p>
+
+    {% if property.complex.hide_name is False %}
+      <p class="thumbnailText">Complex: <em>{{property.complex.name}}</em></p>
+    {% else %}
+        <p class="thumbnailText">Complex: <em>Modern Complex</em></p>
+    {% endif %}
+
     <p class="thumbnailText"><em style="font-size: 11px;">{{property.created|date:"N j, Y"}}</em></p>
     <!-- <p class="thumbnailText">Created Date: <em>{{property.created |date:"M d, Y"}}</em></p> -->
     <div class="property-meta-data d-flex align-items-end justify-content-between">
