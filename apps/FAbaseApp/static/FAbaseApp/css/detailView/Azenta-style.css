@@ -1646,12 +1646,12 @@
 	font-size: 14;
 }
 .pd-details-text .pd-details-tab .tab-content .property-more-table .left-table {
-	width: 48%;
+	width: 45%;
 	float: left;
 	margin-right: 25px;
 }
 .pd-details-text .pd-details-tab .tab-content .property-more-table .right-table {
-	width: 49%;
+	width: 45%;
 }
 .pd-details-text .pd-details-tab .tab-content .pd-table-desc {
 	border: 1px solid #ebebeb;
@@ -2494,9 +2494,10 @@
 	}
 	.pd-details-text .pd-details-tab .tab-content .property-more-table .left-table {
 		margin-right: 20px;
+		width: 45%;
 	}
 	.pd-details-text .pd-details-tab .tab-content .property-more-table .right-table {
-		width: 48%;
+		width: 45%;
 	}
 	.pd-details-text .pd-details-tab .tab-content .property-more-table table tbody tr td.p-value {
 		padding-left: 20px;
