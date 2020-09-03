@@ -399,9 +399,9 @@ img {
 /* :: 7.0 South Button CSS */
 
 .navbar-bold {
-  -webkit-text-stroke-width: 0.7px;
-  -webkit-text-stroke-color: red;
-  font-size: 18px;
+  -webkit-text-stroke-width: 2px;
+  -webkit-text-stroke-color: rgba(49, 197, 47, 0.5);
+  font-size: 18px !important;
 }
 
 
