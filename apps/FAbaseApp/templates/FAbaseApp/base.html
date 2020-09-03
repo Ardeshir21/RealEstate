@@ -109,7 +109,7 @@
                                 </li>
 
                                 {% for navCategory in blogCategoriesNav %}
-                                  <li><a href="{% url "FAblogApp:category_list" category=navCategory.slug %}">{{navCategory.category}}</a></li>
+                                  <li><a class="navbar-bold" href="{% url "FAblogApp:category_list" category=navCategory.slug %}">{{navCategory.category}}</a></li>
                                 {% endfor %}
 
                                 <li><a href="{% url "FAbaseApp:faq" category=navbar_FAQ %}">سوالات متداول</a></li>

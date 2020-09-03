@@ -398,6 +398,13 @@ img {
 
 /* :: 7.0 South Button CSS */
 
+.navbar-bold {
+  -webkit-text-stroke-width: 0.7px;
+  -webkit-text-stroke-color: red;
+  font-size: 18px;
+}
+
+
 .south-btn {
   position: relative;
   z-index: 1;
