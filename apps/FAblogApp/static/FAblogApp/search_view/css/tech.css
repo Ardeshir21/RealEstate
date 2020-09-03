@@ -230,34 +230,6 @@
 }
 
 
-.page-title .bg-orange,
-.masonry-box:hover .blog-meta span.bg-orange,
-.color-orange a {
-    background-color: #FF6347 !important;
-}
-
-.footer a:hover,
-.footer .fa:hover,
-.footer .fa:focus {
-    color: #0091e5 !important;
-}
-
-.authorbox p a,
-.pp a,
-.blog-top .fa-rss,
-a:hover,
-a:focus {
-    color: #FF6347 !important;
-}
-
-.btn,
-.page-link:hover,
-.page-link:focus,
-.btn:hover,
-.btn:focus {
-    color: #ffffff !important;
-    background: rgba(0, 0, 0, 0) linear-gradient(to right, #0091e5 0px, #00b7e5 100%) repeat scroll 0 0 !important
-}
 
 .tag-cloud-single span,
 .navbar-inverse {
@@ -266,26 +238,6 @@ a:focus {
     background: rgba(0, 0, 0, 0) linear-gradient(to right, #0091e5 0px, #00b7e5 100%) repeat scroll 0 0 !important
 }
 
-.gp-button.btn-primary:hover,
-.gp-button.btn-primary:focus,
-.gp-button.btn-primary {
-    border-color: #DA5333 !important;
-    background: #DA5333 !important;
-}
-
-.fb-button.btn-primary:focus,
-.fb-button.btn-primary:hover,
-.fb-button.btn-primary {
-    background: #3B5998 !important;
-    border-color: #3B5998 !important;
-}
-
-.tw-button.btn-primary:hover,
-.tw-button.btn-primary:focus,
-.tw-button.btn-primary {
-    background: #00B6F1 !important;
-    border-color: #00B6F1 !important;
-}
 
 @media (max-width: 1080px) {
     .first-section .blog-meta h4 {

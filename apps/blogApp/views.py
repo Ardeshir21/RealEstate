@@ -9,7 +9,10 @@ from django.db.models import Q
 def get_extra_context():
     extraContext = {
         'featuredProperties': baseAppModel.Asset.objects.filter(featured=True),
-        'blogCategories': models.PostCategories.objects.filter(category_lang='EN'),
+        # Blog Categories with EN language filter
+        'blogCategories': blogAppModel.PostCategories.objects.filter(category_lang='EN').exclude(pk__in=[14, 28, 29]),
+        # Item for Navbar from Blog CategoryListView
+        'blogCategoriesNav': blogAppModel.PostCategories.objects.filter(category_lang='EN', pk__in=[14, 28, 29]),
         # Default page for FAQ section.
         'navbar_FAQ': 'all'
         }
@@ -78,7 +81,7 @@ class PostDetail(generic.DetailView):
         context.update(get_extra_context())
 
         # This view have no pageTitle
-        # Get the first PostCategories object of the current post 
+        # Get the first PostCategories object of the current post
         context['slideContent'] = self.get_object().categories.first()
 
         return context
