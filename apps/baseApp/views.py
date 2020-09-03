@@ -26,7 +26,9 @@ def get_extra_context():
         # Blog models with EN language and being Featured filter
         'blogPosts': blogAppModel.Post.objects.filter(status=True, language='EN', featured=True),
         # Blog Categories with EN language filter
-        'blogCategories': blogAppModel.PostCategories.objects.filter(category_lang='EN'),
+        'blogCategories': blogAppModel.PostCategories.objects.filter(category_lang='EN').exclude(pk__in=[14, 28, 29]),
+        # Item for Navbar from Blog CategoryListView
+        'blogCategoriesNav': blogAppModel.PostCategories.objects.filter(category_lang='EN', pk__in=[14, 28, 29]),
         # Apartments Unqiue names
         'apartments': models.Complex.objects.all(),
         # Default page for FAQ section.

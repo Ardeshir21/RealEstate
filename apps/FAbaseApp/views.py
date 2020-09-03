@@ -42,7 +42,9 @@ def get_extra_context():
         # Blog models for FA Posts
         'blogPosts': blogAppModel.Post.objects.filter(status=True, language='FA', featured=True),
         # Blog Categories with EN language filter
-        'blogCategories': blogAppModel.PostCategories.objects.filter(category_lang='FA'),
+        'blogCategories': blogAppModel.PostCategories.objects.filter(category_lang='FA').exclude(pk__in=[24, 27, 30]),
+        # Item for Navbar from Blog CategoryListView
+        'blogCategoriesNav': blogAppModel.PostCategories.objects.filter(category_lang='FA', pk__in=[24, 27, 30]),
         # Apartments Unqiue names
         'apartments': models.Complex.objects.all(),
         # Default page for FAQ section.

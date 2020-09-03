@@ -110,9 +110,13 @@
                                         <li><a href="elements.html">Elements</a></li>
                                     </ul>
                                 </li> -->
-                                <li><a href="{% url "baseApp:about_us" %}">About Us</a></li>
                                 <li><a href="{% url "baseApp:properties" %}">Properties</a></li>
                                 <li><a href="{% url "baseApp:faq" category=navbar_FAQ %}">FAQ</a></li>
+
+                                {% for navCategory in blogCategoriesNav %}
+                                  <li><a href="{% url "blogApp:category_list" category=navCategory.slug %}">{{navCategory.category}}</a></li>
+                                {% endfor %}
+                                
                                 <li><a href="{% url "blogApp:all_posts" %}">Blog</a>
                                   <ul class="dropdown">
                                     {% for category in blogCategories %}
@@ -156,6 +160,7 @@
                                         </ul>
                                     </div>
                                 </li> -->
+                                <li><a href="{% url "baseApp:about_us" %}">About Us</a></li>
                                 <li><a href="#">Language</a>
                                     <ul class="dropdown">
                                         <li><a href="{% url "baseApp:index" %}">English</a></li>
