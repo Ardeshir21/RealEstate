@@ -12,7 +12,7 @@ def get_extra_context():
         # Blog Categories with EN language filter
         'blogCategories': blogAppModel.PostCategories.objects.filter(category_lang='EN').exclude(pk__in=[14, 28, 29]),
         # Item for Navbar from Blog CategoryListView
-        'blogCategoriesNav': blogAppModel.PostCategories.objects.filter(category_lang='EN', pk__in=[14, 28, 29]),
+        # 'blogCategoriesNav': blogAppModel.PostCategories.objects.filter(category_lang='EN', pk__in=[14, 28, 29]),
         # Default page for FAQ section.
         'navbar_FAQ': 'all'
         }

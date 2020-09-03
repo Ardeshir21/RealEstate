@@ -20,7 +20,7 @@ def get_extra_context():
         # Blog Categories with EN language filter
         'blogCategories': blogAppModel.PostCategories.objects.filter(category_lang='FA').exclude(pk__in=[24, 27, 30]),
         # Item for Navbar from Blog CategoryListView
-        'blogCategoriesNav': blogAppModel.PostCategories.objects.filter(category_lang='FA', pk__in=[24, 27, 30]),
+        # 'blogCategoriesNav': blogAppModel.PostCategories.objects.filter(category_lang='FA', pk__in=[24, 27, 30]),
         # Default page for FAQ section.
         'navbar_FAQ': 'all'
         }
