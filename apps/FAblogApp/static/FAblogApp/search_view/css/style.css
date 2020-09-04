@@ -47,32 +47,7 @@
 .mb-50 h3{
   margin-bottom: 60px;
 }
-.navbar-inverse .navbar-nav .nav-link,
-.navbar-nav .nav-link {
-    font-size: 15px;
-    font-weight: 500;
-    line-height: 1;
-    padding: 0.9rem 0 0.8rem;
-    text-transform: capitalize;
-    color: #121212;
-}
 
-.dropdown-toggle::after {
-    display: inline-block;
-    width: auto;
-    height: auto;
-    margin-left: 0.5em;
-    margin-top: 0rem;
-    vertical-align: middle;
-    content: "\f107";
-    border: 0;
-    font-family: 'FontAwesome';
-}
-
-.navbar-toggleable-md .navbar-nav .nav-link {
-    padding-left: 0.8rem;
-    padding-right: 0.8rem;
-}
 
 .header-section {
     padding: 3rem 0 1.5rem;
@@ -87,9 +62,6 @@
     display: block;
 }
 
-.navbar-nav {
-    margin: 0;
-}
 
 .header .dropdown-menu {
     padding: 0;
