@@ -469,7 +469,6 @@
     </div>
     <!-- Partner Carousel Section End -->
 
-
     <!-- Js Plugins -->
     <script src="{% static "baseApp/js/detailView/jquery-3.3.1.min.js" %}"></script>
     <script src="{% static "baseApp/js/detailView/jquery.magnific-popup.min.js" %}"></script>
@@ -480,7 +479,13 @@
     <script src="{% static "baseApp/js/clipboard.min.js" %}"></script>
     <script src="{% static "baseApp/js/nouislider.min.js" %}" ></script>
 
-    <!-- Slider Settings -->
+
+{% endblock body_content %}
+
+
+{% block body_JS %}
+
+    <!-- Search Slider Settings -->
     <script type="text/javascript">
           // A function to comma seperate the digits
 
@@ -571,10 +576,6 @@
         });
     </script>
 
-{% endblock body_content %}
-
-
-{% block body_JS %}
   <!-- Region selection buttons for Search area -->
   <script type="text/javascript">
 

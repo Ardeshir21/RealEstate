@@ -20,7 +20,7 @@
 
 .SumoSelect { display: inline-block; position: relative;outline:none;}
 .SumoSelect:focus > .CaptionCont,.SumoSelect:hover > .CaptionCont, .SumoSelect.open > .CaptionCont {box-shadow: 0 0 2px #7799D0;border-color: #7799D0;}
-    .SumoSelect > .CaptionCont { position: relative; border: 1px solid #ccc; height: 34px; width: 100%; background-color: #fff;border-radius:4px;margin:0; font-size: 14px; }
+    .SumoSelect > .CaptionCont { position: relative; border: 1px solid #ccc; height: 34px; width: 100%; background-color:#fff;border-radius:4px;margin:0; font-size: 14px; }
         .SumoSelect > .CaptionCont > span { display: block; padding-right: 30px; position: relative; bottom:3px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;cursor:default;}
             /*placeholder style*/
             .SumoSelect > .CaptionCont > span.placeholder { color: #8e8e8e; font-weight: 500; float:left; font-family: "Open Sans"; position:absolute; bottom:2px;}

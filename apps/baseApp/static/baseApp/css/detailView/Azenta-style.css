@@ -404,7 +404,7 @@
 }
 .pd-details-text .pd-details-tab .tab-item ul li a.active {
 	color: #ffffff;
-	background: #d5a253;
+	background: var(--forSale-tag-color);
 }
 .pd-details-text .pd-details-tab .tab-content .property-more-table {
 	padding-left: 30px;
