@@ -2204,6 +2204,15 @@ img {
       text-decoration: underline;
     }
 
+  @media only screen and (max-width: 767px) {
+    .single-accordion h6 a span {
+      font-size: 10px;
+      position: absolute;
+      left: 8px;
+      text-align: center;
+      top: 18px; }
+  }
+
 /* Tabs CSS*/
 .south-tabs-content {
   position: relative;

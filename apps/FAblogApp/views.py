@@ -17,6 +17,8 @@ from django.db.models import Q
 def get_extra_context():
     extraContext = {
         'featuredProperties': baseAppModel.Asset.objects.filter(featured=True),
+        # All blog categories
+        'blogCategories_All': models.PostCategories.objects.filter(category_lang='FA'),
         # Blog Categories with EN language filter
         'blogCategories': models.PostCategories.objects.filter(category_lang='FA').exclude(pk__in=[24, 27, 30]),
         # Item for Navbar from Blog CategoryListView

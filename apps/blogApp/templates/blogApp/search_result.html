@@ -88,7 +88,7 @@
                   <div class="south-catagories-card mb-70 ml-30">
                       <h5>Categories</h5>
                       <ul class="catagories-menu">
-                        {% for category in blogCategories %}
+                        {% for category in blogCategories_All %}
                           <li><a href="{% url 'blogApp:category_list' category=category.slug %}">{{category}}</a></li>
                         {% endfor %}
                       </ul>

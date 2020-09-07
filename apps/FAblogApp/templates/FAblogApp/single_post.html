@@ -38,7 +38,7 @@
                 <div class="south-catagories-card mb-70 ml-30">
                     <h5>دسته بندی</h5>
                     <ul class="catagories-menu">
-                      {% for category in blogCategories %}
+                      {% for category in blogCategories_All %}
                         <li><a href="{% url 'FAblogApp:category_list' category=category.slug %}">{{category}}</a></li>
                       {% endfor %}
                     </ul>
