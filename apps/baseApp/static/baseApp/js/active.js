@@ -136,6 +136,18 @@
             nav: true,
             navText: ['<i class="far fa-angle-left fa-lg"></i>', '<i class="far fa-angle-right fa-lg"></i>']
         });
+
+        $('.single-listings-sliders').owlCarousel({
+            items: 1,
+            margin: 0,
+            loop: true,
+            dots: true,
+            autoplay: true,
+            autoplayTimeout: 5000,
+            smartSpeed: 1000,
+            nav: true,
+            navText: ['<i class="far fa-angle-left fa-lg"></i>', '<i class="far fa-angle-right fa-lg"></i>']
+        });
     }
 
     // :: CounterUp Active Code
