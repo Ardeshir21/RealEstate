@@ -125,7 +125,7 @@
             }
         });
 
-        $('.featured-properties-slides, .single-listings-sliders').owlCarousel({
+        $('.featured-properties-slides').owlCarousel({
             items: 1,
             margin: 0,
             loop: true,
