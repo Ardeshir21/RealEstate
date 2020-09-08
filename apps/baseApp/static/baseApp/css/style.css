@@ -772,7 +772,7 @@ img {
 .hero-area .owl-dots {
   width: 1110px;
   position: absolute;
-  bottom: 15px;
+  bottom: 55px;
   left: 50%;
   -webkit-transform: translateX(-50%);
   transform: translateX(-50%); }

@@ -93,16 +93,16 @@
         });
 
         // Dots Showing Number
-        var dot = $('.hero-slides .owl-dot');
-
-        dot.each(function () {
-            var dotnumber = $(this).index() + 1;
-            if (dotnumber <= 9) {
-                $(this).html('0').append(dotnumber);
-            } else {
-                $(this).html(dotnumber);
-            }
-        });
+        // var dot = $('.hero-slides .owl-dot');
+        //
+        // dot.each(function () {
+        //     var dotnumber = $(this).index() + 1;
+        //     if (dotnumber <= 9) {
+        //         $(this).html('0').append(dotnumber);
+        //     } else {
+        //         $(this).html(dotnumber);
+        //     }
+        // });
 
         $('.testimonials-slides').owlCarousel({
             items: 3,
@@ -129,6 +129,7 @@
             items: 1,
             margin: 0,
             loop: true,
+            dots: false,
             autoplay: true,
             autoplayTimeout: 5000,
             smartSpeed: 1000,
