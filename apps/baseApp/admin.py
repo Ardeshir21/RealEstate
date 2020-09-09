@@ -48,6 +48,9 @@ class AssetImagesAdmin(admin.ModelAdmin):
     list_display = ['asset', 'image']
     list_editable = ['image']
 
+class BedroomAdmin(admin.ModelAdmin):
+    list_display = ['id', 'number', 'description', 'description_FA']
+
 class DistanceInline(admin.TabularInline):
     model = Distance
 
@@ -90,5 +93,5 @@ admin.site.register(Slide, SlideAdmin)
 admin.site.register(FAQCategories, FAQCategoriesAdmin)
 # admin.site.register(AssetImages, AssetImagesAdmin)
 # admin.site.register(Distance)
-# admin.site.register(Bedroom)
+admin.site.register(Bedroom, BedroomAdmin)
 # admin.site.register(Country)

@@ -12,6 +12,7 @@ LANGUAGE_LIST = [
 ]
 
 ASSET_TYPES = [('FL', 'Flat'),
+                ('DF', 'Dublex Flat'),
                 ('VI', 'Villa'),
                 ('OF', 'Office'),
                 ('ST', 'Store')]

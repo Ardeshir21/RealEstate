@@ -283,7 +283,7 @@ class AssetSingleView(generic.edit.FormMixin, generic.DetailView):
 
     def form_valid(self, form):
         # This for success message. See Django Documentation
-        messages.add_message(self.request, messages.INFO, 'Hello world.')
+        messages.add_message(self.request, messages.SUCCESS, 'Your message has been successfully sent.')
         # This is a custom function in forms.py
         # It may also work:      current_url = resolve(request.path_info).url_name
         form.send_email(current_url=self.request.build_absolute_uri())
