@@ -181,6 +181,7 @@ class Asset(models.Model):
     description_FA = RichTextUploadingField(help_text='Full images can be 730px wide', null=True, blank=True)
     type = models.CharField(max_length=15, choices=ASSET_TYPES, default='FL')
     installment = models.BooleanField(choices=YES_NO_CHOICES, default=False)
+    base_price = models.DecimalField(max_digits=15, decimal_places=0, default=0.0)
     price = models.DecimalField(max_digits=15, decimal_places=0, default=0.0)
     rental_income = models.PositiveIntegerField(default=0,
                                                 help_text="(For Sale): Rental Income or (For Rent): Deposit")
