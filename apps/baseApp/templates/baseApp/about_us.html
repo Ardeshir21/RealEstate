@@ -186,3 +186,12 @@
     </section>
     <!-- ##### Meet The Team Area End ##### -->
 {% endblock body_content %}
+
+{% block body_JS %}
+  <script type="text/javascript">
+        $("#success-alert").show(); // use slide down for animation
+        setTimeout(function () {
+          $("#success-alert").slideUp(500);
+        }, 3000);
+  </script>
+{% endblock body_JS %}

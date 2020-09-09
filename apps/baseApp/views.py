@@ -296,6 +296,8 @@ class ContactView(generic.edit.FormView):
     success_url = reverse_lazy('baseApp:about_us')
 
     def form_valid(self, form):
+        # This for success message. See Django Documentation
+        messages.add_message(self.request, messages.SUCCESS, 'Your message has been successfully sent.')
         # This method is called when valid form data has been POSTed.
         # current_url = resolve(request.path_info).url_name
         form.send_email(current_url=self.request.build_absolute_uri())

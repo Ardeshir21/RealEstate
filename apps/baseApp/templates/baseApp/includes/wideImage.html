@@ -2,6 +2,18 @@
 <section class="breadcumb-area bg-img" style="background-image: url({{slideContent.image.url}});">
   {% if pageTitle %}
     <div class="container h-100">
+
+        <!-- Success Message area -->
+        {% if messages %}
+            {% for message in messages %}
+              <div class="row">
+                <div class="text-center col-lg-8 offset-lg-2 alert alert-{{message.tags}}" id='success-alert' role="alert">
+                    {{message|safe}}
+                </div>
+              </div>
+            {% endfor %}
+        {% endif %}
+
         <div class="row h-100 align-items-center">
             <div class="col-12">
                 <div class="breadcumb-content">

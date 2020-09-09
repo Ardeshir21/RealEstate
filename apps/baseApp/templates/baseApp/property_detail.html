@@ -21,17 +21,12 @@
 
 
 {% block body_content %}
-
-
-
-
-
-
-
     <!-- Property Details Hero Section Begin -->
     <section class="pd-hero-section set-bg" data-setbg="{{slideContent.image.url}}">
         <div class="container">
 
+          <!-- Form success message area -->
+          <!-- This here because this template is not using wideImage.html -->
           {% if messages %}
               {% for message in messages %}
                 <div class="row">
