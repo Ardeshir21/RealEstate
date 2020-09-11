@@ -199,6 +199,11 @@ img {
 .section-padding-50 {
   padding: 50px 0; }
 
+@media only screen and (max-width: 767px) {
+.section-padding-50 {
+  padding: 20px 0; }
+}
+
 .section-padding-50-0 {
   padding: 50px 0 0 0; }
 
@@ -462,6 +467,16 @@ img {
     .south-btn.btn-3:hover, .south-btn.btn-3:focus {
       color: #ffffff;
       background-color: #000000; }
+
+@media only screen and (max-width: 767px){
+ .south-btn{
+   min-width: 100px;
+   height: 40px;
+   line-height: 0px;
+   margin-top: 8px;
+ }
+}
+
 
 .region-btn{
   margin: 4px;
@@ -1336,7 +1351,15 @@ img {
   .footer-widget-area .featured-properties-slides:hover .owl-prev, .footer-widget-area .featured-properties-slides:hover .owl-next {
     opacity: 1;
     visibility: visible; }
+.footer-logo img {
+  width: 70%;
+}
 
+@media only screen and (max-width: 576px){
+  .footer-logo img {
+    width: 50%;
+  }
+}
 /* :: 16.0 Breadcumb Area CSS */
 .breadcumb-area {
   width: 100%;
@@ -2114,6 +2137,11 @@ img {
       text-decoration: underline;
     }
 
+    .single-accordion .search-filter {
+      border-top: 0 solid transparent;
+      box-shadow: none;
+      padding: 10px;
+      margin-bottom: 12px;}
 
 @media only screen and (max-width: 767px) {
     .single-accordion h6 a span {
@@ -2122,6 +2150,12 @@ img {
       right: 8px;
       text-align: center;
       top: 18px;}
+
+      .single-accordion .search-filter {
+        border-top: 0 solid transparent;
+        box-shadow: none;
+        padding: 1px;
+        margin-bottom: 12px;}
 }
 /* Tabs CSS*/
 .south-tabs-content {

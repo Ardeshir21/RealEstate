@@ -46,7 +46,7 @@ def get_extra_context():
         # Item for Navbar from Blog CategoryListView
         'blogCategoriesNav': blogAppModel.PostCategories.objects.filter(category_lang='FA', pk__in=[24, 27, 30]),
         # Apartments Unqiue names
-        'apartments': models.Complex.objects.all(),
+        'apartments': models.Complex.objects.filter(hide_name=False),
         # Default page for FAQ section.
         'navbar_FAQ': 'all'
         }
