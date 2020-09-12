@@ -354,6 +354,11 @@ class FAQCategoryView(generic.ListView):
         context['pageTitle'] = ''
         # All category objects filtered by Language
         context['all_categories'] = models.FAQCategories.objects.filter(category_lang='FA')
+        # This is for Title Tag in the head section of the html
+        if self.kwargs['category'] == 'all':
+            context['titleTag'] = models.FAQCategories.objects.get(id=6)
+        else:
+            context['titleTag'] = models.FAQCategories.objects.get(slug=self.kwargs['category'])
         return context
 
     # This is for AJAX call -- We ignore using AJAX because of Google Crawling and SEO
