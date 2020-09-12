@@ -1284,7 +1284,8 @@ img {
         color: rgba(49, 197, 47, 0.9); }
 
 .footer-widget-area .widget-title {
-  margin-bottom: 50px; }
+  margin-bottom: 50px;
+  text-align: center;}
   .footer-widget-area .widget-title h6 {
     font-size: 16px;
     color: #ffffff;
@@ -1330,7 +1331,8 @@ img {
     }
 .footer-widget-area .useful-links-nav {
   -ms-flex-wrap: wrap;
-  flex-wrap: wrap; }
+  flex-wrap: wrap;
+  text-align: center;}
   .footer-widget-area .useful-links-nav li {
     -webkit-box-flex: 0;
     -ms-flex: 0 0 50%;
@@ -1467,13 +1469,14 @@ img {
   position: relative;
   z-index: 1; }
   .single-team-member .team-member-thumb {
-    margin-bottom: 40px; }
+    margin-bottom: 20px;
+    text-align: center;}
     .single-team-member .team-member-thumb img {
-      width: 100%; }
+      width: 70%; }
   .single-team-member .team-member-info {
     text-align: center; }
     .single-team-member .team-member-info .section-heading {
-      margin-bottom: 40px; }
+      margin-bottom: 20px; }
     .single-team-member .team-member-info .address h6 {
       margin-bottom: 15px;
       font-size: 14px; }
