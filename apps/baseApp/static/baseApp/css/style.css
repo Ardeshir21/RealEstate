@@ -216,6 +216,11 @@ img {
 .section-padding-100-0 {
   padding: 100px 0 0; }
 
+  @media only screen and (max-width: 576px) {
+    .section-padding-100-0 {
+      padding: 100px 25px 0px 25px; }
+  }
+
 .section-padding-0-100 {
   padding: 0 0 100px; }
 
@@ -414,12 +419,25 @@ img {
     font-size: 30px;
     text-transform: uppercase;
     margin-bottom: 5px; }
+.section-heading-about-us {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  margin-bottom: 40px; }
+  .section-heading-about-us h2 {
+    font-size: 30px;
+    text-transform: uppercase;
+    margin-bottom: 5px; }
     @media only screen and (min-width: 992px) and (max-width: 1199px) {
       .section-heading h2 {
-        font-size: 24px; } }
+        font-size: 24px; }
+      .section-heading-about-us h2 {
+        font-size: 24px;}}
     @media only screen and (max-width: 767px) {
       .section-heading h2 {
-        font-size: 24px; } }
+        font-size: 22px;}
+        .section-heading-about-us h2 {
+          font-size: 22px; } }
   .section-heading p {
     color: var(--main-color);
     font-size: 14px;
@@ -472,7 +490,7 @@ img {
  .south-btn{
    min-width: 100px;
    height: 40px;
-   line-height: 0px;
+   line-height: 36px;
    margin-top: 8px;
  }
 }
@@ -578,6 +596,8 @@ img {
       width: 45px;
       height: 45px;
       text-align: center; }
+      .top-header-area .phone-number .icon i {
+        padding: 6px; }
       .top-header-area .phone-number .icon img {
         padding: 16px 0;
         max-width: 15px; }
@@ -631,10 +651,10 @@ img {
     transition-duration: 500ms; }
   .main-header-area .searchbtn {
     margin-left: 30px;
-    height: 90px;
-    line-height: 90px;
+    height: 70px;
+    line-height: 70px;
     background-color: transparent;
-    width: 90px;
+    width: 70px;
     text-align: center; }
     @media only screen and (min-width: 992px) and (max-width: 1199px) {
       .main-header-area .searchbtn {
@@ -838,8 +858,7 @@ img {
   color: #8e8e8e;
   bottom:2px;
   margin-bottom: 10px;
-  text-transform:uppercase;
-  font-weight: 500;
+  font-weight: 700;
   padding: 0 15px;
   border: 1px solid #e1dddd; }
   .form-control:hover, .form-control:focus {
@@ -1325,7 +1344,7 @@ img {
       .footer-widget-area .useful-links-nav li a:first-child, .footer-widget-area .useful-links-nav li a:nth-child(2) {
         padding-top: 0; }
       .footer-widget-area .useful-links-nav li a:hover, .footer-widget-area .useful-links-nav li a:focus {
-        color: var(--main-color); }
+        color: #FFFFFF; }
 .footer-widget-area .featured-properties-slides {
   position: relative;
   z-index: 1; }
@@ -1460,8 +1479,11 @@ img {
       font-size: 14px; }
       .single-team-member .team-member-info .address h6:last-of-type {
         margin-bottom: 0; }
-      .single-team-member .team-member-info .address h6 img {
-        margin-right: 10px; }
+        .single-team-member .team-member-info .address h6 i {
+          font-size: 20px;
+          position: relative;
+          top: 2px;
+          color: limegreen;}
 
 /* :: 19.0 Listings Area CSS */
 .listings-content-wrapper {
@@ -2123,7 +2145,7 @@ img {
 
 
 .contact-heading {
-  margin-bottom: 90px; }
+  margin-bottom: 15px; }
   .contact-heading h6 {
     border-bottom: 2px solid var(--main-color);
     display: inline-block;

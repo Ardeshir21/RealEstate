@@ -11,11 +11,11 @@ class ContactForm(forms.Form):
     message = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Your Message',
                                                             'class': 'form-control'}))
     client_email = forms.EmailField(
-                                widget=forms.EmailInput(attrs={'placeholder': 'someone@example.com',
+                                widget=forms.EmailInput(attrs={'placeholder': 'Your Email',
                                                                 'class': 'form-control'})
                                 )
     client_phone = PhoneNumberField(required=False,
-                                    widget=forms.TextInput(attrs={'placeholder': '+905356832320',
+                                    widget=forms.TextInput(attrs={'placeholder': 'Phone Number',
                                                                     'class': 'form-control'})
                                     )
 

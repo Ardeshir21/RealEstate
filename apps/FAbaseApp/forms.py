@@ -8,15 +8,14 @@ class ContactForm(forms.Form):
                             widget=forms.TextInput(attrs={'placeholder': 'نام شما',
                                                             'class': 'form-control'})
                             )
-    message = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'پیغام شما',
+    message = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'متن پیام',
                                                             'class': 'form-control'}))
     client_email = forms.EmailField(
-                                widget=forms.EmailInput(attrs={'placeholder': 'someone@example.com',
-                                                                'class': 'form-control',
-                                                                'style': 'direction: ltr;'})
+                                widget=forms.EmailInput(attrs={'placeholder': 'ایمیل',
+                                                                'class': 'form-control'})
                                 )
     client_phone = PhoneNumberField(required=False,
-                                    widget=forms.TextInput(attrs={'placeholder': '+989123456789',
+                                    widget=forms.TextInput(attrs={'placeholder': 'تلفن همراه',
                                                                     'class': 'form-control',
                                                                     'style': 'direction: ltr;'})
                                     )
