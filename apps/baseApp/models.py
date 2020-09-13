@@ -30,10 +30,12 @@ COMPLEX_FEATURES_CATEGORY = [('TOP', 'Top'),
                             ]
 
 MEASURE_TYPES = [('K', 'KM'),
+                ('ME', 'METER'),
                 ('S', 'STEP'),
                 ('M', 'MIN')]
 
 MEASURE_TYPES_FA = {'K': 'کیلومتر',
+                    'ME': 'متر',
                     'S': 'قدم',
                     'M': 'دقیقه'}
 
@@ -277,7 +279,7 @@ class FAQ(models.Model):
 
     class Meta():
         verbose_name_plural = "FAQs"
-        ordering = ['created']
+        ordering = ['updated']
 
     def save(self, *args, **kwargs):
         ''' On save, update timestamps '''
