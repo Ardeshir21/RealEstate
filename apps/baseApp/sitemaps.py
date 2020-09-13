@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
 from apps.baseApp.models import Asset, FAQCategories
@@ -18,7 +19,7 @@ class StaticSitemap(Sitemap):
 
 # Asset sitemap EN
 class AssetSitemap(Sitemap):
-    changefreq = "daily"
+    changefreq = "weekly"
     priority = 0.6
     protocol = 'https'
 
@@ -32,7 +33,7 @@ class AssetSitemap(Sitemap):
 
 # Asset sitemap FA
 class AssetFaSitemap(Sitemap):
-    changefreq = "daily"
+    changefreq = "weekly"
     priority = 0.6
     protocol = 'https'
 
@@ -48,7 +49,7 @@ class AssetFaSitemap(Sitemap):
 
 # Posts EN
 class PostSitemap(Sitemap):
-    changefreq = "daily"
+    changefreq = "weekly"
     priority = 0.8
     protocol = 'https'
 
@@ -60,7 +61,7 @@ class PostSitemap(Sitemap):
 
 # Posts FA
 class PostFaSitemap(Sitemap):
-    changefreq = "daily"
+    changefreq = "weekly"
     priority = 0.8
     protocol = 'https'
 
@@ -75,7 +76,7 @@ class PostFaSitemap(Sitemap):
 
 # FAQ EN
 class FAQCategoriesSitemap(Sitemap):
-    changefreq = "daily"
+    changefreq = "weekly"
     priority = 0.9
     protocol = 'https'
 
@@ -84,13 +85,16 @@ class FAQCategoriesSitemap(Sitemap):
 
     def lastmod(self, item):
         # Take all ManyToMany question for current Category, and take the first one which is ordered by updated field
-        latestFAQ_item = item.categories.all()[0]
-        # Use the last update of question for each Category
-        return latestFAQ_item.updated
+        # Sometimes the query result and empty queryset
+        if item.categories.all().exists():
+            latestFAQ_item = item.categories.all()[0]
+            # Use the last update of question for each Category
+            return latestFAQ_item.updated
+        else: return timezone.now().date()
 
 # FAQ FA
 class FAQCategoriesFaSitemap(Sitemap):
-    changefreq = "daily"
+    changefreq = "weekly"
     priority = 0.9
     protocol = 'https'
 
@@ -102,6 +106,9 @@ class FAQCategoriesFaSitemap(Sitemap):
 
     def lastmod(self, item):
         # Take all ManyToMany question for current Category, and take the first one which is ordered by updated field
-        latestFAQ_item = item.categories.all()[0]
-        # Use the last update of question for each Category
-        return latestFAQ_item.updated
+        # Sometimes the query result and empty queryset
+        if item.categories.all().exists():
+            latestFAQ_item = item.categories.all()[0]
+            # Use the last update of question for each Category
+            return latestFAQ_item.updated
+        else: return timezone.now().date()

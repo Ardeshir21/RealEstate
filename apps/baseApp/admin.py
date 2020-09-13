@@ -6,7 +6,7 @@ from .models import (Country, City, Region,
                     ComplexFeatures,
                     Bedroom,
                     Asset, AssetImages, AssetFeatures,
-                    FAQ, FAQCategories,
+                    FAQ, FAQCategories, FAQPriority,
                     Slide)
 
 
@@ -64,21 +64,41 @@ class ComplexAdmin(admin.ModelAdmin):
         DistanceInline,
     ]
 
+# Used in FAQ admin for selecting the FAQ Categories
+# Because the intermediate model is used via Through, defaul M2M relation is not working
+class FAQCategoryInline(admin.TabularInline):
+    model = FAQPriority
+    fields = ('category', )
 
 class FAQAdmin(admin.ModelAdmin):
     list_display = ['id', 'question', 'active']
     list_editable = ['active']
     search_fields = ['question']
 
+    # other Inlines
+    inlines = [
+        FAQCategoryInline,
+    ]
+
     # Using Widgets
-    formfield_overrides = {
-        models.ManyToManyField: {'widget': forms.CheckboxSelectMultiple(attrs={'multiple': True})},
-    }
+    # formfield_overrides = {
+    #     models.ManyToManyField: {'widget': forms.CheckboxSelectMultiple(attrs={'multiple': True})},
+    # }
+
+# Because the intermediate model is used via Through, defaul M2M relation is not working
+class FAQPriorityInline(admin.TabularInline):
+    model = FAQPriority
+    readonly_fields = ('question', )
+    fields = ('question', 'priority')
 
 class FAQCategoriesAdmin(admin.ModelAdmin):
     list_display = ['id', 'category', 'slug']
     prepopulated_fields = {"slug": ("category",)}
 
+    # other Inlines
+    inlines = [
+        FAQPriorityInline,
+    ]
 
 
 admin.site.register(AssetFeatures)

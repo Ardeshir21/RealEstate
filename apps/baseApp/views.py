@@ -325,7 +325,8 @@ class FAQCategoryView(generic.ListView):
         result = super(FAQCategoryView, self).get_queryset()
 
         # Categories -- For filtering based on the categories
-        result= result.filter(language='EN', categories__slug=self.kwargs['category'], active=True).order_by('-created')
+        # Related_name used for order_by 
+        result= result.filter(language='EN', categories__slug=self.kwargs['category'], active=True).order_by('priorities')
         return result
 
     def get_context_data(self, **kwargs):

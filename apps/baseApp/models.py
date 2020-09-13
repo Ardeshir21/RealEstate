@@ -132,8 +132,7 @@ class Complex(models.Model):
     description = RichTextUploadingField(null=True, blank=True)
     description_FA = RichTextUploadingField(null=True, blank=True)
     near_locations = models.ManyToManyField(Location, through='Distance', blank=True, null=True)
-    # address = map_fields.AddressField(max_length=200)
-    # geolocation = map_fields.GeoLocationField(max_length=100)
+
 
     def __str__(self):
         return self.name
@@ -150,7 +149,7 @@ class Distance(models.Model):
     measure_FA = models.CharField(max_length=10, blank=True, null=True)
 
     def __str__(self):
-        return '{} to {}: {}'.format(self.complex,self.location, self.distance)
+        return '{} to {}: {} {}'.format(self.complex,self.location, self.distance, self.measure)
 
     def save(self, *args, **kwargs):
             self.measure_FA = MEASURE_TYPES_FA[self.measure]
@@ -267,7 +266,7 @@ class FAQCategories(models.Model):
 
 class FAQ(models.Model):
     language = models.CharField(max_length=20, choices=LANGUAGE_LIST, default='EN')
-    categories = models.ManyToManyField(FAQCategories, related_name='categories', null=True)
+    categories = models.ManyToManyField(FAQCategories, through='FAQPriority', related_name='categories', null=True)
     question = models.CharField(max_length=300, unique=True)
     answer = RichTextUploadingField(help_text='Full images can be 730px wide', null=True, blank=True)
     active = models.BooleanField(choices=YES_NO_CHOICES, default=True)
@@ -279,7 +278,7 @@ class FAQ(models.Model):
 
     class Meta():
         verbose_name_plural = "FAQs"
-        ordering = ['updated']
+
 
     def save(self, *args, **kwargs):
         ''' On save, update timestamps '''
@@ -287,3 +286,16 @@ class FAQ(models.Model):
             self.created = timezone.now()
         self.updated = timezone.now()
         return super(FAQ, self).save(*args, **kwargs)
+
+class FAQPriority(models.Model):
+    category = models.ForeignKey(FAQCategories, on_delete=models.CASCADE)
+    question = models.ForeignKey(FAQ, related_name='priorities', on_delete=models.CASCADE)
+    priority = models.PositiveSmallIntegerField(default=100)
+
+    def __str__(self):
+        return 'Question Place is: {}'.format(self.priority)
+
+    class Meta():
+        verbose_name_plural = "FAQ Priorities"
+        db_table = "baseApp_faq_categories"
+        ordering = ['priority']
