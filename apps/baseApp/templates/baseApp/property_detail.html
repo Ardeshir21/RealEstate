@@ -4,6 +4,12 @@
 {% load humanize %}
 {% load my_tags %}
 
+
+{% block head_description %}
+  <!-- Specific Description for each page -->
+  <meta name="description" content="">
+{% endblock head_description %}
+
 {% block head %}
     <!-- Css Styles for these template (page) -->
     <link rel="stylesheet" href="{% static "baseApp/css/detailView/Azenta-style.css" %}" type="text/css">

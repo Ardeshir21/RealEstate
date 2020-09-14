@@ -4,6 +4,11 @@
 {% load my_tags %}
 
 
+{% block head_description %}
+  <!-- Specific Description for each page -->
+  <meta name="description" content="">
+{% endblock head_description %}
+
 {% block head_title %}
 <!-- Title  -->
 <title> {{property.title_FA}} - {{property.complex.region.name}} - {{property.complex.region.city.name_FA}} - &#x202E;{{property.bedroom.description_FA}} </title>

@@ -3,6 +3,11 @@
 {% load humanize %}
 
 
+{% block head_description %}
+  <!-- Specific Description for each page -->
+  <meta name="description" content="">
+{% endblock head_description %}
+
 {% block head_title %}
 <!-- Title  -->
 <title>{{the_post.title}} | {{slideContent.category}}</title>

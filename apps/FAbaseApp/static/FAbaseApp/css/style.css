@@ -1723,7 +1723,6 @@ img {
   }
   .single-blog-area p img {
     position: relative;
-    left: 25px;
     margin-top: 25px;
     margin-bottom: 25px;
   }
@@ -1844,7 +1843,6 @@ img {
     }
     .single-blog-area p img {
       position: relative;
-      left: 21px;
       margin-top: 15px;
       margin-bottom: 15px;
     }
