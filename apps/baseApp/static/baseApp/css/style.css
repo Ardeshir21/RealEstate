@@ -1961,10 +1961,10 @@ img {
   font-size: 19px; }
 .south-catagories-card ul li a {
   display: block;
-  padding: 0 0 0 50px;
+  padding: 0 0 9px 50px;
   color: #7d7d7d;
   font-size: 17px;
-  font-weight: 400; }
+  font-weight: 600; }
   .south-catagories-card ul li a:hover, .south-catagories-card ul li a:focus {
     color: var(--main-color); }
 
