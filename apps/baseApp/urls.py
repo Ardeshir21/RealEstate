@@ -5,6 +5,7 @@ from . import views, sitemaps
 app_name = 'baseApp'
 
 sitemaps_dict = {'Static_sitemap': sitemaps.StaticSitemap,
+                'AllPostSitemap': sitemaps.AllPostSitemap,
                 'Asset_sitemap': sitemaps.AssetSitemap,
                 'AssetFa_sitemap': sitemaps.AssetFaSitemap,
                 'Post_sitemap': sitemaps.PostSitemap,
