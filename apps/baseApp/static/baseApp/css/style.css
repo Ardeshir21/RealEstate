@@ -598,6 +598,10 @@ img {
       text-align: center; }
       .top-header-area .phone-number .icon i {
         padding: 6px; }
+        .top-header-area .phone-number .icon a {
+          color: limegreen;}
+          .top-header-area .phone-number .icon a:hover {
+            color: green;}
       .top-header-area .phone-number .icon img {
         padding: 16px 0;
         max-width: 15px; }
@@ -1709,6 +1713,9 @@ img {
         color: #aaa8a8;
         font-size: 12px;
         text-indent: 0px;}
+        .single-blog-area .post-content .south-btn {
+          margin-top: 8px;
+        }
         .single-blog-area .post-content .post-meta p a {
           font-size: 12px;
           color: #aaa8a8;

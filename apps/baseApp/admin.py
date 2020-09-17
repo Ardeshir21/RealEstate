@@ -24,7 +24,7 @@ class AssetAdmin(admin.ModelAdmin):
 
     # search_fields = ['complex']
     list_filter = ['complex']
-    list_display = ['id', 'created', 'type', 'active', 'featured', 'tag', 'complex', 'build_area', 'bedroom', 'price',]
+    list_display = ['id', 'created', 'type', 'active', 'featured', 'complex', 'build_area', 'bedroom', 'price', 'base_price']
     list_editable = ['active', 'featured']
 
     # other Inlines

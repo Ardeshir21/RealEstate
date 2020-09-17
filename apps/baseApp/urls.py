@@ -26,6 +26,9 @@ urlpatterns = [
     # AJAX test
     path('ajaxtest/', views.AJAX_TEST.as_view(), name='ajax_test'),
 
+    # All Asset Download Excel file
+    path('export-assets/', views.ExcelOutputAssets.as_view(), name='export_assets'),
+
     # This is for sitemap.xml
     path('RealSiteMap.xml', sitemap, {'sitemaps': sitemaps_dict},
      name='django.contrib.sitemaps.views.sitemap'),

@@ -8,6 +8,8 @@ from django.urls import reverse_lazy, reverse
 from django.http import HttpResponse, JsonResponse
 from django.core import serializers
 import json
+import io
+import xlsxwriter
 
 
 # Here is the Extra Context ditionary which is used in get_context_data of Views classes
@@ -325,7 +327,7 @@ class FAQCategoryView(generic.ListView):
         result = super(FAQCategoryView, self).get_queryset()
 
         # Categories -- For filtering based on the categories
-        # Related_name used for order_by 
+        # Related_name used for order_by
         result= result.filter(language='EN', categories__slug=self.kwargs['category'], active=True).order_by('priorities')
         return result
 
@@ -383,6 +385,59 @@ class FAQSearch(generic.ListView):
         context['all_categories'] = models.FAQCategories.objects.filter(category_lang='EN')
         return context
 
+
+class ExcelOutputAssets(generic.View):
+
+    def get(self, request):
+
+        # Create an in-memory output file for the new workbook.
+        output = io.BytesIO()
+
+        # Even though the final file will be in memory the module uses temp
+        # files during assembly for efficiency. To avoid this on servers that
+        # don't allow temp files, for example the Google APP Engine, set the
+        # 'in_memory' Workbook() constructor option as shown in the docs.
+        workbook = xlsxwriter.Workbook(output)
+        worksheet = workbook.add_worksheet()
+
+        # Get some data to write to the spreadsheet.
+        column_names = ['ID', 'Created Date', 'Region', 'Complex', 'Bedroom',
+          'Price', 'Base Price',
+          'Build Area']
+
+        data = models.Asset.objects.all().values_list('id', 'created', 'complex__region__name',
+          'complex__name', 'bedroom__description',
+          'price', 'base_price',
+          'build_area')
+
+        # Write the titles
+        for col in range(0, len(column_names)):
+            worksheet.write(0, col, column_names[col])
+        # Write some test data.
+        for row_num, columns in enumerate(data, start=1):
+            for col_num, cell_data in enumerate(columns):
+                worksheet.write(row_num, col_num, cell_data)
+
+        # Close the workbook before sending the data.
+        workbook.close()
+
+        # Rewind the buffer.
+        output.seek(0)
+
+        # Set up the Http response.
+        filename = 'django_simple.xlsx'
+        response = HttpResponse(
+            output,
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = 'attachment; filename=%s' % filename
+
+        return response
+
+
+
+
+############################################################
 # AJAX TEST
 class AJAX_TEST(generic.TemplateView):
     template_name = 'baseApp/AJAX-test.html'

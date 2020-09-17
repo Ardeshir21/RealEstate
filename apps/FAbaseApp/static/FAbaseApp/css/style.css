@@ -588,6 +588,10 @@ img {
       text-align: center; }
       .top-header-area .phone-number .icon i {
         padding: 6px; }
+      .top-header-area .phone-number .icon a {
+        color: limegreen;}
+        .top-header-area .phone-number .icon a:hover {
+          color: green;}
     .top-header-area .phone-number .number a {
       padding: 0 60px;
       color: #ffffff;
@@ -1971,6 +1975,9 @@ img {
       font-weight: 200;
       text-align: right;
       direction: rtl;}
+    .single-blog-area .post-content .south-btn {
+      margin-top: 8px;
+    }
 
 .search-widget-area form {
   position: relative;
