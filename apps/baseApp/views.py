@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.utils import timezone
 from django.views import generic
 from . import models, forms
 from apps.blogApp import models as blogAppModel
@@ -425,7 +426,7 @@ class ExcelOutputAssets(generic.View):
         output.seek(0)
 
         # Set up the Http response.
-        filename = 'django_simple.xlsx'
+        filename = 'assets-{}.xlsx'.format(timezone.now().date())
         response = HttpResponse(
             output,
             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
