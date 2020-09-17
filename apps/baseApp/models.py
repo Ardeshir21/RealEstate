@@ -41,7 +41,6 @@ MEASURE_TYPES_FA = {'K': 'کیلومتر',
 
 PAGE_CHOICES = [('HOME', 'Homepage'),
                 ('PROPERTY_SEARCH', 'Property Search'),
-                ('PROPERTY_PAGE', 'Property View'),
                 ('BLOG_HOME', 'Blog Homepage'),
                 ('BLOG_SEARCH', 'Blog Search'),
                 ('BLOG_CATEGORY', 'Blog Categories'),
