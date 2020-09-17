@@ -126,7 +126,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'RealEstate.wsgi.application'
-
+LOGIN_URL = '/management-login-page/login/'
 SITE_ID = 1
 
 # Robots.txt setup

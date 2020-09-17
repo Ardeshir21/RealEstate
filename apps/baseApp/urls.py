@@ -1,4 +1,5 @@
 from django.urls import path
+from django.contrib.auth.decorators import login_required
 from django.contrib.sitemaps.views import sitemap
 from . import views, sitemaps
 
@@ -27,7 +28,7 @@ urlpatterns = [
     path('ajaxtest/', views.AJAX_TEST.as_view(), name='ajax_test'),
 
     # All Asset Download Excel file
-    path('export-assets/', views.ExcelOutputAssets.as_view(), name='export_assets'),
+    path('export-page/', login_required(views.ExcelOutputAssets.as_view()), name='export_assets'),
 
     # This is for sitemap.xml
     path('RealSiteMap.xml', sitemap, {'sitemaps': sitemaps_dict},
