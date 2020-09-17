@@ -280,7 +280,8 @@ class AssetSingleView(generic.edit.FormMixin, generic.DetailView):
         context = super().get_context_data(**kwargs)
         # Append extraContext
         context.update(get_extra_context())
-        context['slideContent'] = models.Slide.objects.get(useFor__exact='PROPERTY_PAGE', active__exact=True)
+        # Using the same image as the Asset has for its thumbnail
+        context['slideContent'] = self.get_object()
         context['assets_all'] = models.Asset.objects.all()
         context['form'] = self.get_form()
         # Categorize the features to be used in template
