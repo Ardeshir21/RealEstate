@@ -56,12 +56,15 @@ class IndexView(generic.ListView):
 # Search Box - searchResult.html
 class AssetFilterView(generic.ListView):
     context_object_name = 'assets_filtered'
-    model = models.Asset.objects.filter(active=True)
+    model = models.Asset
     template_name = 'baseApp/property_list.html'
     paginate_by = 9
 
     def get_queryset(self):
         result = super(AssetFilterView, self).get_queryset()
+
+        # Filter all inactive assets at the beginning.
+        result = result.filter(active=True)
 
         # Get Requests
         region_query = self.request.GET.getlist('region_select') # value=[list of marked regions]
