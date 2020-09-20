@@ -55,9 +55,8 @@ class IndexView(generic.ListView):
 
 # Search Box - searchResult.html
 class AssetFilterView(generic.ListView):
-    # This not all the assets actually. It is filtered_assets. But for consistency in template codes, I named it assets_all.
     context_object_name = 'assets_filtered'
-    model = models.Asset
+    model = models.Asset.filter(active=True)
     template_name = 'baseApp/property_list.html'
     paginate_by = 9
 
