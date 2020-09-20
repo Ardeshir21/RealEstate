@@ -56,7 +56,7 @@ class IndexView(generic.ListView):
 # Search Box - searchResult.html
 class AssetFilterView(generic.ListView):
     context_object_name = 'assets_filtered'
-    model = models.Asset.filter(active=True)
+    model = models.Asset.objects.filter(active=True)
     template_name = 'baseApp/property_list.html'
     paginate_by = 9
 
