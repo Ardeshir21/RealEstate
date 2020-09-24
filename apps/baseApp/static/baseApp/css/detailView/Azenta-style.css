@@ -137,7 +137,8 @@
 	font-size: 22px;
 	font-weight: 600;
 	color: #19191a;
-	margin-bottom: 34px;
+	margin-bottom: 5px;
+	margin-top: 34px;
 }
 .property-sidebar .sidebar-btn {
 	margin-bottom: 30px;
@@ -201,16 +202,32 @@
 	font-size: 22px;
 	font-weight: 600;
 	color: #19191a;
-	margin-bottom: 34px;
 }
 .property-sidebar .best-agents .ba-item {
 	overflow: hidden;
-	margin-bottom: 20px;
+	margin-top: 10px;
 	display: block;
 }
 .property-sidebar .best-agents .ba-item .ba-pic {
-	float: left;
 	margin-right: 20px;
+	width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: blue;
+  /* commented for demo
+  float: left;
+  margin-left: 125px;
+  margin-top: 20px;
+  */
+
+  /*for demo*/
+  display:inline-block;
+  vertical-align:middle;
+}
+
+.property-sidebar .best-agents .ba-item .ba-pic img {
+	width:100%;
 }
 .property-sidebar .best-agents .ba-item .ba-text {
 	overflow: hidden;
@@ -220,10 +237,10 @@
 	font-weight: 600;
 	margin-bottom: 3px;
 }
-.property-sidebar .best-agents .ba-item .ba-text span {
+.property-sidebar .best-agents .ba-text a {
 	font-size: 14px;
+	color: limegreen;
 	display: inline-block;
-	color: #aaaab3;
 	margin-bottom: 6px;
 }
 .property-sidebar .best-agents .ba-item .ba-text p {

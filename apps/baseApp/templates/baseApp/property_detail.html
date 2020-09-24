@@ -203,7 +203,7 @@
                                                     </tr>
                                                     <!-- Building Age -->
                                                     <tr>
-                                                        <td class="pt-name">Buliding Age</td>
+                                                        <td class="pt-name">Building Age</td>
                                                         <td class="p-value">{{property.complex.age}} years</td>
                                                     </tr>
                                                     <!-- Contract Type -->
@@ -305,16 +305,15 @@
                                     <div class="agent-desc">
                                         <img src="{% static "baseApp/img/core-img/hotline.jpg" %}" alt="Hotline">
                                         <div class="agent-title">
-                                            <h5>GAMMA Agency</h5>
-                                            <span>Sales Team</span>
+                                            <h5>GAMMA Turkey</h5>
+                                            <span>Contact with Sales Team</span>
                                         </div>
                                         <div class="agent-social">
-                                          <a href="#"><i class="fab fa-facebook-square fa-2x"></i></a>
+                                          <a href="https://www.facebook.com/GAMMA-Turkey-102648594932767"><i class="fab fa-facebook-square fa-2x"></i></a>
                                           <a href="https://t.me/contact2121"><i class="fab fa-telegram fa-2x"></i></a>
-                                          <a href="https://wa.me/905356832320"><i class="fab fa-whatsapp-square fa-2x"></i></a>
+                                          <a href="https://wa.me/905072860569"><i class="fab fa-whatsapp-square fa-2x"></i></a>
                                         </div>
-                                        <p>In today’s net-savvy world it has become common for any business to have a
-                                            website which they use mostly for advertising their products and services.
+                                        <p>Contact us for sales enquiries, technical support, feedback and customer service.
                                         </p>
                                     </div>
                                 </div>
@@ -331,8 +330,8 @@
                 <!-- SIDE FILTER BAR -->
                 <div class="col-lg-3 text-center">
                     <div class="property-sidebar">
-                        <h4>SEARCH PROPERTY</h4>
                         <!-- SEARCH FORM -->
+                        <h4>SEARCH PROPERTY</h4>
                         <form action="{% url 'baseApp:properties' %}" method="GET" id="advanceSearch" class="sidebar-search">
 
                             <!-- SALE/RENT Button -->
@@ -404,40 +403,31 @@
 
                             <button type="submit" id="advancedButton" class="btn south-btn">Search</button>
                         </form>
-
                         <!-- MORE SIDE BAR -->
                         <div class="best-agents">
-                            <h4>Best Agents</h4>
-                            <a href="#" class="ba-item">
+                            <h4>CONTACT NOW</h4>
+                            <!-- Single Agent -->
+                            <a href="https://wa.me/905072860569" class="ba-item">
                                 <div class="ba-pic">
-                                    <img src="" alt="">
-                                </div>
-                                <div class="ba-text">
-                                    <h5>Lester Bradley</h5>
-                                    <span>Company Agents</span>
-                                    <p class="property-items">6 property </p>
+                                    <img src="{% static "baseApp/img/core-img/Ufuk.jpg" %}" alt="Agent">
                                 </div>
                             </a>
-                            <a href="#" class="ba-item">
+                            <div class="ba-text">
+                                <h5>Ufuk Kacir</h5>
+                                <a href="https://wa.me/905072860569"><i class="fab fa-whatsapp-square"></i> +90 545 650 34 13</a>
+                                <p class="property-items">Turkish & English</p>
+                            </div>
+                            <!-- Single Agent -->
+                            <a href="https://wa.me/905446454297" class="ba-item">
                                 <div class="ba-pic">
-                                    <img src="" alt="">
-                                </div>
-                                <div class="ba-text">
-                                    <h5>Janie Blair</h5>
-                                    <span>Company Agents</span>
-                                    <p class="property-items">6 property </p>
+                                    <img src="{% static "baseApp/img/core-img/Parisa.jpg" %}" alt="Agent">
                                 </div>
                             </a>
-                            <a href="#" class="ba-item">
-                                <div class="ba-pic">
-                                    <img src="" alt="">
-                                </div>
-                                <div class="ba-text">
-                                    <h5>Sophia Cole</h5>
-                                    <span>Marketing & Ceo</span>
-                                    <p class="property-items">6 property </p>
-                                </div>
-                            </a>
+                            <div class="ba-text">
+                                <h5>Parisa</h5>
+                                <a href="https://wa.me/905446454297"><i class="fab fa-whatsapp-square"></i> +90 544 645 42 97</a>
+                                <p class="property-items">Persian & English</p>
+                            </div>
                         </div>
                     </div>
                 </div>

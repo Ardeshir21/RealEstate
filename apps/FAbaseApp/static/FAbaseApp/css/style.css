@@ -1458,7 +1458,9 @@ img {
     .about-content-wrapper .about-content {
       margin-bottom: 100px; } }
   .about-content-wrapper .about-content img {
-    margin-bottom: 40px; }
+    margin: 20px;
+    float: left;
+    width: 50%;}
   .about-content-wrapper .featured-properties-slides {
     position: relative;
     z-index: 1; }
