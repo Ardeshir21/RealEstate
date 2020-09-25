@@ -65,7 +65,7 @@
                                 <h4><a href="{% url 'FAblogApp:post_detail' slug=post.slug %}" title="">{{post.title}}</a></h4>
                                 <p>{{post.shortContent|slice:":370" }} ...</p>
                                 <small class="firstsmall"><a class="bg-orange" href="{% url 'FAblogApp:post_detail' slug=post.slug %}" title="">خواندن مطلب</a></small>
-                                <small>12 خرداد 1399</small>
+                                <small>{{post.created_on | date:"d M Y"}}</small>
                                 <small><a href="#" title="">{{post.author}}</a></small>
                                 <small><i class="fa fa-eye"></i> {{post.view}}</small>
                             </div><!-- end meta -->

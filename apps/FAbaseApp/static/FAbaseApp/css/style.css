@@ -1956,8 +1956,8 @@ img {
       margin-bottom: 5px; }
       .single-blog-area .post-content .post-meta p {
         color: #aaa8a8;
-        direction: rtl;
-        text-align: right;
+        direction: ltr;
+        text-align: left;
         text-indent: 0px;
         font-size: 12px; }
         .single-blog-area .post-content .post-meta p a {
