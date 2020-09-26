@@ -29,14 +29,14 @@ COMPLEX_FEATURES_CATEGORY = {'GENERAL': 'عمومی',
 # Here is the Extra Context ditionary which is used in get_context_data of Views classes
 def get_extra_context():
     extraContext = {
-        'regions': models.Region.objects.all(),
+        'regions': models.Region.objects.filter(regions__complexes__active=True).distinct(),
         'propertyTypeNames': [obj[1] for obj in ASSET_TYPES],
         'tagType': set([obj.get_tag_display() for obj in models.Asset.objects.all()]),
         'bedroomNumbers': models.Bedroom.objects.order_by('number'),
-        'spaceRange': models.Asset.objects.aggregate(Min('build_area'), Max('build_area')),
+        'spaceRange': models.Asset.objects.filter(active=True).aggregate(Min('build_area'), Max('build_area')),
         # ********for later expansion*********
         # context['priceRangeRent'] = models.Asset.objects.filter(tag__exact='FR').aggregate(Min('price'), Max('price'))
-        'priceRange': models.Asset.objects.aggregate(Min('price'), Max('price')),
+        'priceRange': models.Asset.objects.filter(active=True).aggregate(Min('price'), Max('price')),
         # Featured part of the page
         'featuredProperties': models.Asset.objects.filter(featured=True),
         # Blog models for FA Posts
@@ -59,6 +59,13 @@ class IndexView(generic.ListView):
     context_object_name = 'assets_all'
     template_name = 'FAbaseApp/index.html'
     model = models.Asset
+
+    def get_queryset(self):
+        result = super(IndexView, self).get_queryset()
+
+        # Filter all inactive assets at the beginning.
+        result = result.filter(active=True)
+        return result
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -204,7 +211,7 @@ class AssetFilterView(generic.ListView):
         # An slide picture for Search Result page. This need just one slide >> id= ?
         context['slideContent'] = models.Slide.objects.get(useFor__exact='PROPERTY_SEARCH', active__exact=True)
         context['pageTitle'] = 'املاک'
-        context['assets_all'] = models.Asset.objects.all()
+        context['assets_all'] = models.Asset.objects.filter(active=True)
 
     ####### Filtered Items Part #######
         # Building a dictionary of GET request with nice words in order to present them in the search result page.

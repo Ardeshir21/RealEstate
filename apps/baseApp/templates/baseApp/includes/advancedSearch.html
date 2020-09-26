@@ -133,7 +133,7 @@
                             <!-- Price Range -->
                             <div class="col-12 col-md-12 col-lg-12 col-xl-6 d-flex">
                                 <div class="slider-range form-group text-center">
-                                  <p>Price Range (TL)</p>
+                                  <p>Price {{priceRange.price__min}} Range (TL)</p>
                                   <div id="slider_price" data-min={{priceRange.price__min}} data-max={{priceRange.price__max}}></div>
                                   <div class="row justify-content-center">
                                     <div class="col-5 col-md-4 col-lg-4 col-xl-5">
@@ -198,7 +198,7 @@
             noUiSlider.create(slider_price, {
                 start: [min_price, max_price],
                 connect: true,
-                step: 500,
+                step: 5000,
                 range: {
                     'min': {{priceRange.price__min}},
                     'max': {{priceRange.price__max}}
@@ -232,7 +232,7 @@
           noUiSlider.create(slider_area, {
               start: [min_area, max_area],
               connect: true,
-              step: 10,
+              step: 5,
               range: {
                   'min': {{spaceRange.build_area__min}},
                   'max': {{spaceRange.build_area__max}}
