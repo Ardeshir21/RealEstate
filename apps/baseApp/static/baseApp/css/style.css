@@ -2228,38 +2228,39 @@ img {
 .single-accordion h6 {
   margin-bottom: 0;
  }
-  .single-accordion h6 a {
+  .single-accordion h2 a {
     background-color: var(--main-color);
     border-radius: 0;
     color: #ffffff;
     display: block;
+    font-weight: 700;
     padding: 15px 60px 15px 15px;
     margin-bottom: 10px;
     position: relative;
     font-size: 14px;
-    font-weight: 500;
     border: 2px solid transparent; }
-    .single-accordion h6 a span {
+    .single-accordion h2 a span {
       font-size: 10px;
       position: absolute;
       right: 20px;
       text-align: center;
       top: 18px; }
-      .single-accordion h6 a span.accor-open {
+      .single-accordion h2 a span.accor-open {
         opacity: 0;
         -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
         filter: alpha(opacity=0); }
-    .single-accordion h6 a.collapsed {
+    .single-accordion h2 a.collapsed {
       border: 2px solid var(--main-color);
       background-color: transparent;
       color: #000000;
       margin-bottom: 10px;
+      font-weight: 700;
       }
-      .single-accordion h6 a.collapsed span.accor-close {
+      .single-accordion h2 a.collapsed span.accor-close {
         opacity: 0;
         -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
         filter: alpha(opacity=0); }
-      .single-accordion h6 a.collapsed span.accor-open {
+      .single-accordion h2 a.collapsed span.accor-open {
         opacity: 1;
         -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
         filter: alpha(opacity=100); }
@@ -2270,6 +2271,10 @@ img {
   margin-bottom: 12px;}
   .single-accordion .accordion-content p {
     margin-bottom: 0; }
+  .single-accordion .accordion-content h3 {
+    font-size: 15px;
+    font-weight: 700;
+  }
   .single-accordion .accordion-content a {
     /* These are technically the same, but use both */
     overflow-wrap: break-word;
