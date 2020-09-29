@@ -26,6 +26,8 @@ class PostCategories(models.Model):
                                 help_text="Banner Image 1920x1280")
     slug = models.SlugField(max_length=150, unique=True, blank=True, null=True, allow_unicode=True,
                                 help_text="The name of the page as it will appear in URLs e.g http://domain.com/blog/category/[my-slug]/")
+    description = models.TextField(max_length=800, blank=True, help_text='Max Characters = 800')
+    
     class Meta():
         verbose_name_plural = "Categories"
         ordering = ['category']
