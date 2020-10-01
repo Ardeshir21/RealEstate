@@ -100,7 +100,7 @@
                         <!-- Nav Start -->
                         <div class="classynav">
                             <ul>
-                                <li><a href="{% url "baseApp:index" %}">Home</a></li>
+                                <li><a rel="canonical" href="{% url "baseApp:index" %}">Home</a></li>
                                 <!-- <li><a href="#">Pages</a>
                                     <ul class="dropdown">
                                         <li><a href="index.html">Home</a></li>
@@ -121,14 +121,14 @@
                                         <li><a href="elements.html">Elements</a></li>
                                     </ul>
                                 </li> -->
-                                <li><a href="{% url "baseApp:properties" %}">Properties</a></li>
+                                <li><a rel="canonical" href="{% url "baseApp:properties" %}">Properties</a></li>
                                 <li><a href="{% url "baseApp:faq" category=navbar_FAQ %}">FAQ</a></li>
 
                                 {% for navCategory in blogCategoriesNav %}
                                   <li><a class="navbar-bold" href="{% url "blogApp:category_list" category=navCategory.slug %}">{{navCategory.category}}</a></li>
                                 {% endfor %}
 
-                                <li><a href="{% url "blogApp:all_posts" %}">Blog</a>
+                                <li><a rel="canonical" href="{% url "blogApp:all_posts" %}">Blog</a>
                                   <ul class="dropdown">
                                     {% for category in blogCategories %}
                                       <li><a href="{% url "blogApp:category_list" category=category.slug %}">{{category.category}}</a></li>

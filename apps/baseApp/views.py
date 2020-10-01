@@ -51,7 +51,7 @@ class IndexView(generic.ListView):
         # Filter all inactive assets at the beginning.
         result = result.filter(active=True)
         return result
-        
+
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
@@ -354,6 +354,13 @@ class FAQCategoryView(generic.ListView):
         context['pageTitle'] = ''
         # All category objects filtered by Language
         context['all_categories'] = models.FAQCategories.objects.filter(category_lang='EN')
+        # Structred Questions - This for making structured data in templates
+        # The problem is to use the last Item of queryset without comma
+        currentQueryset = self.get_queryset()
+        currentQuerysetCount = len(currentQueryset)
+        if currentQuerysetCount > 0:
+            context['excludedLastQuestion'] = currentQueryset[:currentQuerysetCount-1]
+            context['lastQuestion'] = currentQueryset[currentQuerysetCount-1]
         # This is for Title Tag in the head section of the html
         if self.kwargs['category'] == 'all':
             context['titleTag'] = models.FAQCategories.objects.get(id=1)
@@ -452,7 +459,20 @@ class ExcelOutputAssets(generic.View):
 ############################################################
 # AJAX TEST
 class AJAX_TEST(generic.TemplateView):
-    template_name = 'baseApp/AJAX-test.html'
+    template_name = 'baseApp/test-AJAX.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        ss = {'name': 'My Cake',
+                'type': 'Recipe',
+                'author_type': 'Person',
+                'author_name': 'Parisa',
+                'description': 'This is a description for Cake!!!'
+        }
+
+        context['structredData'] = ss
+        return context
 
 
 # Error Pages

@@ -110,7 +110,7 @@
                                     </ul>
                                 </li>
                                 <li><a href="{% url "FAbaseApp:about_us" %}">درباره ما</a></li>
-                                <li><a href="{% url "FAblogApp:all_posts" %}">راهنمای ترکیه</a>
+                                <li><a rel="canonical" href="{% url "FAblogApp:all_posts" %}">راهنمای ترکیه</a>
                                   <ul class="dropdown">
                                     {% for category in blogCategories %}
                                       <li><a href="{% url "FAblogApp:category_list" category=category.slug %}">{{category.category}}</a></li>
@@ -123,8 +123,8 @@
                                 {% endfor %}
 
                                 <li><a href="{% url "FAbaseApp:faq" category=navbar_FAQ %}">سوالات متداول</a></li>
-                                <li><a href="{% url "FAbaseApp:properties" %}">املاک</a></li>
-                                <li><a href="{% url "FAbaseApp:index" %}">خانه</a></li>
+                                <li><a rel="canonical" href="{% url "FAbaseApp:properties" %}">املاک</a></li>
+                                <li><a rel="canonical" href="{% url "FAbaseApp:index" %}">خانه</a></li>
                             </ul>
 
                             <!-- Search Form -->

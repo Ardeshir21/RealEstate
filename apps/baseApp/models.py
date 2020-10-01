@@ -286,6 +286,7 @@ class FAQ(models.Model):
         self.updated = timezone.now()
         return super(FAQ, self).save(*args, **kwargs)
 
+# This class is for "through" relation model in FAQ model
 class FAQPriority(models.Model):
     category = models.ForeignKey(FAQCategories, on_delete=models.CASCADE)
     question = models.ForeignKey(FAQ, related_name='priorities', on_delete=models.CASCADE)

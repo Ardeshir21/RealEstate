@@ -4,6 +4,20 @@
   <head>
     <meta charset="utf-8">
     <title>AJAX TEST PAGE</title>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org/",
+        "@type": "{{structredData.type}}",
+        "name": "{{structredData.name}}",
+        "author": {
+          "@type": "{{structredData.author_type}}",
+          "name": "{{structredData.author_name}}"
+        },
+        "description": "{{structredData.description}}"
+      }
+    </script>
+
   </head>
   <body>
 

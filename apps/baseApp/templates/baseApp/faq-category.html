@@ -18,6 +18,39 @@
 {% block head %}
 <!-- load stylesheets -->
 <link rel="stylesheet" href="{% static "baseApp/css/templatemo-style.css" %}">
+
+<!-- Structured Data - FAQ -->
+<!-- if there is no lastQuestion exists, we do not have any FAQ -->
+{% if lastQuestion %}
+  <script type="application/ld+json">
+
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {% for question in excludedLastQuestion %}
+            {
+            "@type": "Question",
+            "name": "{{question.question}}",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "{{question.answer}}"
+              }
+            },
+        {% endfor %}
+            // Last Item
+            {
+            "@type": "Question",
+            "name": "{{lastQuestion.question}}",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "{{lastQuestion.answer}}"
+              }
+            }
+      ]
+    }
+  </script>
+{% endif %}
 {% endblock head %}
 
 
@@ -28,7 +61,6 @@
   <!-- ##### WideImage Area Start ##### -->
   <!-- Add category specific picture using Views.py for this part -->
   {% include "baseApp/includes/wideImage.html" %}
-
 
   <section id="CategoryArea" class="south-blog-area section-padding-100">
           <div class="tm-page-wrap mx-auto">

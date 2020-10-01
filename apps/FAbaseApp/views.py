@@ -364,6 +364,13 @@ class FAQCategoryView(generic.ListView):
         context['pageTitle'] = ''
         # All category objects filtered by Language
         context['all_categories'] = models.FAQCategories.objects.filter(category_lang='FA')
+        # Structred Questions - This for making structured data in templates
+        # The problem is to use the last Item of queryset without comma
+        currentQueryset = self.get_queryset()
+        currentQuerysetCount = len(currentQueryset)
+        if currentQuerysetCount > 0:
+            context['excludedLastQuestion'] = currentQueryset[:currentQuerysetCount-1]
+            context['lastQuestion'] = currentQueryset[currentQuerysetCount-1]
         # This is for Title Tag in the head section of the html
         if self.kwargs['category'] == 'all':
             context['titleTag'] = models.FAQCategories.objects.get(id=6)

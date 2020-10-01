@@ -18,6 +18,37 @@
 {% block head %}
 <!-- load stylesheets -->
 <link rel="stylesheet" href="{% static "FAbaseApp/css/templatemo-style.css" %}">
+<!-- if there is no lastQuestion exists, we do not have any FAQ -->
+{% if lastQuestion %}
+  <script type="application/ld+json">
+
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {% for question in excludedLastQuestion %}
+            {
+            "@type": "Question",
+            "name": "{{question.question}}",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "{{question.answer}}"
+              }
+            },
+        {% endfor %}
+            // Last Item
+            {
+            "@type": "Question",
+            "name": "{{lastQuestion.question}}",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "{{lastQuestion.answer}}"
+              }
+            }
+      ]
+    }
+  </script>
+{% endif %}
 {% endblock head %}
 
 
