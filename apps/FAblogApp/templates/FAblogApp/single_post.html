@@ -13,6 +13,20 @@
 <title>{{the_post.title}} | {{slideContent.category}}</title>
 {% endblock head_title %}
 
+{% block head %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "{{the_post.title}}",
+    "image": "{{the_post.image.url}}",
+    "datePublished": "{{the_post.created_on}}",
+    "dateModified": "{{the_post.updated_on}}",
+    "articleSection": "{{slideContent.category}}",
+    "url": "{% url 'FAblogApp:post_detail' slug=the_post.slug %}"
+  }
+  </script>
+{% endblock head %}
 
 {% block body_content %}
   <!-- ##### WideImage Area Start ##### -->

@@ -6,13 +6,17 @@
 
 {% block head_description %}
   <!-- Specific Description for each page -->
-  <meta name="description" content="">
+  <meta name="description" content="Look for home in all Istanbul areas and Turkey">
 {% endblock head_description %}
 
 {% block head_title %}
 <!-- Title  -->
 <title>Search Property and Find Home in Turkey - Best Price | GAMMA</title>
 {% endblock head_title %}
+
+{% block head %}
+<link rel="canonical" href="{{request.scheme}}://{{request.get_host}}{% url "baseApp:properties" %}" />
+{% endblock head %}
 
   <!-- The main content of the page -->
   {% block body_content %}

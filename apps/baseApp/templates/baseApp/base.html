@@ -50,7 +50,7 @@
     </div>
 
     <!-- Whatsapp Icon -->
-    <a href="https://wa.me/905446454297?text=Hi%2C%20good%20day" class="float" target="_blank">
+    <a alt="Contact" href="https://wa.me/905446454297?text=Hi%2C%20good%20day" class="float" target="_blank">
     <i class="fab fa-whatsapp fa-3x"></i>
     </a>
 
@@ -100,7 +100,7 @@
                         <!-- Nav Start -->
                         <div class="classynav">
                             <ul>
-                                <li><a rel="canonical" href="{% url "baseApp:index" %}">Home</a></li>
+                                <li><a href="{% url "baseApp:index" %}" alt="Homepage">Home</a></li>
                                 <!-- <li><a href="#">Pages</a>
                                     <ul class="dropdown">
                                         <li><a href="index.html">Home</a></li>
@@ -121,17 +121,17 @@
                                         <li><a href="elements.html">Elements</a></li>
                                     </ul>
                                 </li> -->
-                                <li><a rel="canonical" href="{% url "baseApp:properties" %}">Properties</a></li>
-                                <li><a href="{% url "baseApp:faq" category=navbar_FAQ %}">FAQ</a></li>
+                                <li><a href="{% url "baseApp:properties" %}" alt="Offers">Properties</a></li>
+                                <li><a href="{% url "baseApp:faq" category=navbar_FAQ %}" alt="FAQ">FAQ</a></li>
 
                                 {% for navCategory in blogCategoriesNav %}
-                                  <li><a class="navbar-bold" href="{% url "blogApp:category_list" category=navCategory.slug %}">{{navCategory.category}}</a></li>
+                                  <li><a alt="{{navCategory.category}}" class="navbar-bold" href="{% url "blogApp:category_list" category=navCategory.slug %}">{{navCategory.category}}</a></li>
                                 {% endfor %}
 
-                                <li><a rel="canonical" href="{% url "blogApp:all_posts" %}">Blog</a>
+                                <li><a href="{% url "blogApp:all_posts" %}" alt="Blog">Blog</a>
                                   <ul class="dropdown">
                                     {% for category in blogCategories %}
-                                      <li><a href="{% url "blogApp:category_list" category=category.slug %}">{{category.category}}</a></li>
+                                      <li><a alt="{{category.category}}" href="{% url "blogApp:category_list" category=category.slug %}">{{category.category}}</a></li>
                                     {% endfor %}
                                   </ul>
                                 </li>
@@ -171,8 +171,8 @@
                                         </ul>
                                     </div>
                                 </li> -->
-                                <li><a href="{% url "baseApp:about_us" %}">About Us</a></li>
-                                <li><a href="#">Language</a>
+                                <li><a href="{% url "baseApp:about_us" %}" alt="About Us">About Us</a></li>
+                                <li><a href="#" alt="Language">Language</a>
                                     <ul class="dropdown">
                                         <li><a href="{% url "baseApp:index" %}">English</a></li>
                                         <li><a href="{% url "FAbaseApp:index" %}" style="font-family: IranSans-Medium !important;">فارسی</a></li>
