@@ -151,7 +151,8 @@ EMAIL_USE_SSL = True
 
 # Maintenace mode
 # Use this code: python manage.py maintenance_mode off/on
-MAINTENANCE_MODE = True
+MAINTENANCE_MODE = None
+MAINTENANCE_MODE_TEMPLATE = '503.html'
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
