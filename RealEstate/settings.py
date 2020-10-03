@@ -90,6 +90,8 @@ INSTALLED_APPS = [
     'compressor',
     # for debug analysis
     # 'debug_toolbar',
+    # Maintenance Mode
+    'maintenancemode',
 ]
 
 MIDDLEWARE = [
@@ -103,6 +105,8 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    # Maintenance Mode
+    'maintenancemode.middleware.MaintenanceModeMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -142,6 +146,11 @@ EMAIL_PORT = 465
 EMAIL_HOST_USER = secrets_dict['EMAIL_HOST_USER']
 EMAIL_HOST_PASSWORD = secrets_dict['EMAIL_HOST_PASSWORD']
 EMAIL_USE_SSL = True
+
+# Maintenace mode
+# Use this code: python manage.py maintenance off/on
+MAINTENANCE_MODE = False
+
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
