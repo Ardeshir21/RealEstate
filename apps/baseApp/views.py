@@ -486,11 +486,6 @@ def error_500(request):
         # The html file should be in templates folder not the subfolders
         return render(request,'baseApp/500.html', data)
 
-def maintenance_mode(request):
-        data = {}
-        # The html file should be in templates folder not the subfolders
-        return render(request,'baseApp/503.html', data)
-
 # FORMS are here
 # from . import forms
 

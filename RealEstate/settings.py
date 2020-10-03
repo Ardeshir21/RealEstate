@@ -73,6 +73,8 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'robots',
 
+    # Maintenance Mode
+    'maintenance_mode',
     # My webApps
     'apps.baseApp',
     'apps.blogApp',
@@ -90,8 +92,6 @@ INSTALLED_APPS = [
     'compressor',
     # for debug analysis
     # 'debug_toolbar',
-    # Maintenance Mode
-    'maintenancemode',
 ]
 
 MIDDLEWARE = [
@@ -105,10 +105,10 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    # Maintenance Mode
-    'maintenancemode.middleware.MaintenanceModeMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # Maintenance Mode
+    'maintenance_mode.middleware.MaintenanceModeMiddleware',
 ]
 
 ROOT_URLCONF = 'RealEstate.urls'
@@ -124,6 +124,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # Maintenance Mode
+                'maintenance_mode.context_processors.maintenance_mode',
             ],
         },
     },
@@ -148,9 +150,8 @@ EMAIL_HOST_PASSWORD = secrets_dict['EMAIL_HOST_PASSWORD']
 EMAIL_USE_SSL = True
 
 # Maintenace mode
-# Use this code: python manage.py maintenance off/on
-MAINTENANCE_MODE = False
-
+# Use this code: python manage.py maintenance_mode off/on
+MAINTENANCE_MODE = True
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
