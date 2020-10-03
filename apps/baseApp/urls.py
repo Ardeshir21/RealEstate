@@ -38,3 +38,4 @@ urlpatterns = [
 
 handler404 = 'apps.baseApp.views.error_404'
 handler500 = 'apps.baseApp.views.error_500'
+handler503 = 'apps.baseApp.views.maintenance_mode'

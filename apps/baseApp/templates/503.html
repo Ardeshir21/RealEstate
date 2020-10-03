@@ -1,0 +1,78 @@
+{% load compress static %}
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Page Not Found</title>
+    <!-- Favicon  -->
+    <link rel="icon" href="{% static "baseApp/img/core-img/favicon.ico" %}">
+    {% compress css %}
+        <link type="text/x-scss" href="{% static "baseApp/css/404.scss" %}" rel="stylesheet" media="screen">
+    {% endcompress %}
+  </head>
+
+  <body>
+      <div class="not-found parallax">
+                  <div class="sky-bg"></div>
+                  <div class="wave-7"></div>
+                  <div class="wave-6"></div>
+                  <a class="wave-island" href="{% url "baseApp:index" %}">
+                          <img src="{% static "baseApp/img/core-img/island.svg" %}" alt="Island">
+                      </a>
+                  <div class="wave-5"></div>
+                  <div class="wave-lost wrp">
+                      <span>5</span>
+                      <span>0</span>
+                      <span>3</span>
+                  </div>
+                  <div class="wave-4"></div>
+                  <div class="wave-boat">
+                      <img class="boat" src="{% static "baseApp/img/core-img/boat.svg" %}" alt="Boat">
+                  </div>
+                  <div class="wave-3"></div>
+                  <div class="wave-2"></div>
+                  <div class="wave-1"></div>
+                  <div class="wave-message">
+                      <p>Maintenance</p>
+                      <p style="font-family: IranSans-Medium;">نگهداری و تعمیرات</p>
+                      <p>Keep Calm!</p>
+                      <p style="font-family: IranSans-Medium;">آرامش خودتان را حفظ کنید</p>
+                  </div>
+              </div>
+      <!-- javascript -->
+      <script type="text/javascript">
+          var parallax = function(e) {
+              var windowWidth = $(window).width();
+              if (windowWidth < 768) return;
+              var halfFieldWidth = $(".parallax").width() / 2,
+                halfFieldHeight = $(".parallax").height() / 2,
+                fieldPos = $(".parallax").offset(),
+                x = e.pageX,
+                y = e.pageY - fieldPos.top,
+                newX = (x - halfFieldWidth) / 30,
+                newY = (y - halfFieldHeight) / 30;
+              $('.parallax [class*="wave"]').each(function(index) {
+                $(this).css({
+                  transition: "",
+                  transform:
+                    "translate3d(" + index * newX + "px," + index * newY + "px,0px)"
+                });
+              });
+            },
+            stopParallax = function() {
+              $('.parallax [class*="wave"]').css({
+                transform: "translate(0px,0px)",
+                transition: "all .7s"
+              });
+              $timeout(function() {
+                $('.parallax [class*="wave"]').css("transition", "");
+              }, 700);
+            };
+          $(document).ready(function() {
+            $(".not-found").on("mousemove", parallax);
+            $(".not-found").on("mouseleave", stopParallax);
+          });
+      </script>
+</body>
+</html>
