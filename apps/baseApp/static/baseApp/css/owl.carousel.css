@@ -116,8 +116,6 @@
 .owl-carousel .owl-item img {
   display: block;
   width: 100%;
-  position: absolute;
-  bottom: 10px;
   -webkit-transform-style: preserve-3d;
 }
 .owl-carousel.owl-text-select-on .owl-item {

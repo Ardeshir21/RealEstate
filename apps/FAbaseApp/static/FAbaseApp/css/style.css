@@ -1155,6 +1155,13 @@ img {
       color: #7d7d7d;
       font-size: 1.25rem;
       line-height: 1.5;}
+    .testimonials-slides .single-testimonial-slide img {
+      display: block;
+      width: 100%;
+      -webkit-transform-style: preserve-3d;
+      position: absolute;
+      bottom: 10px;
+    }
     .testimonials-slides .single-testimonial-slide .testimonial-author-info {
       margin-top: 50px; }
       .testimonials-slides .single-testimonial-slide .testimonial-author-info img {
