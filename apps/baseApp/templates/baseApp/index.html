@@ -98,8 +98,8 @@
                       {% for post in blogPosts %}
                         <!-- Single Testimonial Slide -->
                         <div class="single-testimonial-slide text-center">
-                            <a href="{% url 'blogApp:post_detail' slug=post.slug %}"><h5>{{post.title}}</h5></a>
-                            <a href="{% url 'blogApp:post_detail' slug=post.slug %}"><img src="{{post.image.url}}" alt="{{post.slug}}"></a>
+                          <a href="{% url 'FAblogApp:post_detail' slug=post.slug %}"><h3>{{post.title}}</h3>
+                          {% if post.image %}<img src="{{post.image.url}}" alt="{{post.slug}}">{% endif %}</a>
 
                             <!-- <div class="testimonial-author-info">
                                 <p>Author, <span>{{post.author}}</span></p>
