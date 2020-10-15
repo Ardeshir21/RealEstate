@@ -10,6 +10,7 @@ venv
 staticfiles
 /static
 .env
+.vs
 db.sqlite3
 RealEstateKEYS.txt
 Digital Ocean.txt
