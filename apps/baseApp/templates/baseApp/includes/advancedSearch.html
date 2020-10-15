@@ -190,6 +190,9 @@
 <!-- Slider Settings -->
 <script type="text/javascript">
       // A function to comma seperate the digits
+      function numberWithCommas(x) {
+          return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      }
 
       // PRICE SLIDER
             var slider_price = document.getElementById('slider_price');
@@ -211,7 +214,8 @@
           slider_price.noUiSlider.on('update', function (values, handle) {
 
       // "values" is a list of [min, max] numbers. And "handle" can be 0 or 1
-            inputPriceMin.value = Math.round(values[0])
+            var AAA = 34523453;
+            inputPriceMin.value = numberWithCommas(AAA)
             inputPriceMax.value = Math.round(values[1])
           });
 
