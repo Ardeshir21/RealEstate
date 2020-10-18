@@ -214,8 +214,7 @@
           slider_price.noUiSlider.on('update', function (values, handle) {
 
       // "values" is a list of [min, max] numbers. And "handle" can be 0 or 1
-            var AAA = 34523453;
-            inputPriceMin.value = numberWithCommas(AAA)
+            inputPriceMin.value = Math.round(values[0])
             inputPriceMax.value = Math.round(values[1])
           });
 
