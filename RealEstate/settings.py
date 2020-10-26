@@ -132,6 +132,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'RealEstate.wsgi.application'
+# This is for redirecting functions for examples @login_required functions
 LOGIN_URL = '/management-login-page/login/'
 SITE_ID = 1
 
