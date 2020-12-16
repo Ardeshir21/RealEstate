@@ -1,0 +1,69 @@
+
+{% load humanize %}
+
+  {% if scraped_data %}
+  <div class="row">
+      <div class="col-12 col-lg-5">
+        <div class="text-center wow bounceInLeft" data-wow-duration="1s" data-wow-delay="500ms">
+          <img src="{{scraped_data.Image}}" style="width:415px; height:auto;">
+        </div>
+      </div>
+      <div class="col-12 col-lg-7">
+        <div class="text-center">
+          <!-- Title & Price -->
+          <div class="wow bounceInRight" data-wow-duration="1s" data-wow-delay="700ms">
+            <h3 style="margin-top: 20px;">{{scraped_data.Title}}</h3>
+            <h6 class="mt-4" style="color:green; font-size:25px; margin-bottom:70px;">{{scraped_data.Final_Price}} لیر </h6>
+          </div>
+          <!-- Quotation Details -->
+          <table class="table table-bordered table-hover wow fadeInUp" data-wow-duration="1s" data-wow-delay="800ms" style="direction: rtl;">
+            <thead>
+              <tr>
+                <th scope="col">شرح</th>
+                <th scope="col">تومان</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <th scope="row">نرخ لیر</th>
+                <td>{{calculated_data.Currency_Rate}}</td>
+              </tr>
+              <tr>
+                <th scope="row">قیمت محصول</th>
+                <td>
+                  {% filter floatformat:"0"|intcomma %}
+                    {{calculated_data.Product_Price}}
+                  {% endfilter %}
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">هزینه ارسال</th>
+                <td>
+                  {% filter floatformat:"0"|intcomma %}
+                    {{calculated_data.Transport_Price}}
+                  {% endfilter %}
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">قیمت نهایی</th>
+                <td>
+                  <h6 style="direction: ltr; color:green; font-size:25px;">
+                    {% filter floatformat:"0"|intcomma %}
+                      {{calculated_data.Final_Price}}
+                    {% endfilter %}
+                  </h6>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+  </div>
+
+  {% else %}
+
+
+
+
+  {% endif %}

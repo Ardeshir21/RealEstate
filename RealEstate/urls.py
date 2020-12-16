@@ -25,6 +25,7 @@ urlpatterns = [
     path('blog/', include('apps.blogApp.urls')),
     path('fa/', include('apps.FAbaseApp.urls')),
     path('fa/راهنمای-ترکیه/', include('apps.FAblogApp.urls')),
+    path('fa/خرید-ترکیه/', include('apps.scrapeApp.urls')),
 
     # This is for Blog Editor in blogApp.models.py
     path('ckeditor/', include('ckeditor_uploader.urls')),
