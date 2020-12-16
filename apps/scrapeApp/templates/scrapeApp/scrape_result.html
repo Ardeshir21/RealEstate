@@ -38,10 +38,10 @@
                 </td>
               </tr>
               <tr>
-                <th scope="row">هزینه ارسال</th>
+                <th scope="row">هزینه ارسال و کارمزد</th>
                 <td>
                   {% filter floatformat:"0"|intcomma %}
-                    {{calculated_data.Transport_Price}}
+                    {{calculated_data.Transport_Margin}}
                   {% endfilter %}
                 </td>
               </tr>

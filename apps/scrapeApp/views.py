@@ -56,14 +56,14 @@ class AJAX_SCRAPE(generic.TemplateView):
         last_sales_params = models.SalesParameter.objects.latest('date')
         last_currency_data = models.CurrencyRate.objects.latest('date')
         currency_rate = last_currency_data.rate_TurkishLira
-        product_price = scraped_data['Final_Price'] * currency_rate * (1+(last_sales_params.margin_percent/100))
-        transport_price = last_sales_params.pricePerKilo
-        final_price = product_price + transport_price
+        product_price = scraped_data['Final_Price'] * currency_rate
+        transport_plus_margin = last_sales_params.pricePerKilo + (product_price * (last_sales_params.margin_percent/100))
+        final_price = product_price + transport_plus_margin
 
         calculated_data = {
         'Currency_Rate': currency_rate,
         'Product_Price': product_price,
-        'Transport_Price': transport_price,
+        'Transport_Margin': transport_plus_margin,
         'Final_Price': final_price
         }
 
