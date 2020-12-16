@@ -38,7 +38,7 @@
                 </td>
               </tr>
               <tr>
-                <th scope="row">هزینه ارسال و کارمزد</th>
+                <th scope="row">هزینه ارسال و کارمزد*</th>
                 <td>
                   {% filter floatformat:"0"|intcomma %}
                     {{calculated_data.Transport_Margin}}
@@ -46,7 +46,7 @@
                 </td>
               </tr>
               <tr>
-                <th scope="row">قیمت نهایی</th>
+                <th scope="row">قیمت نهایی**</th>
                 <td>
                   <h6 style="direction: ltr; color:green; font-size:25px;">
                     {% filter floatformat:"0"|intcomma %}
@@ -57,6 +57,8 @@
               </tr>
             </tbody>
           </table>
+          <p style="text-align: right;">*مدت زمان تحویل کالا در تهران تقریبا 20 روز کاری می باشد</p>
+          <p style="text-align: right;">**قیمت های فوق بر اساس نرخ ارز بروزرسانی می شوند</p>
         </div>
       </div>
   </div>

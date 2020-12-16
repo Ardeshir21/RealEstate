@@ -2567,4 +2567,30 @@ img {
       content: "Loading...";
     }
   }
+
+#website-div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80px;
+}
+a#web-btn {
+  font-size: 1.5rem;
+  padding: 0.5rem 3rem;
+  color: orange;
+  text-transform: uppercase;
+  margin: 20px;
+}
+
+#web-btn {
+  text-decoration: none;
+  border: 1px solid rgb(146, 148, 248);
+  position: relative;
+  overflow: hidden;
+}
+
+#web-btn:hover {
+  box-shadow: 1px 1px 25px 10px rgba(146, 148, 248, 0.4);
+}
+
 /*# sourceMappingURL=style.css.map */
