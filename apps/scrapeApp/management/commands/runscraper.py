@@ -60,4 +60,4 @@ class Command(BaseCommand):
                 product.active = False
                 product.save()
                 self.stdout.write('ERROR: from different domain - {}'.format(product.name))
-    return
+        return
