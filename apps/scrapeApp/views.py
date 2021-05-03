@@ -3,7 +3,7 @@ from django.views import generic
 from . import models
 from apps.baseApp import models as baseAppModel
 from apps.blogApp import models as blogAppModel
-from .spiders import Trendyol
+from .scrapers import Trendyol
 from django.db.models import Q
 
 # Here is the Extra Context ditionary which is used in get_context_data of Views classes
@@ -21,9 +21,49 @@ def get_extra_context():
         }
     return extraContext
 
+class AllStoreView(generic.ListView):
+    context_object_name = 'stores'
+    template_name = 'scrapeApp/all-stores.html'
+    model = models.Store
 
-class LinkQuotation(generic.TemplateView):
-    template_name = 'scrapeApp/link_quotation.html'
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Append shared extraContext
+        context.update(get_extra_context())
+
+        # This title is different for this view
+        context['slideContent'] = baseAppModel.Slide.objects.get(useFor__exact='BLOG_HOME', active__exact=True)
+
+        return context
+
+class StoreView(generic.DetailView):
+    context_object_name = 'the_store'
+    template_name = 'scrapeApp/store.html'
+    model = models.Store
+    slug_url_kwarg = 'store'
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Append shared extraContext
+        context.update(get_extra_context())
+
+        # Filter are active products
+        context['products'] = models.Product.objects.filter(store__slug=self.kwargs['store'], active=True)
+
+        # This title is different for this view
+        context['slideContent'] = baseAppModel.Slide.objects.get(useFor__exact='BLOG_HOME', active__exact=True)
+
+        return context
+
+class ProductView(generic.DetailView):
+    context_object_name = 'the_product'
+    template_name = 'scrapeApp/product.html'
+    model = models.Product
+    slug_url_kwarg = 'product_slug'
+    pk_url_kwarg = 'product_id'
+    query_pk_and_slug = True
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -49,7 +89,7 @@ class AJAX_SCRAPE(generic.TemplateView):
         client_ip = self.request.META['REMOTE_ADDR']
         requested_url = self.request.GET.get('requested_url')
 
-        # Here we use a scraper code to get required data from a website
+        # Here we use a scraper code from spiders folder to get required data from a website
         scraped_data= Trendyol.GoScrape(requested_url)
 
         # Do some calculation on result

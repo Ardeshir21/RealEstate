@@ -1,0 +1,123 @@
+{% extends "FAbaseApp/base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block head_description %}
+  <!-- Specific Description for each page -->
+  <meta name="description" content="ترندیول یا Trendyol یک فروشگاه آنلاین لباس در کشور ترکیه است. عرضه اجناس با کیفیت بالا و با قیمتی مناسب برای فروش آنلاین پوشاک و لوازم آرایشی از تمام برندهای خارجی. خرید و ارسال پوشاک و لوازم آرایش از ترکیه به ایران. ">
+{% endblock head_description %}
+
+{% block head_title %}
+<!-- Title  -->
+<title>خرید از ترکیه - {{the_product.store.name}}</title>
+{% endblock head_title %}
+
+
+{% block head %}
+<!-- Style CSS -->
+<link rel="stylesheet" href="{% static "scrapeApp/css/custome.css" %}">
+{% endblock head %}
+
+
+<!-- The main content of the page -->
+{% block body_content %}
+
+    <!-- ##### WideImage Area Start ##### -->
+
+    <section id="Quotation" class="south-contact-area product-section-padding">
+        <div id='result-part' class="container">
+          <!-- Images and Table -->
+          <div class="row">
+              <!-- Images -->
+              <div class="col-12 col-lg-5">
+                <div class="text-center wow bounceInLeft" data-wow-duration="1s" data-wow-delay="500ms">
+                  <!-- OWL Slider -->
+                  {% with all_urls=the_product.product_images_urls.all %}
+                    {% if all_urls|length > 1 %}
+                      <div class="single-listings-sliders owl-carousel" data-ride="carousel">
+                        {% for pic in all_urls %}
+                          <div class="item">
+                              <img src="{{pic.image_url}}" alt="pic" title="pic" id="{{pic.pk}}"/>
+                          </div>
+                        {% endfor %}
+                      </div>
+                    {% else %}
+                      <div>
+                        {% for pic in all_urls %}
+                          <div class="item">
+                              <img src="{{pic.image_url}}" alt="pic" title="pic" id="{{pic.pk}}"/>
+                          </div>
+                        {% endfor %}
+                      </div>
+                    {% endif %}
+                  {% endwith %}
+                </div>
+              </div>
+              <!-- Table -->
+              <div class="col-12 col-lg-7">
+                <div class="text-center">
+                  <!-- Title & Price -->
+                  <div class="wow bounceInRight" data-wow-duration="1s" data-wow-delay="700ms">
+                    <h3 style="margin-top: 20px;">{{the_product.name}}</h3>
+                    <h6 class="mt-4" style="color:green; font-size:25px; margin-bottom:70px;">{{the_product.final_price}} لیر </h6>
+                    <h6 class="mt-4" style="color:green; font-size:25px; margin-bottom:70px;">کد کالا: GAM21{{the_product.id}}</h6>
+                  </div>
+                  <!-- Quotation Details -->
+                  <table class="table table-bordered table-hover wow fadeInUp" data-wow-duration="1s" data-wow-delay="800ms" style="direction: rtl;">
+                    <thead>
+                      <tr>
+                        <th scope="col">شرح</th>
+                        <th scope="col">تومان</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      <tr>
+                        <th scope="row">نرخ لیر</th>
+                        <td>{{calculated_data.Currency_Rate}}</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">قیمت محصول</th>
+                        <td>
+                          {% filter floatformat:"0"|intcomma %}
+                            {{calculated_data.Product_Price}}
+                          {% endfilter %}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th scope="row">هزینه ارسال و کارمزد*</th>
+                        <td>
+                          {% filter floatformat:"0"|intcomma %}
+                            {{calculated_data.Transport_Margin}}
+                          {% endfilter %}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th scope="row">قیمت نهایی**</th>
+                        <td>
+                          <h6 style="direction: ltr; color:green; font-size:25px;">
+                            {% filter floatformat:"0"|intcomma %}
+                              {{calculated_data.Final_Price}}
+                            {% endfilter %}
+                          </h6>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <p style="text-align: right;">*مدت زمان تحویل کالا در تهران تقریبا 20 روز کاری می باشد</p>
+                  <p style="text-align: right;">**قیمت های فوق بر اساس نرخ ارز بروزرسانی می شوند</p>
+                </div>
+                <div class="text-center mt-50">
+                  <a class="btn south-btn" href="#">سفارش</a>
+                </div>
+              </div>
+          </div>
+          <!-- Back Button -->
+          <div class="row back-btn mt-70">
+            <div class="col-12 text-center">
+              <a href="{% url "scrapeApp:store_page" store=the_product.store.slug %}"><i class="fas fa-chevron-square-left"></i> Back to {{the_product.store.name}}</a>
+            </div>
+          </div>
+        </div>
+    </section>
+{% endblock body_content %}

@@ -2,7 +2,8 @@ from django.contrib import admin
 from django import forms
 from django.db import models
 from django.contrib.admin.widgets import AdminDateWidget
-from .models import (RequestedLinks, CurrencyRate, SalesParameter)
+from .models import (RequestedLinks, CurrencyRate, SalesParameter,
+                        Store, Product, ProductImagesUrls)
 
 
 
@@ -15,8 +16,28 @@ class CurrencyRateAdmin(admin.ModelAdmin):
 class SalesParameterAdmin(admin.ModelAdmin):
     list_display = ['date', 'pricePerKilo', 'margin_percent']
 
+class StoreAdmin(admin.ModelAdmin):
+    list_display = ['name', 'website_url']
+    prepopulated_fields = {'slug': ('name',)}
 
+class ProductImagesUrlsInline(admin.TabularInline):
+    model = ProductImagesUrls
+    list_display = ['product', 'image_tag', 'active', 'display_order']
+    list_editable = ['display_order']
+    readonly_fields = ['image_tag']
+
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ['store', 'image_tag', 'name', 'updated_on']
+    prepopulated_fields = {'slug': ('name',)}
+    readonly_fields = ['image_tag']
+    search_fields = ['store']
+    # other Inlines
+    inlines = [
+        ProductImagesUrlsInline,
+    ]
 
 admin.site.register(RequestedLinks, RequestedLinksAdmin)
 admin.site.register(CurrencyRate, CurrencyRateAdmin)
 admin.site.register(SalesParameter, SalesParameterAdmin)
+admin.site.register(Store, StoreAdmin)
+admin.site.register(Product, ProductAdmin)

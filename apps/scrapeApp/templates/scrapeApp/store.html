@@ -1,0 +1,70 @@
+{% extends "FAbaseApp/base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block head_description %}
+  <!-- Specific Description for each page -->
+  <meta name="description" content="ترندیول یا Trendyol یک فروشگاه آنلاین لباس در کشور ترکیه است. عرضه اجناس با کیفیت بالا و با قیمتی مناسب برای فروش آنلاین پوشاک و لوازم آرایشی از تمام برندهای خارجی. خرید و ارسال پوشاک و لوازم آرایش از ترکیه به ایران. ">
+{% endblock head_description %}
+
+
+{% block head_title %}
+<!-- Title  -->
+<title>{{the_store.name}}</title>
+{% endblock head_title %}
+
+
+{% block head %}
+<!-- Style CSS -->
+<link rel="stylesheet" href="{% static "scrapeApp/css/custome.css" %}">
+{% endblock head %}
+
+<!-- The main content of the page -->
+{% block body_content %}
+
+    <!-- ##### WideImage Area Start ##### -->
+    {% include "FAbaseApp/includes/wideImage.html" %}
+
+
+
+    <section class="product-list section-padding-50">
+        <div class="container">
+            <div class="row">
+              <div class="col-12 text-center mb-5">
+                <h1>{{the_store.name}}</h1>
+              </div>
+            </div>
+            <div class="row" style="direction:rtl;">
+              {% for product in products %}
+                {% if product.is_image_url_valid %}
+                <div id="product-item-wrapper" class="col-6 col-xs-6 col-sm-6 col-md-3 effect7">
+                  <a href="{% url "scrapeApp:product_page" store=the_store.slug product_id=product.pk product_slug=product.slug %}">
+                    <div class="product-thumbnail">
+                      <img src="{{product.image_url}}" alt="">
+                    </div>
+                    <div class="product-info">
+                      <div class="product-name">
+                        <h2>{{product.name}}</h2>
+                      </div>
+                      {% if product.is_discounted %}
+                        <div class="original-price discounted">
+                          <h4>تومان 150000</h4>
+                        </div>
+                        <div class="final-price">
+                          <h4>تومان 110000</h4>
+                        </div>
+                      {% else %}
+                        <div class="original-price">
+                          <h4>تومان 150000</h4>
+                        </div>
+                      {% endif %}
+                    </div>
+                  </a>
+                </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+        </div>
+    </section>
+
+{% endblock body_content %}

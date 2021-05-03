@@ -9,8 +9,15 @@
 
 {% block head_title %}
 <!-- Title  -->
-<title>خرید از ترندیول | Trendyol</title>
+<title>خرید کالا از ترکیه</title>
 {% endblock head_title %}
+
+{% block head %}
+<!-- Style CSS -->
+<link rel="stylesheet" href="{% static "scrapeApp/css/custome.css" %}">
+{% endblock head %}
+
+
 
 <!-- The main content of the page -->
 {% block body_content %}
@@ -31,22 +38,34 @@
     <!-- ##### WideImage Area Start ##### -->
     {% include "FAbaseApp/includes/wideImage.html" %}
 
-    <section class="blog-area section-padding-50">
+    <section class="section-padding-50">
         <div class="container">
             <div class="row justify-content-md-center">
-                <div class="col-12 col-lg-10">
-                  <div class="single-blog-area">
-                    <h1>خرید کالا از ترکیه - سایت ترندیول</h1>
-                    <p>خرید اینترنتی پوشاک و اجناس مد روز از کشور ترکیه خصوصا فروشگاه ترندیول گزینه مورد خیلی از علاقه علاقمندان حوزه پوشاک و اجناس با کیفیت از ترکیه است. ترندیول یا Trendyol یک فروشگاه آنلاین لباس در کشور ترکیه است که بیش از 100 برند داخلی و خارجی در آن اجناس خود را به فروش می‌رسانند. به عبارتی این فروشگاه که در آن به عرضه اجناس با کیفیت بالا و قیمت خیلی مناسب پرداخته شده است صرفا برای فروش آنلاین پوشاک نبوده و لوازم زیبایی و آرایشی و حتی لوازم الکترونیکی نیز در آن به فروش می رسد.</p>
-                    <div id="website-div">
-                      <a id="web-btn" class="web-btn" href="#">سایت ترندیول</a>
-                    </div>
-                    <p>این فروشگاه رتبه اول فروش آنلاین را در ترکیه دارا می باشد و صرفا بصورت آنلاین فعالیت می نماید و هیچ گونه فروشگاه فیزیکی ندارد و تنها راه دسترسی به آن در کشور ترکیه است. از این رو تیم ما امکان خرید آنلاین را برای مشتریان و دوستداران اجناس خوب و با کیفیت ترندیول را در ایران فراهم آورد. برای این کار کافی است از سایت ترندیول لینک کالای مورد علاقه خود را در فرم ارزیابی قیمت وارد نموده و سفارش خود را با تیم فروش نهایی کنید. </p>
-                  </div>
+                <div class="col-12 text-center">
+                    <h1>خرید کالا از ترکیه</h1>
                 </div>
             </div>
         </div>
     </section>
+
+    <section class=" storesection-padding-50">
+        <div class="container">
+            <div class="row">
+              {% for store in stores %}
+                <div class="col-6 col-lg-3 store">
+                  <a class="no-hover" href="{% url "scrapeApp:store_page" store=store.slug %}">
+                    <div class="store-name text-center">
+                        <h2>{{store.name}}</h2>
+                    </div>
+                    <img src="{{store.logo.url}}" alt="">
+                  </a>
+                </div>
+              {% endfor %}
+            </div>
+        </div>
+    </section>
+
+
 
 
     <section id="LinkFrom" class="south-contact-area section-padding-50">

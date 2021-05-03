@@ -9,6 +9,7 @@ migrations/
 venv
 staticfiles
 /static
+/General Documents
 .env
 .vs
 db.sqlite3

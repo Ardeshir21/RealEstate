@@ -6,26 +6,33 @@ def GoScrape(URL):
     try:
         page = requests.get(URL)
     # When the request is not a valid URL
-    except: return False
+    except: return None
 
     page_soup = BeautifulSoup(page.content, 'html.parser')
 
     title = titleScraper(page_soup)
-    image = imageScraper(page_soup)
+    image_main = mainImageScraper(page_soup)
+    images_urls_list = imagesScraper(page_soup)
     original_price = priceMaker(originalPriceScraper(page_soup))
     discounted_price = priceMaker(discountedPriceScraper(page_soup))
     indirim_price = priceMaker(indirimPriceScraper(page_soup))
     prices_list = [original_price, discounted_price, indirim_price]
-    final_price = min(i for i in prices_list if i is not None)
+
+    try:
+        final_price = min(i for i in prices_list if i is not None)
+    # the situation that the list is empty
+    except:
+        final_price = None
 
 
     # When the request is URL but not related to Trendyol Product page
-    if title==None and discounted_price==None:
-        return False
+    # if title==None and discounted_price==None:
+    #     return False
 
     result= {
     'Title': title,
-    'Image': image,
+    'Image': image_main,
+    'Images': images_urls_list,
     'Final_Price': final_price
     }
 
@@ -37,10 +44,15 @@ def titleScraper(soup):
     if temp_:
         return temp_.text
 
-def imageScraper(soup):
+def mainImageScraper(soup):
     temp_= soup.select_one('img.ph-gl-img')
     if temp_:
         return temp_['src']
+
+def imagesScraper(soup):
+    temp_= soup.select('.ph-gl-w.ph-gl-sml.pd-img img')
+    if temp_:
+        return [item['src'] for item in temp_]
 
 def originalPriceScraper(soup):
     temp_= soup.select_one('span.prc-org')
