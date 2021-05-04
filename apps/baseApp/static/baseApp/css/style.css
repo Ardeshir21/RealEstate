@@ -65,8 +65,14 @@
   margin: 0;
   padding: 0; }
 
+  html, body {
+    overflow-x: hidden;
+  }
+
 body {
-  font-family: "Open Sans", sans-serif; }
+  font-family: "Open Sans", sans-serif;
+  position: relative;
+ }
 
 h1,
 h2,

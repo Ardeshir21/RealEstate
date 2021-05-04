@@ -68,9 +68,14 @@
   margin: 0;
   padding: 0; }
 
+  html, body {
+    overflow-x: hidden;
+  }
+
 body {
   font-family: "IranSans-UltraLight", sans-serif;
-  font-weight: 300;}
+  font-weight: 300;
+  position: relative;}
 
 h1,
 h2,
