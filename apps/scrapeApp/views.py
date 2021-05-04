@@ -43,7 +43,7 @@ class StoreView(generic.ListView):
     context_object_name = 'products'
     template_name = 'scrapeApp/store.html'
     model = models.Product
-    paginate_by = 20
+    paginate_by = 16
 
     def get_queryset(self, **kwargs):
         result = super(StoreView, self).get_queryset()

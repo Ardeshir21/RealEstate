@@ -48,14 +48,14 @@
                       </div>
                       {% if product.is_discounted %}
                         <div class="original-price discounted">
-                          <h4>تومان 150000</h4>
+                          <h4>{{product.calc_tomans.Product_Original_Price|intcomma}} تومان</h4>
                         </div>
                         <div class="final-price">
-                          <h4>تومان 110000</h4>
+                          <h4>{{product.calc_tomans.Product_Final_Price|intcomma}} تومان</h4>
                         </div>
                       {% else %}
                         <div class="original-price">
-                          <h4>تومان 150000</h4>
+                          <h4>{{product.calc_tomans.Product_Original_Price|intcomma}} تومان</h4>
                         </div>
                       {% endif %}
                     </div>

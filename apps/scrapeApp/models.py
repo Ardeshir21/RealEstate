@@ -166,12 +166,12 @@ class Product(models.Model):
         final_price_with_cost = product_final_price + transport_plus_margin_lower
 
         calculated_data = {
-        'Currency_Rate': currency_rate,
-        'Product_Original_Price': product_original_price,
-        'Product_Final_Price': product_final_price,
+        'Currency_Rate': int(currency_rate),
+        'Product_Original_Price': int(product_original_price),
+        'Product_Final_Price': int(product_final_price),
         'Transport_Margin_Upper': transport_plus_margin_upper,
-        'Transport_Margin_Lower': transport_plus_margin_lower,
-        'Final_Price_With_Cost': final_price_with_cost
+        'Transport_Margin_Lower': int(transport_plus_margin_lower),
+        'Final_Price_With_Cost': int(final_price_with_cost)
         }
 
         return calculated_data
@@ -189,6 +189,17 @@ class Product(models.Model):
             else:
                 return False
         # None value for image_url
+        else:
+            return False
+
+    # Custome method to if product has discount
+    # It's used in Templates
+    def is_discounted(self):
+        '''
+        output: True or False
+        '''
+        if self.original_price > self.final_price:
+            return True
         else:
             return False
 
