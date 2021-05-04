@@ -27,10 +27,10 @@ class ProductImagesUrlsInline(admin.TabularInline):
     readonly_fields = ['image_tag']
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['store', 'image_tag', 'name', 'updated_on']
+    list_display = ['id', 'store', 'image_tag', 'weight_category', 'main_url', 'updated_on']
     prepopulated_fields = {'slug': ('name',)}
     readonly_fields = ['image_tag']
-    search_fields = ['store']
+    search_fields = ['id', 'store__name']
     # other Inlines
     inlines = [
         ProductImagesUrlsInline,

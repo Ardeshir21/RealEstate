@@ -17,6 +17,26 @@ class IntegerRangeField(models.IntegerField):
 
 # Variables
 YES_NO_CHOICES = [(True, 'Yes'), (False, 'No')]
+WEIGHT_CHOICES = [('200gr', '1 - 200 gr'),
+                    ('400gr', '200 - 400 gr'),
+                    ('600gr', '400 - 600 gr'),
+                    ('800gr', '600 - 800 gr'),
+                    ('1000gr', '800 - 1000 gr'),
+                    ('1500gr', '1 - 1.5 kg'),
+                    ('2000gr', '1.5 - 2 kg'),
+                    ('2001gr', ' >2 kg'),]
+WEIGHT_CATEGORIES = [('Garment', 'پوشاک'),
+                    ('Bag_Shoes', 'کیف و کفش'),
+                    ('Cosmetics', 'آرایشی')]
+# Convert Variables
+WEIGHT_CHOICES_Converted = {'200gr': [50, 200],
+                            '400gr': [0.2, 0.4],
+                            '600gr': [0.4, 0.6],
+                            '800gr': [0.6, 0.8],
+                            '1000gr': [0.8, 1],
+                            '1500gr': [1, 1.5],
+                            '2000gr': [1.5, 2],
+                            '2001gr': [2, 10]}
 
 class RequestedLinks(models.Model):
 
@@ -52,6 +72,7 @@ class CurrencyRate(models.Model):
 class SalesParameter(models.Model):
     date = models.DateField()
     pricePerKilo = models.IntegerField()
+    weight_category = models.CharField(max_length=20, choices=WEIGHT_CATEGORIES, default='Garment')
     margin_percent = IntegerRangeField(min_value=1, max_value=100)
     created_on = models.DateTimeField(editable=False)
 
@@ -63,6 +84,7 @@ class SalesParameter(models.Model):
     class Meta():
         verbose_name_plural = "Sales Parameters"
         ordering = ['-date']
+
 
 class Store(models.Model):
     name = models.CharField(max_length=50)
@@ -87,6 +109,8 @@ class Product(models.Model):
     store = models.ForeignKey(Store, related_name='products', on_delete=models.CASCADE)
     main_url = models.CharField(max_length=1000)
     name = models.CharField(max_length=250)
+    weight_category = models.CharField(max_length=20, choices=WEIGHT_CATEGORIES, default='Garment')
+    weight = models.CharField(max_length=20, choices=WEIGHT_CHOICES, default='600gr')
     original_price = models.DecimalField(max_digits=10, decimal_places=2, default=10.00, null=True, blank=True)
     final_price = models.DecimalField(max_digits=10, decimal_places=2, default=10.00, null=True, blank=True)
     image_url = models.CharField(max_length=1000, null=True, blank=True)
@@ -114,6 +138,43 @@ class Product(models.Model):
     def image_tag(self):
         return mark_safe('<img src="%s" width="100" height="100" />' % (self.image_url))
     image_tag.short_description = 'Image'
+
+    # Custome method to calculate the Toman Price
+    # Toman Price Calculator for Database
+    def calc_tomans(self):
+        '''
+        The latest SalesParameter are used
+        '''
+        # Get latest Parameters
+        last_sales_params = SalesParameter.objects.filter(weight_category=self.weight_category).latest('date')
+        last_currency_data = CurrencyRate.objects.latest('date')
+        currency_rate = last_currency_data.rate_TurkishLira
+
+        # Do some calculation on result
+        product_original_price = float(self.original_price) * currency_rate
+        product_final_price = float(self.final_price) * currency_rate
+
+        # if >2 kg was the choice
+        if WEIGHT_CHOICES_Converted[self.weight][1] > 3:
+            transport_plus_margin_upper = 'Heavy Product'
+        else:
+            transport_plus_margin_upper = (WEIGHT_CHOICES_Converted[self.weight][1] * last_sales_params.pricePerKilo) + (product_final_price * (last_sales_params.margin_percent/100))
+
+        transport_plus_margin_lower = (WEIGHT_CHOICES_Converted[self.weight][0] * last_sales_params.pricePerKilo) + (product_final_price * (last_sales_params.margin_percent/100))
+
+        # Sum all the cost and prices of LOWER
+        final_price_with_cost = product_final_price + transport_plus_margin_lower
+
+        calculated_data = {
+        'Currency_Rate': currency_rate,
+        'Product_Original_Price': product_original_price,
+        'Product_Final_Price': product_final_price,
+        'Transport_Margin_Upper': transport_plus_margin_upper,
+        'Transport_Margin_Lower': transport_plus_margin_lower,
+        'Final_Price_With_Cost': final_price_with_cost
+        }
+
+        return calculated_data
 
     # Custome method to validate the image_url
     # It's used in Templates

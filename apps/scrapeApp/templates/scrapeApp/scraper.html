@@ -1,0 +1,43 @@
+{% extends "FAbaseApp/base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block head_description %}
+  <!-- Specific Description for each page -->
+  <meta name="description" content="ترندیول یا Trendyol یک فروشگاه آنلاین لباس در کشور ترکیه است. عرضه اجناس با کیفیت بالا و با قیمتی مناسب برای فروش آنلاین پوشاک و لوازم آرایشی از تمام برندهای خارجی. خرید و ارسال پوشاک و لوازم آرایش از ترکیه به ایران. ">
+{% endblock head_description %}
+
+{% block head_title %}
+<!-- Title  -->
+<title>خرید از ترکیه - {{the_product.store.name}}</title>
+{% endblock head_title %}
+
+
+{% block head %}
+<!-- Style CSS -->
+<link rel="stylesheet" href="{% static "scrapeApp/css/custome.css" %}">
+{% endblock head %}
+
+
+<!-- The main content of the page -->
+{% block body_content %}
+
+    <!-- ##### WideImage Area Start ##### -->
+
+    <section class="south-contact-area product-section-padding">
+        <div class="container">
+          <!-- Images and Table -->
+          <div class="row">
+            <div class="col-12 text-center">
+              <h1>تمام محصولات بروزرسانی شد!</h1>
+            </div>
+          </div>
+          <!-- Back Button -->
+          <div class="row back-btn mt-70">
+            <div class="col-12 text-center">
+              <a href="{% url "scrapeApp:all_stores" %}"><i class="fas fa-chevron-square-left"></i> بازگشت به فروشگاه ها</a>
+            </div>
+          </div>
+        </div>
+    </section>
+{% endblock body_content %}

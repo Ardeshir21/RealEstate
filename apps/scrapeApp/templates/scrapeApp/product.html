@@ -59,8 +59,8 @@
                   <!-- Title & Price -->
                   <div class="wow bounceInRight" data-wow-duration="1s" data-wow-delay="700ms">
                     <h3 style="margin-top: 20px;">{{the_product.name}}</h3>
-                    <h6 class="mt-4" style="color:green; font-size:25px; margin-bottom:70px;">{{the_product.final_price}} لیر </h6>
-                    <h6 class="mt-4" style="color:green; font-size:25px; margin-bottom:70px;">کد کالا: GAM21{{the_product.id}}</h6>
+                    <h6 class="mt-4" style="color:#25d366; font-size:25px;">{{the_product.final_price}} لیر </h6>
+                    <h6 class="mt-4" style="color:#25d366; font-size:25px; margin-bottom:50px;">کد کالا: GAM21{{the_product.id}}</h6>
                   </div>
                   <!-- Quotation Details -->
                   <table class="table table-bordered table-hover wow fadeInUp" data-wow-duration="1s" data-wow-delay="800ms" style="direction: rtl;">
@@ -77,45 +77,49 @@
                         <td>{{calculated_data.Currency_Rate}}</td>
                       </tr>
                       <tr>
-                        <th scope="row">قیمت محصول</th>
+                        <th scope="row">قیمت محصول *</th>
                         <td>
                           {% filter floatformat:"0"|intcomma %}
-                            {{calculated_data.Product_Price}}
+                            {{calculated_data.Product_Final_Price}}
                           {% endfilter %}
                         </td>
                       </tr>
                       <tr>
-                        <th scope="row">هزینه ارسال و کارمزد*</th>
+                        <th scope="row">هزینه ارسال و کارمزد **</th>
                         <td>
                           {% filter floatformat:"0"|intcomma %}
-                            {{calculated_data.Transport_Margin}}
+                            {{calculated_data.Transport_Margin_Lower}}
                           {% endfilter %}
                         </td>
                       </tr>
                       <tr>
-                        <th scope="row">قیمت نهایی**</th>
+                        <th scope="row">قیمت نهایی ***</th>
                         <td>
-                          <h6 style="direction: ltr; color:green; font-size:25px;">
+                          <h6 class="final-price-table">
                             {% filter floatformat:"0"|intcomma %}
-                              {{calculated_data.Final_Price}}
+                              {{calculated_data.Final_Price_With_Cost}}
                             {% endfilter %}
                           </h6>
                         </td>
                       </tr>
                     </tbody>
                   </table>
-                  <p style="text-align: right;">*مدت زمان تحویل کالا در تهران تقریبا 20 روز کاری می باشد</p>
-                  <p style="text-align: right;">**قیمت های فوق بر اساس نرخ ارز بروزرسانی می شوند</p>
+                  <p style="text-align: right;margin-bottom:0;">* مدت زمان تحویل کالا در تهران تقریبا 20 روز کاری می باشد</p>
+                  <p style="text-align: right;margin-bottom:0;">** وزن کالا به صورت تقریبی محاسبه شده است. مبلغ نهایی ارسال بعد از خرید کالا محاسبه می شود</p>
+                  <p style="text-align: right;margin-bottom:0;">*** قیمت های فوق بر اساس نرخ ارز بروزرسانی شده اند</p>
+                  {% if calculated_data.Transport_Margin_Upper == 'Heavy Product' %}
+                    <p style="text-align:center;color:red;font-weight:700;margin-top:15px;">وزن این کالا بیش از 2 کیلوگرم است، برای اطلاعات بیشتر در مورد هزینه ارسال لطفا با ما تماس بگیرید.</p>
+                  {% endif %}
                 </div>
                 <div class="text-center mt-50">
-                  <a class="btn south-btn" href="#">سفارش</a>
+                  <a class="btn south-btn" target="_blank" href="https://wa.me/905446454297?text=%D9%85%D9%86%20%D9%82%D8%B5%D8%AF%20%D8%B3%D9%81%D8%A7%D8%B1%D8%B4%20%D8%AE%D8%B1%DB%8C%D8%AF%20%DA%A9%D8%A7%D9%84%D8%A7%20%D8%A8%D8%A7%20%DA%A9%D8%AF%20%D8%B4%D9%85%D8%A7%D8%B1%D9%87%20GAM21{{the_product.id}}%20%D8%B1%D8%A7%20%D8%AF%D8%A7%D8%B1%D9%85.">سفارش</a>
                 </div>
               </div>
           </div>
           <!-- Back Button -->
           <div class="row back-btn mt-70">
             <div class="col-12 text-center">
-              <a href="{% url "scrapeApp:store_page" store=the_product.store.slug %}"><i class="fas fa-chevron-square-left"></i> Back to {{the_product.store.name}}</a>
+              <a href="{% url "scrapeApp:store_page" store=the_product.store.slug %}"><i class="fas fa-chevron-square-left"></i> {{the_product.store.name}} بازگشت به</a>
             </div>
           </div>
         </div>

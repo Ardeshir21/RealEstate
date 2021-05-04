@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.views import generic
+from .management.commands import runscraper
 from . import models
+from django.contrib.auth.mixins import LoginRequiredMixin
 from apps.baseApp import models as baseAppModel
 from apps.blogApp import models as blogAppModel
 from .scrapers import Trendyol
@@ -37,11 +39,18 @@ class AllStoreView(generic.ListView):
 
         return context
 
-class StoreView(generic.DetailView):
-    context_object_name = 'the_store'
+class StoreView(generic.ListView):
+    context_object_name = 'products'
     template_name = 'scrapeApp/store.html'
-    model = models.Store
-    slug_url_kwarg = 'store'
+    model = models.Product
+    paginate_by = 20
+
+    def get_queryset(self, **kwargs):
+        result = super(StoreView, self).get_queryset()
+
+        # Categories -- For filtering based on the categories
+        result= result.filter(store__slug=self.kwargs['store'], active=True)
+        return result
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -49,9 +58,7 @@ class StoreView(generic.DetailView):
         # Append shared extraContext
         context.update(get_extra_context())
 
-        # Filter are active products
-        context['products'] = models.Product.objects.filter(store__slug=self.kwargs['store'], active=True)
-
+        context['the_store'] = models.Store.objects.get(slug=self.kwargs['store'])
         # This title is different for this view
         context['slideContent'] = baseAppModel.Slide.objects.get(useFor__exact='BLOG_HOME', active__exact=True)
 
@@ -71,11 +78,40 @@ class ProductView(generic.DetailView):
         # Append shared extraContext
         context.update(get_extra_context())
 
+        # form Product model method. Here is the structure:
+                # calculated_data = {
+                # 'Currency_Rate': currency_rate,
+                # 'Product_Original_Price': product_original_price,
+                # 'Product_Final_Price': product_final_price,
+                # 'Transport_Margin_Upper': transport_plus_margin_upper,
+                # 'Transport_Margin_Lower': transport_plus_margin_lower,
+                # 'Final_Price_With_Cost': final_price_with_cost
+                # }
+        context['calculated_data'] = self.get_object().calc_tomans()
+
         # This title is different for this view
         context['slideContent'] = baseAppModel.Slide.objects.get(useFor__exact='BLOG_HOME', active__exact=True)
 
         return context
 
+# Run scraper to update the database
+class RUN_SCRAPER(LoginRequiredMixin, generic.TemplateView):
+    template_name = 'scrapeApp/scraper.html'
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Append shared extraContext
+        context.update(get_extra_context())
+
+        args = []
+        options = {}
+        command_obj = runscraper.Command()
+        command_obj.handle(*args, **options)
+
+        return context
+
+# AJAX call which is used to scrape product with URL by client
 class AJAX_SCRAPE(generic.TemplateView):
     template_name = 'scrapeApp/scrape_result.html'
 
@@ -92,20 +128,7 @@ class AJAX_SCRAPE(generic.TemplateView):
         # Here we use a scraper code from spiders folder to get required data from a website
         scraped_data= Trendyol.GoScrape(requested_url)
 
-        # Do some calculation on result
-        last_sales_params = models.SalesParameter.objects.latest('date')
-        last_currency_data = models.CurrencyRate.objects.latest('date')
-        currency_rate = last_currency_data.rate_TurkishLira
-        product_price = scraped_data['Final_Price'] * currency_rate
-        transport_plus_margin = last_sales_params.pricePerKilo + (product_price * (last_sales_params.margin_percent/100))
-        final_price = product_price + transport_plus_margin
-
-        calculated_data = {
-        'Currency_Rate': currency_rate,
-        'Product_Price': product_price,
-        'Transport_Margin': transport_plus_margin,
-        'Final_Price': final_price
-        }
+        calculated_data = calc_tomans_ajax(scraped_data)
 
         if scraped_data:
             context['scraped_data'] = scraped_data
@@ -116,3 +139,33 @@ class AJAX_SCRAPE(generic.TemplateView):
             instance.save()
 
         return context
+
+# Toman Price Calculator for AJAX and GoScrape
+def calc_tomans_ajax(scraped_data):
+    '''
+    This function is used for AJAX call
+    scraped_data must be taken from GoScrape functions.
+    The latest SalesParameter are used
+    '''
+    # Get latest Parameters
+    last_sales_params = models.SalesParameter.objects.latest('date')
+    last_currency_data = models.CurrencyRate.objects.latest('date')
+    currency_rate = last_currency_data.rate_TurkishLira
+
+    # Do some calculation on result
+    product_original_price = scraped_data['Original_Price'] * currency_rate
+    product_final_price = scraped_data['Final_Price'] * currency_rate
+
+    transport_plus_margin = last_sales_params.pricePerKilo + (product_final_price * (last_sales_params.margin_percent/100))
+
+    final_price_with_cost = product_price + transport_plus_margin
+
+    calculated_data = {
+    'Currency_Rate': currency_rate,
+    'Product_Original_Price': product_original_price,
+    'Product_Final_Price': product_final_price,
+    'Transport_Margin': transport_plus_margin,
+    'Final_Price_With_Cost': final_price_with_cost
+    }
+
+    return calculated_data
