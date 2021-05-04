@@ -29,7 +29,7 @@ WEIGHT_CATEGORIES = [('Garment', 'پوشاک'),
                     ('Bag_Shoes', 'کیف و کفش'),
                     ('Cosmetics', 'آرایشی')]
 # Convert Variables
-WEIGHT_CHOICES_Converted = {'200gr': [50, 200],
+WEIGHT_CHOICES_Converted = {'200gr': [0.05, 0.2],
                             '400gr': [0.2, 0.4],
                             '600gr': [0.4, 0.6],
                             '800gr': [0.6, 0.8],
