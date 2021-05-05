@@ -27,13 +27,32 @@ def GoScrape(URL):
     except:
         final_price = None
 
+    # Size Variants Objects List
+    size_variants = scraped_data.product.variants
+    # Make the required structure from each Object
+    size_variants_list = []
+    for variant in size_variants:
+        temp_dict = {}
+        temp_dict['Size'] = variant.attributeValue
+        # if there is no size variant i.e. One Size only
+        if temp_dict['Size'] == "":
+            temp_dict['Size'] = "محصول"
+        temp_dict['Original_Price'] = priceMaker(variant.price.originalPrice.text)
+        temp_dict['Discounted_Price'] = priceMaker(variant.price.discountedPrice.text)
+        # in Trendyol Stock:null or Stock:int means Available
+        # But Stock:0 means Not Available 
+        temp_dict['Stock'] = variant.stock
+        # add the built dictionary to the list
+        size_variants_list.append(temp_dict)
+
     # The structure of the result dictionary must be the same in other websites scrapes
-    # This will be used in command > runscraper.py 
+    # This will be used in command > runscraper.py
     result= {
     'Image': image_main,
     'Images': images_urls_list,
     'Original_Price': original_price,
-    'Final_Price': final_price
+    'Final_Price': final_price,
+    'Size_Variants': size_variants_list,
     }
 
     return result

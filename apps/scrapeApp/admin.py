@@ -3,7 +3,7 @@ from django import forms
 from django.db import models
 from django.contrib.admin.widgets import AdminDateWidget
 from .models import (RequestedLinks, CurrencyRate, SalesParameter,
-                        Store, Product, ProductImagesUrls)
+                        Store, Product, ProductImagesUrls, ProductSizeVariants)
 
 
 
@@ -26,6 +26,10 @@ class ProductImagesUrlsInline(admin.TabularInline):
     list_editable = ['display_order']
     readonly_fields = ['image_tag']
 
+class ProductSizeVariantsInline(admin.TabularInline):
+    model = ProductSizeVariants
+    list_display = ['product', 'size', 'active']
+
 class ProductAdmin(admin.ModelAdmin):
     list_display = ['id', 'store', 'image_tag', 'weight_category', 'main_url', 'updated_on']
     prepopulated_fields = {'slug': ('name',)}
@@ -33,6 +37,7 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ['id', 'store__name']
     # other Inlines
     inlines = [
+        ProductSizeVariantsInline,
         ProductImagesUrlsInline,
     ]
 

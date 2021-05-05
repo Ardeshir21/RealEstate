@@ -16,6 +16,8 @@
 {% block head %}
 <!-- Style CSS -->
 <link rel="stylesheet" href="{% static "scrapeApp/css/custome.css" %}">
+<!-- Css Styles for these template (page) -->
+<link rel="stylesheet" href="{% static "FAbaseApp/css/detailView/Azenta-style.css" %}" type="text/css">
 {% endblock head %}
 
 
@@ -53,66 +55,225 @@
                   {% endwith %}
                 </div>
               </div>
-              <!-- Table -->
-              <div class="col-12 col-lg-7">
-                <div class="text-center">
-                  <!-- Title & Price -->
-                  <div class="wow bounceInRight" data-wow-duration="1s" data-wow-delay="700ms">
-                    <h3 style="margin-top: 20px;">{{the_product.name}}</h3>
-                    <h6 class="mt-4" style="color:#25d366; font-size:25px;">{{the_product.final_price}} لیر </h6>
-                    <h6 class="mt-4" style="color:#25d366; font-size:25px; margin-bottom:50px;">کد کالا: GAM21{{the_product.id}}</h6>
-                  </div>
-                  <!-- Quotation Details -->
-                  <table class="table table-bordered table-hover wow fadeInUp" data-wow-duration="1s" data-wow-delay="800ms" style="direction: rtl;">
-                    <thead>
-                      <tr>
-                        <th scope="col">شرح</th>
-                        <th scope="col">تومان</th>
-                      </tr>
-                    </thead>
-
-                    <tbody>
-                      <tr>
-                        <th scope="row">نرخ لیر</th>
-                        <td>{{calculated_data.Currency_Rate}}</td>
-                      </tr>
-                      <tr>
-                        <th scope="row">قیمت محصول *</th>
-                        <td>
-                          {% filter floatformat:"0"|intcomma %}
-                            {{calculated_data.Product_Final_Price}}
-                          {% endfilter %}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th scope="row">هزینه ارسال و کارمزد **</th>
-                        <td>
-                          {% filter floatformat:"0"|intcomma %}
-                            {{calculated_data.Transport_Margin_Lower}}
-                          {% endfilter %}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th scope="row">قیمت نهایی ***</th>
-                        <td>
-                          <h6 class="final-price-table">
-                            {% filter floatformat:"0"|intcomma %}
-                              {{calculated_data.Final_Price_With_Cost}}
-                            {% endfilter %}
-                          </h6>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <p style="text-align: right;margin-bottom:0;">* مدت زمان تحویل کالا در تهران تقریبا 20 روز کاری می باشد</p>
-                  <p style="text-align: right;margin-bottom:0;">** وزن کالا به صورت تقریبی محاسبه شده است. مبلغ نهایی ارسال بعد از خرید کالا محاسبه می شود</p>
-                  <p style="text-align: right;margin-bottom:0;">*** قیمت های فوق بر اساس نرخ ارز بروزرسانی شده اند</p>
-                  {% if calculated_data.Transport_Margin_Upper == 'Heavy Product' %}
-                    <p style="text-align:center;color:red;font-weight:700;margin-top:15px;">وزن این کالا بیش از 2 کیلوگرم است، برای اطلاعات بیشتر در مورد هزینه ارسال لطفا با ما تماس بگیرید.</p>
-                  {% endif %}
+              <!-- Table Tabs -->
+              <div class="col-12 col-lg-7 text-center">
+                <div class="wow bounceInRight" data-wow-duration="1s" data-wow-delay="700ms">
+                  <h3 style="margin-top: 20px;">{{the_product.name}}</h3>
+                  <h6 class="mt-4" style="color:#25d366; font-size:25px; margin-bottom:50px;">کد کالا: GAM21{{the_product.id}}</h6>
                 </div>
-                <div class="text-center mt-50">
-                  <a class="btn south-btn" target="_blank" href="https://wa.me/905446454297?text=%D9%85%D9%86%20%D9%82%D8%B5%D8%AF%20%D8%B3%D9%81%D8%A7%D8%B1%D8%B4%20%D8%AE%D8%B1%DB%8C%D8%AF%20%DA%A9%D8%A7%D9%84%D8%A7%20%D8%A8%D8%A7%20%DA%A9%D8%AF%20%D8%B4%D9%85%D8%A7%D8%B1%D9%87%20GAM21{{the_product.id}}%20%D8%B1%D8%A7%20%D8%AF%D8%A7%D8%B1%D9%85.">سفارش</a>
+                <!-- TABS -->
+                <div class="pd-details-text">
+                  <div class="pd-details-tab">
+                      <!-- TABS TTILES -->
+                      <div class="tab-item">
+                          <ul class="nav" role="tablist">
+                            {% for size_variant in variants_calculated_data %}
+
+                              {% if forloop.counter == 1 %}
+
+                                          {% if size_variant.variant_obj.active %}
+                                            <li>
+                                                <a class="active" data-toggle="tab" href="#tab-{{forloop.counter}}" role="tab">{{size_variant.variant_obj.size}}</a>
+                                            </li>
+                                          {% else %}
+                                            <li>
+                                                <a class="active" style="text-decoration:line-through;" data-toggle="tab" href="#tab-{{forloop.counter}}" role="tab">{{size_variant.variant_obj.size}}</a>
+                                            </li>
+                                          {% endif %}
+
+                              {% else %}
+
+                                          {% if size_variant.variant_obj.active %}
+                                            <li>
+                                                <a data-toggle="tab" href="#tab-{{forloop.counter}}" role="tab">{{size_variant.variant_obj.size}}</a>
+                                            </li>
+                                          {% else %}
+                                            <li>
+                                                <a data-toggle="tab" style="text-decoration:line-through;" href="#tab-{{forloop.counter}}" role="tab">{{size_variant.variant_obj.size}}</a>
+                                            </li>
+                                          {% endif %}
+
+                              {% endif %}
+                            {% endfor %}
+                          </ul>
+                      </div>
+                      <!-- TABS CONTENT -->
+                      <div class="tab-item-content">
+                          <div class="tab-content">
+                            {% for size_variant in variants_calculated_data %}
+                                    <!-- seperate the first tab to be active from the beginning -->
+                                    {% if forloop.counter == 1 %}
+
+                                              {% if size_variant.variant_obj.active %}
+                                                <!-- First TAB  -->
+                                                <div class="tab-pane active" id="tab-{{forloop.counter}}" role="tabpanel">
+                                                    <div class="property-more-table" style="padding-right:0;border:none;">
+                                                      <div class="text-center">
+                                                        <!-- Title & Price -->
+                                                        <div>
+                                                          <h6 class="mt-4" style="color:#25d366; font-size:25px;">{{size_variant.variant_obj.final_price}} لیر </h6>
+                                                        </div>
+                                                        <!-- Quotation Details -->
+                                                        <table class="table table-bordered table-hover" style="direction: rtl;">
+                                                          <thead>
+                                                            <tr>
+                                                              <th scope="col">شرح</th>
+                                                              <th scope="col">تومان</th>
+                                                            </tr>
+                                                          </thead>
+
+                                                          <tbody>
+                                                            <tr>
+                                                              <th scope="row">نرخ لیر</th>
+                                                              <td>{{size_variant.calculated_values.Currency_Rate}}</td>
+                                                            </tr>
+                                                            <tr>
+                                                              <th scope="row">قیمت محصول *</th>
+                                                              <td>
+                                                                {% filter floatformat:"0"|intcomma %}
+                                                                  {{size_variant.calculated_values.Product_Final_Price}}
+                                                                {% endfilter %}
+                                                              </td>
+                                                            </tr>
+                                                            <tr>
+                                                              <th scope="row">هزینه ارسال و کارمزد **</th>
+                                                              <td>
+                                                                {% filter floatformat:"0"|intcomma %}
+                                                                  {{size_variant.calculated_values.Transport_Margin_Lower}}
+                                                                {% endfilter %}
+                                                              </td>
+                                                            </tr>
+                                                            <tr>
+                                                              <th scope="row">قیمت نهایی ***</th>
+                                                              <td>
+                                                                <h6 class="final-price-table">
+                                                                  {% filter floatformat:"0"|intcomma %}
+                                                                    {{size_variant.calculated_values.Final_Price_With_Cost}}
+                                                                  {% endfilter %}
+                                                                </h6>
+                                                              </td>
+                                                            </tr>
+                                                          </tbody>
+                                                        </table>
+                                                        <p style="text-align: right;margin-bottom:0;">* مدت زمان تحویل کالا در تهران تقریبا 20 روز کاری می باشد</p>
+                                                        <p style="text-align: right;margin-bottom:0;">** وزن کالا به صورت تقریبی محاسبه شده است. مبلغ نهایی ارسال بعد از خرید کالا محاسبه می شود</p>
+                                                        <p style="text-align: right;margin-bottom:0;">*** قیمت های فوق بر اساس نرخ ارز بروزرسانی شده اند</p>
+                                                        {% if size_variant.calculated_values.Transport_Margin_Upper == 'Heavy Product' %}
+                                                          <p style="text-align:center;color:red;font-weight:700;margin-top:15px;">وزن این کالا بیش از 2 کیلوگرم است، برای اطلاعات بیشتر در مورد هزینه ارسال لطفا با ما تماس بگیرید.</p>
+                                                        {% endif %}
+                                                      </div>
+                                                      <div class="text-center mt-50">
+                                                        <a class="btn south-btn" target="_blank" href="https://wa.me/905446454297?text=%D9%85%D9%86%20%D9%82%D8%B5%D8%AF%20%D8%B3%D9%81%D8%A7%D8%B1%D8%B4%20%D8%AE%D8%B1%DB%8C%D8%AF%20%DA%A9%D8%A7%D9%84%D8%A7%20%D8%A8%D8%A7%20%DA%A9%D8%AF%20%D8%B4%D9%85%D8%A7%D8%B1%D9%87%20GAM21{{the_product.id}} - Size: {{size_variant.variant_obj.size}}%20%D8%B1%D8%A7%20%D8%AF%D8%A7%D8%B1%D9%85.">سفارش</a>
+                                                      </div>
+                                                    </div>
+                                                </div>
+                                              {% else %}
+                                                <!-- First TAB Non Available -->
+                                                <div class="tab-pane active" id="tab-{{forloop.counter}}" role="tabpanel">
+                                                    <div class="property-more-table" style="padding-right:0;border:none;">
+                                                      <div class="text-center">
+                                                        <!-- Title & Price -->
+                                                        <div>
+                                                          <h6 class="mt-4" style="color:#25d366; font-size:25px;">ناموجود</h6>
+                                                        </div>
+                                                        <p style="text-align:center;color:red;font-weight:700;margin-top:15px;">این کالا در حال حاضر موجود نمی باشد. در صورت نیاز به اطلاعات بیشتر با ما تماس بگیرید.</p>
+                                                      </div>
+                                                      <div class="text-center mt-50">
+                                                        <a class="btn south-btn" target="_blank" href="https://wa.me/905446454297?text=%D9%85%D9%86+%DB%8C%DA%A9+%D8%B3%D9%88%D8%A7%D9%84+%D8%AF%D8%B1+%D9%85%D9%88%D8%B1%D8%AF+%D9%85%D8%AD%D8%B5%D9%88%D9%84+%D8%B4%D9%85%D8%A7%D8%B1%D9%87+GAM21{{the_product.id}} - Size: {{size_variant.variant_obj.size}}+%D8%AF%D8%A7%D8%B1%D9%85.+">تماس</a>
+                                                      </div>
+                                                    </div>
+                                                </div>
+                                              {% endif %}
+
+                                    <!-- other tabs that are not active in the beginning -->
+                                    {% else %}
+
+                                              {% if size_variant.variant_obj.active %}
+                                                <!-- Other TABs -->
+                                                <div class="tab-pane fade" id="tab-{{forloop.counter}}" role="tabpanel">
+                                                  <div class="property-more-table" style="padding-right:0;border:none;">
+                                                    <div class="text-center">
+                                                      <!-- Title & Price -->
+                                                      <div>
+                                                        <h6 class="mt-4" style="color:#25d366; font-size:25px;">{{size_variant.variant_obj.final_price}} لیر </h6>
+                                                      </div>
+                                                      <!-- Quotation Details -->
+                                                      <table class="table table-bordered table-hover" style="direction: rtl;">
+                                                        <thead>
+                                                          <tr>
+                                                            <th scope="col">شرح</th>
+                                                            <th scope="col">تومان</th>
+                                                          </tr>
+                                                        </thead>
+
+                                                        <tbody>
+                                                          <tr>
+                                                            <th scope="row">نرخ لیر</th>
+                                                            <td>{{size_variant.calculated_values.Currency_Rate}}</td>
+                                                          </tr>
+                                                          <tr>
+                                                            <th scope="row">قیمت محصول *</th>
+                                                            <td>
+                                                              {% filter floatformat:"0"|intcomma %}
+                                                                {{size_variant.calculated_values.Product_Final_Price}}
+                                                              {% endfilter %}
+                                                            </td>
+                                                          </tr>
+                                                          <tr>
+                                                            <th scope="row">هزینه ارسال و کارمزد **</th>
+                                                            <td>
+                                                              {% filter floatformat:"0"|intcomma %}
+                                                                {{size_variant.calculated_values.Transport_Margin_Lower}}
+                                                              {% endfilter %}
+                                                            </td>
+                                                          </tr>
+                                                          <tr>
+                                                            <th scope="row">قیمت نهایی ***</th>
+                                                            <td>
+                                                              <h6 class="final-price-table">
+                                                                {% filter floatformat:"0"|intcomma %}
+                                                                  {{size_variant.calculated_values.Final_Price_With_Cost}}
+                                                                {% endfilter %}
+                                                              </h6>
+                                                            </td>
+                                                          </tr>
+                                                        </tbody>
+                                                      </table>
+                                                      <p style="text-align: right;margin-bottom:0;">* مدت زمان تحویل کالا در تهران تقریبا 20 روز کاری می باشد</p>
+                                                      <p style="text-align: right;margin-bottom:0;">** وزن کالا به صورت تقریبی محاسبه شده است. مبلغ نهایی ارسال بعد از خرید کالا محاسبه می شود</p>
+                                                      <p style="text-align: right;margin-bottom:0;">*** قیمت های فوق بر اساس نرخ ارز بروزرسانی شده اند</p>
+                                                      {% if size_variant.calculated_values.Transport_Margin_Upper == 'Heavy Product' %}
+                                                        <p style="text-align:center;color:red;font-weight:700;margin-top:15px;">وزن این کالا بیش از 2 کیلوگرم است، برای اطلاعات بیشتر در مورد هزینه ارسال لطفا با ما تماس بگیرید.</p>
+                                                      {% endif %}
+                                                    </div>
+                                                    <div class="text-center mt-50">
+                                                      <a class="btn south-btn" target="_blank" href="https://wa.me/905446454297?text=%D9%85%D9%86%20%D9%82%D8%B5%D8%AF%20%D8%B3%D9%81%D8%A7%D8%B1%D8%B4%20%D8%AE%D8%B1%DB%8C%D8%AF%20%DA%A9%D8%A7%D9%84%D8%A7%20%D8%A8%D8%A7%20%DA%A9%D8%AF%20%D8%B4%D9%85%D8%A7%D8%B1%D9%87%20GAM21{{the_product.id}} - Size: {{size_variant.variant_obj.size}}%20%D8%B1%D8%A7%20%D8%AF%D8%A7%D8%B1%D9%85.">سفارش</a>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              {% else %}
+                                                <!-- First TAB Non Available -->
+                                                <div class="tab-pane fade" id="tab-{{forloop.counter}}" role="tabpanel">
+                                                    <div class="property-more-table" style="padding-right:0;border:none;">
+                                                      <div class="text-center">
+                                                        <!-- Title & Price -->
+                                                        <div>
+                                                          <h6 class="mt-4" style="color:#25d366; font-size:25px;">ناموجود</h6>
+                                                        </div>
+                                                        <p style="text-align:center;color:red;font-weight:700;margin-top:15px;">این کالا در حال حاضر موجود نمی باشد. در صورت نیاز به اطلاعات بیشتر با ما تماس بگیرید.</p>
+                                                      </div>
+                                                      <div class="text-center mt-50">
+                                                        <a class="btn south-btn" target="_blank" href="https://wa.me/905446454297?text=%D9%85%D9%86+%DB%8C%DA%A9+%D8%B3%D9%88%D8%A7%D9%84+%D8%AF%D8%B1+%D9%85%D9%88%D8%B1%D8%AF+%D9%85%D8%AD%D8%B5%D9%88%D9%84+%D8%B4%D9%85%D8%A7%D8%B1%D9%87+GAM21{{the_product.id}} - Size: {{size_variant.variant_obj.size}}+%D8%AF%D8%A7%D8%B1%D9%85.+">تماس</a>
+                                                      </div>
+                                                    </div>
+                                                </div>
+                                              {% endif %}
+
+                                    {% endif %}
+                            {% endfor %}
+                          </div>
+                      </div>
+                  </div>
                 </div>
               </div>
           </div>

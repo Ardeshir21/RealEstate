@@ -110,12 +110,12 @@ class Product(models.Model):
     main_url = models.CharField(max_length=1000)
     name = models.CharField(max_length=250)
     weight_category = models.CharField(max_length=20, choices=WEIGHT_CATEGORIES, default='Garment')
+    featured = models.BooleanField(choices=YES_NO_CHOICES, default=False)
     weight = models.CharField(max_length=20, choices=WEIGHT_CHOICES, default='600gr')
     original_price = models.DecimalField(max_digits=10, decimal_places=2, default=10.00, null=True, blank=True)
     final_price = models.DecimalField(max_digits=10, decimal_places=2, default=10.00, null=True, blank=True)
     image_url = models.CharField(max_length=1000, null=True, blank=True)
-    active = models.BooleanField(choices=YES_NO_CHOICES, default=True)
-    featured = models.BooleanField(choices=YES_NO_CHOICES, default=False)
+    active = models.BooleanField(choices=YES_NO_CHOICES, null=True, blank=True, default=True)
     slug = models.SlugField(max_length=300, blank=True, null=True, allow_unicode=True)
     updated_on = models.DateTimeField(editable=False, null=True)
     created_on = models.DateTimeField(editable=False)
@@ -217,3 +217,69 @@ class ProductImagesUrls(models.Model):
     class Meta():
         verbose_name_plural = "Products Images Urls"
         ordering = ['display_order']
+
+class ProductSizeVariants(models.Model):
+    main_product = models.ForeignKey(Product, related_name='size_variants', on_delete=models.CASCADE)
+    size = models.CharField(max_length=8)
+    original_price = models.DecimalField(max_digits=10, decimal_places=2, default=10.00, null=True, blank=True)
+    final_price = models.DecimalField(max_digits=10, decimal_places=2, default=10.00, null=True, blank=True)
+    active = models.BooleanField(choices=YES_NO_CHOICES, default=True)
+    updated_on = models.DateTimeField(editable=False, null=True)
+    created_on = models.DateTimeField(editable=False)
+
+    def __str__(self):
+        return self.size
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.created_on = timezone.now()
+        else:
+            self.updated_on = timezone.now()
+        return super(ProductSizeVariants, self).save(*args, **kwargs)
+
+    # Custome method to calculate the Toman Price
+    # Toman Price Calculator for Database
+    def calc_tomans(self):
+        '''
+        The latest SalesParameter are used
+        '''
+        # Get latest Parameters
+        last_sales_params = SalesParameter.objects.filter(weight_category=self.main_product.weight_category).latest('date')
+        last_currency_data = CurrencyRate.objects.latest('date')
+        currency_rate = last_currency_data.rate_TurkishLira
+
+        # Do some calculation on result
+        product_original_price = float(self.original_price) * currency_rate
+        product_final_price = float(self.final_price) * currency_rate
+
+        # if >2 kg was the choice
+        if WEIGHT_CHOICES_Converted[self.main_product.weight][1] > 3:
+            transport_plus_margin_upper = 'Heavy Product'
+        else:
+            transport_plus_margin_upper = (WEIGHT_CHOICES_Converted[self.main_product.weight][1] * last_sales_params.pricePerKilo) + (product_final_price * (last_sales_params.margin_percent/100))
+
+        transport_plus_margin_lower = (WEIGHT_CHOICES_Converted[self.main_product.weight][0] * last_sales_params.pricePerKilo) + (product_final_price * (last_sales_params.margin_percent/100))
+
+        # Sum all the cost and prices of LOWER
+        final_price_with_cost = product_final_price + transport_plus_margin_lower
+
+        calculated_data = {
+        'Currency_Rate': int(currency_rate),
+        'Product_Original_Price': int(product_original_price),
+        'Product_Final_Price': int(product_final_price),
+        'Transport_Margin_Upper': transport_plus_margin_upper,
+        'Transport_Margin_Lower': int(transport_plus_margin_lower),
+        'Final_Price_With_Cost': int(final_price_with_cost)
+        }
+        return calculated_data
+
+    # Custome method to if product has discount
+    # It's used in Templates
+    def is_discounted(self):
+        '''
+        output: True or False
+        '''
+        if self.original_price > self.final_price:
+            return True
+        else:
+            return False

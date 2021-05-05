@@ -78,7 +78,8 @@ class ProductView(generic.DetailView):
         # Append shared extraContext
         context.update(get_extra_context())
 
-        # form Product model method. Here is the structure:
+        # We have the The_Product but we need all its size variants to display on the template
+        # from ProductSizeVariants model method. Here is the structure:
                 # calculated_data = {
                 # 'Currency_Rate': currency_rate,
                 # 'Product_Original_Price': product_original_price,
@@ -87,7 +88,16 @@ class ProductView(generic.DetailView):
                 # 'Transport_Margin_Lower': transport_plus_margin_lower,
                 # 'Final_Price_With_Cost': final_price_with_cost
                 # }
-        context['calculated_data'] = self.get_object().calc_tomans()
+        all_related_variants = self.get_object().size_variants.all()
+        # create a list of dictionaries with size_variants and their calc_toman values
+        calculated_variants = []
+        for variant in all_related_variants:
+            temp_dict = {}
+            temp_dict['variant_obj'] = variant
+            temp_dict['calculated_values'] = variant.calc_tomans()
+            calculated_variants.append(temp_dict)
+
+        context['variants_calculated_data'] = calculated_variants
 
         # This title is different for this view
         context['slideContent'] = baseAppModel.Slide.objects.get(useFor__exact='BLOG_HOME', active__exact=True)
