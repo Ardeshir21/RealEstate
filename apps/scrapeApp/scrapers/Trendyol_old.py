@@ -1,3 +1,7 @@
+# This file uses the DOM elements to extract the Data
+# I write the Trendyol.py to grab the data from the scripts of the DOM not its elements
+
+
 import requests
 from bs4 import BeautifulSoup
 
