@@ -14,8 +14,8 @@ def GoScrape(URL):
     page_soup = BeautifulSoup(page.content, 'html.parser')
     scraped_data = javascriptScraper(page_soup)
 
-    image_main = 'https://www.trendyol.com/' + scraped_data.product.images[0]
-    images_urls_list = ['https://www.trendyol.com/'+url for url in scraped_data.product.images]
+    image_main = 'https://cdn.dsmcdn.com' + scraped_data.product.images[0]
+    images_urls_list = ['https://cdn.dsmcdn.com'+url for url in scraped_data.product.images]
     original_price = priceMaker(scraped_data.product.price.originalPrice.text)
     discounted_price = priceMaker(scraped_data.product.price.discountedPrice.text)
     indirim_price = priceMaker(scraped_data.product.price.sellingPrice.text)
@@ -40,7 +40,7 @@ def GoScrape(URL):
         temp_dict['Original_Price'] = priceMaker(variant.price.originalPrice.text)
         temp_dict['Discounted_Price'] = priceMaker(variant.price.discountedPrice.text)
         # in Trendyol Stock:null or Stock:int means Available
-        # But Stock:0 means Not Available 
+        # But Stock:0 means Not Available
         temp_dict['Stock'] = variant.stock
         # add the built dictionary to the list
         size_variants_list.append(temp_dict)
