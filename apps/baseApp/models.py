@@ -2,6 +2,8 @@ from django.db import models
 from django.urls import reverse_lazy, reverse
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.utils import timezone
+from django.utils.html import mark_safe
+
 
 # Variables
 YES_NO_CHOICES = [(True, 'Yes'), (False, 'No')]
@@ -242,6 +244,11 @@ class Slide(models.Model):
 
     def __str__(self):
             return self.title
+
+    # Display Thumbnails
+    def image_tag(self):
+        return mark_safe('<img src="/media/%s" width="100" height="100" />' % (self.image))
+    image_tag.short_description = 'Image'
 
 class FAQCategories(models.Model):
     category = models.CharField(max_length=100, unique=True)
