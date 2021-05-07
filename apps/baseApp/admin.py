@@ -38,8 +38,9 @@ class AssetAdmin(admin.ModelAdmin):
     }
 
 class SlideAdmin(admin.ModelAdmin):
-    list_display = ['id', 'title', 'useFor', 'active']
+    list_display = ['id', 'title', 'image_tag', 'useFor', 'active']
     list_editable = ['title', 'useFor', 'active']
+    readonly_fields = ['image_tag']
 
 class RegionAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'city']
