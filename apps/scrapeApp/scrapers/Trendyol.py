@@ -14,6 +14,7 @@ def GoScrape(URL):
     page_soup = BeautifulSoup(page.content, 'html.parser')
     scraped_data = javascriptScraper(page_soup)
 
+    original_name = scraped_data.product.name
     image_main = 'https://cdn.dsmcdn.com' + scraped_data.product.images[0]
     images_urls_list = ['https://cdn.dsmcdn.com'+url for url in scraped_data.product.images]
     original_price = priceMaker(scraped_data.product.price.originalPrice.text)
@@ -48,6 +49,7 @@ def GoScrape(URL):
     # The structure of the result dictionary must be the same in other websites scrapes
     # This will be used in command > runscraper.py
     result= {
+    'Original_Name': original_name,
     'Image': image_main,
     'Images': images_urls_list,
     'Original_Price': original_price,

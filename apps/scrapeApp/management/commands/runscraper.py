@@ -29,6 +29,7 @@ class Command(BaseCommand):
                 # if the URL exists and valid make the Product Instance
                 if product_scraped_object is not None:
                     # insert new information into product
+                    product.original_name = product_scraped_object['Original_Name']
                     product.original_price = product_scraped_object['Original_Price']
                     product.final_price = product_scraped_object['Final_Price']
 
@@ -53,7 +54,7 @@ class Command(BaseCommand):
                     # first delete all instances to prevent duplicates
                     all_variantes = models.ProductSizeVariants.objects.filter(main_product=product)
                     all_variantes.delete()
-                    # now add new images_urls to the model
+                    # add new vriantes to the model
                     for size_item in product_scraped_object['Size_Variants']:
                         try:
                             # Check Availability of Stock

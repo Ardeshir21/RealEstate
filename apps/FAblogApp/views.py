@@ -10,12 +10,15 @@ from apps.blogApp import models
 # This is for showing properties on blog pages
 from apps.baseApp import models as baseAppModel
 from django.db.models import Q
+from django.views import generic
+from django.conf import settings
 
 
 
 # Here is the Extra Context ditionary which is used in get_context_data of Views classes
 def get_extra_context():
     extraContext = {
+        'DEBUG_VALUE': settings.DEBUG,
         'featuredProperties': baseAppModel.Asset.objects.filter(featured=True),
         # All blog categories
         'blogCategories_All': models.PostCategories.objects.filter(category_lang='FA'),

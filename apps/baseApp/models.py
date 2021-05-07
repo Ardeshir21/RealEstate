@@ -45,6 +45,7 @@ PAGE_CHOICES = [('HOME', 'Homepage'),
                 ('BLOG_SEARCH', 'Blog Search'),
                 ('BLOG_CATEGORY', 'Blog Categories'),
                 ('BLOG_POST', 'Blog Post'),
+                ('STORE_HOME', 'Store Home'),
                 ('FAQ_PAGE', 'FAQ Page'),
                 ('FAQ_SEARCH', 'FAQ Search')]
 # Models

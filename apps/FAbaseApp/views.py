@@ -7,6 +7,7 @@ from apps.baseApp import models
 from . import forms
 from django.shortcuts import render
 from django.views import generic
+from django.conf import settings
 # This app has its own blog model
 from apps.blogApp import models as blogAppModel
 from django.db.models import Max, Min, Q
@@ -29,6 +30,7 @@ COMPLEX_FEATURES_CATEGORY = {'GENERAL': 'عمومی',
 # Here is the Extra Context ditionary which is used in get_context_data of Views classes
 def get_extra_context():
     extraContext = {
+        'DEBUG_VALUE': settings.DEBUG,
         'regions': models.Region.objects.filter(regions__complexes__active=True).distinct(),
         'propertyTypeNames': [obj[1] for obj in ASSET_TYPES],
         'tagType': set([obj.get_tag_display() for obj in models.Asset.objects.all()]),

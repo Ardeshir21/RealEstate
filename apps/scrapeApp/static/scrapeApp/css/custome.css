@@ -18,6 +18,15 @@
   color: #25d366;
   font-size:21px;
 }
+
+
+.not-available-tab, .not-available-tab:hover{
+  text-decoration:line-through;
+  color: rgba(112, 112, 121, 0.2) !important;
+}
+
+
+
 /*==================================================
  * Effect 7
  * ===============================================*/

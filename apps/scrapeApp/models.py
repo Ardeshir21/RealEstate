@@ -109,6 +109,7 @@ class Product(models.Model):
     store = models.ForeignKey(Store, related_name='products', on_delete=models.CASCADE)
     main_url = models.CharField(max_length=1000)
     name = models.CharField(max_length=250)
+    original_name = models.CharField(max_length=600, null=True, blank=True)
     weight_category = models.CharField(max_length=20, choices=WEIGHT_CATEGORIES, default='Garment')
     featured = models.BooleanField(choices=YES_NO_CHOICES, default=False)
     weight = models.CharField(max_length=20, choices=WEIGHT_CHOICES, default='600gr')

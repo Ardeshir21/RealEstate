@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.utils import timezone
 from django.views import generic
+from django.conf import settings
 from . import models, forms
 from apps.blogApp import models as blogAppModel
 from django.db.models import Max, Min, Q
@@ -16,6 +17,7 @@ import xlsxwriter
 # Here is the Extra Context ditionary which is used in get_context_data of Views classes
 def get_extra_context():
     extraContext = {
+        'DEBUG_VALUE': settings.DEBUG,
         'regions': models.Region.objects.filter(regions__complexes__active=True).distinct(),
         'propertyTypeNames': set([obj.get_type_display() for obj in models.Asset.objects.all()]),
         'tagType': set([obj.get_tag_display() for obj in models.Asset.objects.all()]),
