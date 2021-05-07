@@ -109,10 +109,10 @@ class Product(models.Model):
     store = models.ForeignKey(Store, related_name='products', on_delete=models.CASCADE)
     main_url = models.CharField(max_length=1000)
     name = models.CharField(max_length=250)
-    original_name = models.CharField(max_length=600, null=True, blank=True)
     weight_category = models.CharField(max_length=20, choices=WEIGHT_CATEGORIES, default='Garment')
     featured = models.BooleanField(choices=YES_NO_CHOICES, default=False)
     weight = models.CharField(max_length=20, choices=WEIGHT_CHOICES, default='600gr')
+    original_name = models.CharField(max_length=600, null=True, blank=True)
     original_price = models.DecimalField(max_digits=10, decimal_places=2, default=10.00, null=True, blank=True)
     final_price = models.DecimalField(max_digits=10, decimal_places=2, default=10.00, null=True, blank=True)
     image_url = models.CharField(max_length=1000, null=True, blank=True)
@@ -221,7 +221,7 @@ class ProductImagesUrls(models.Model):
 
 class ProductSizeVariants(models.Model):
     main_product = models.ForeignKey(Product, related_name='size_variants', on_delete=models.CASCADE)
-    size = models.CharField(max_length=8)
+    size = models.CharField(max_length=15)
     original_price = models.DecimalField(max_digits=10, decimal_places=2, default=10.00, null=True, blank=True)
     final_price = models.DecimalField(max_digits=10, decimal_places=2, default=10.00, null=True, blank=True)
     active = models.BooleanField(choices=YES_NO_CHOICES, default=True)
