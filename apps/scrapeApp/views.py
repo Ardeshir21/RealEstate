@@ -115,7 +115,7 @@ class RUN_SCRAPER(LoginRequiredMixin, generic.TemplateView):
         options = {}
         command_obj = runscraper.Command()
         command_obj.handle(*args, **options)
-
+        context['slideContent'] = baseAppModel.Slide.objects.get(useFor__exact='STORE_HOME', active__exact=True)
         return context
 
 # AJAX call which is used to scrape product with URL by client
