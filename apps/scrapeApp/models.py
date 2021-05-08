@@ -17,6 +17,7 @@ class IntegerRangeField(models.IntegerField):
 
 # Variables
 YES_NO_CHOICES = [(True, 'Yes'), (False, 'No')]
+
 WEIGHT_CHOICES = [('200gr', '1 - 200 gr'),
                     ('400gr', '200 - 400 gr'),
                     ('600gr', '400 - 600 gr'),
@@ -25,9 +26,17 @@ WEIGHT_CHOICES = [('200gr', '1 - 200 gr'),
                     ('1500gr', '1 - 1.5 kg'),
                     ('2000gr', '1.5 - 2 kg'),
                     ('2001gr', ' >2 kg'),]
+
 WEIGHT_CATEGORIES = [('Garment', 'پوشاک'),
                     ('Bag_Shoes', 'کیف و کفش'),
                     ('Cosmetics', 'آرایشی')]
+
+GENDER_CHOICES = [('Female', 'زنانه'),
+                    ('Male', 'مردانه'),
+                    ('None', 'بدون جنسیت')]
+
+AGE_CHOICES = [('Adults', 'بزرگسال'),
+                    ('Kids', 'بچه گانه')]
 # Convert Variables
 WEIGHT_CHOICES_Converted = {'200gr': [0.05, 0.2],
                             '400gr': [0.2, 0.4],
@@ -85,11 +94,10 @@ class SalesParameter(models.Model):
         verbose_name_plural = "Sales Parameters"
         ordering = ['-date']
 
-
 class Store(models.Model):
     name = models.CharField(max_length=50)
     slug = models.SlugField(max_length=300, unique=True, blank=True, null=True, allow_unicode=True)
-    description = models.CharField(max_length=500)
+    description = models.TextField(max_length=500)
     logo = models.ImageField(upload_to='scrapeApp/store/', null=True,
                                 help_text='Thumbnail Image 600x600')
     website_url = models.CharField(max_length=100)
@@ -107,8 +115,11 @@ class Store(models.Model):
 
 class Product(models.Model):
     store = models.ForeignKey(Store, related_name='products', on_delete=models.CASCADE)
+    # brand = models.ForeignKey(ProductBrand, related_name='brands', on_delete=models.CASCADE)
     main_url = models.CharField(max_length=1000)
     name = models.CharField(max_length=250)
+    gender = models.CharField(max_length=20, choices=GENDER_CHOICES, default='Female')
+    age = models.CharField(max_length=20, choices=AGE_CHOICES, default='Adults')
     weight_category = models.CharField(max_length=20, choices=WEIGHT_CATEGORIES, default='Garment')
     featured = models.BooleanField(choices=YES_NO_CHOICES, default=False)
     weight = models.CharField(max_length=20, choices=WEIGHT_CHOICES, default='600gr')
@@ -203,6 +214,21 @@ class Product(models.Model):
             return True
         else:
             return False
+
+class ProductBrand(models.Model):
+    name = models.CharField(max_length=50)
+    description = models.TextField(max_length=500, null=True, blank=True)
+    logo = models.ImageField(upload_to='scrapeApp/brands/', null=True, blank=True,
+                                help_text='Thumbnail Image 600x600')
+    created_on = models.DateTimeField(editable=False)
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.created_on = timezone.now()
+        return super(ProductBrand, self).save(*args, **kwargs)
 
 class ProductImagesUrls(models.Model):
     product = models.ForeignKey(Product, related_name='product_images_urls', on_delete=models.CASCADE)

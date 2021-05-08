@@ -3,7 +3,7 @@ from django import forms
 from django.db import models
 from django.contrib.admin.widgets import AdminDateWidget
 from .models import (RequestedLinks, CurrencyRate, SalesParameter,
-                        Store, Product, ProductImagesUrls, ProductSizeVariants)
+                        Store, Product, ProductImagesUrls, ProductSizeVariants, ProductBrand)
 
 
 
@@ -19,6 +19,9 @@ class SalesParameterAdmin(admin.ModelAdmin):
 class StoreAdmin(admin.ModelAdmin):
     list_display = ['name', 'website_url']
     prepopulated_fields = {'slug': ('name',)}
+
+class ProductBrandAdmin(admin.ModelAdmin):
+    list_display = ['name']
 
 class ProductImagesUrlsInline(admin.TabularInline):
     model = ProductImagesUrls
@@ -45,4 +48,5 @@ admin.site.register(RequestedLinks, RequestedLinksAdmin)
 admin.site.register(CurrencyRate, CurrencyRateAdmin)
 admin.site.register(SalesParameter, SalesParameterAdmin)
 admin.site.register(Store, StoreAdmin)
+admin.site.register(ProductBrand, ProductBrandAdmin)
 admin.site.register(Product, ProductAdmin)
