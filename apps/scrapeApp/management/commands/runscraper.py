@@ -74,10 +74,15 @@ class Command(BaseCommand):
                             continue
 
                     # Deactivate the product with some conditions
+                    # if no price scraped
                     if product.final_price is None:
                         product.active = False
                     # if there is no Size Variants list, it means the product is Sold Out
                     if len(product_scraped_object['Size_Variants']) == 0:
+                        product.active = False
+                    # if all size variants are not available seperately
+                    variantes_active_status = models.ProductSizeVariants.objects.filter(main_product=product).values_list('active', flat=True)
+                    if not any(list(variantes_active_status))):
                         product.active = False
 
                     product.save()
