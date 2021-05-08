@@ -82,7 +82,7 @@ class Command(BaseCommand):
                         product.active = False
                     # if all size variants are not available seperately
                     variantes_active_status = models.ProductSizeVariants.objects.filter(main_product=product).values_list('active', flat=True)
-                    if not any(list(variantes_active_status))):
+                    if not any(list(variantes_active_status)):
                         product.active = False
 
                     product.save()
