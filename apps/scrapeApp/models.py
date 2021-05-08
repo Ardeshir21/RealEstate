@@ -113,9 +113,24 @@ class Store(models.Model):
             self.created_on = timezone.now()
         return super(Store, self).save(*args, **kwargs)
 
+class ProductBrand(models.Model):
+    name = models.CharField(max_length=50)
+    description = models.TextField(max_length=500, null=True, blank=True)
+    logo = models.ImageField(upload_to='scrapeApp/brands/', null=True, blank=True,
+                                help_text='Thumbnail Image 600x600')
+    created_on = models.DateTimeField(editable=False)
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.created_on = timezone.now()
+        return super(ProductBrand, self).save(*args, **kwargs)
+
 class Product(models.Model):
     store = models.ForeignKey(Store, related_name='products', on_delete=models.CASCADE)
-    # brand = models.ForeignKey(ProductBrand, related_name='brands', on_delete=models.CASCADE)
+    brand = models.ForeignKey(ProductBrand, related_name='brands', on_delete=models.CASCADE, null=True)
     main_url = models.CharField(max_length=1000)
     name = models.CharField(max_length=250)
     gender = models.CharField(max_length=20, choices=GENDER_CHOICES, default='Female')
@@ -214,21 +229,6 @@ class Product(models.Model):
             return True
         else:
             return False
-
-class ProductBrand(models.Model):
-    name = models.CharField(max_length=50)
-    description = models.TextField(max_length=500, null=True, blank=True)
-    logo = models.ImageField(upload_to='scrapeApp/brands/', null=True, blank=True,
-                                help_text='Thumbnail Image 600x600')
-    created_on = models.DateTimeField(editable=False)
-
-    def __str__(self):
-        return self.name
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.created_on = timezone.now()
-        return super(ProductBrand, self).save(*args, **kwargs)
 
 class ProductImagesUrls(models.Model):
     product = models.ForeignKey(Product, related_name='product_images_urls', on_delete=models.CASCADE)
