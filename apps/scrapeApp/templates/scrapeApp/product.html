@@ -32,6 +32,14 @@
           <div class="row">
               <!-- Images -->
               <div class="col-12 col-lg-5">
+                <!-- Share Buttons -->
+                <div class="pd-details-social text-center">
+                  <a href="#" id='URLcopy' title="Copy URL" data-clipboard-text="{{request.build_absolute_uri}}"><i class="fal fa-copy fa-lg"></i></a>
+                  <p id="copy-notification" class="noshow-notification">کپی شد!</p>
+                  <a href="https://t.me/share/url?url={{request.build_absolute_uri}}" target="_blank"><i class="fab fa-telegram-plane fa-lg"></i></a>
+                  <a href="https://wa.me/?text={{request.build_absolute_uri}}" target="_blank"><i class="fab fa-whatsapp fa-lg"></i></a>
+                </div>
+                <!-- Images -->
                 <div class="text-center wow bounceInLeft" data-wow-duration="1s" data-wow-delay="500ms">
                   <!-- OWL Slider -->
                   {% with all_urls=the_product.product_images_urls.all %}
@@ -290,3 +298,25 @@
         </div>
     </section>
 {% endblock body_content %}
+
+
+{% block body_JS %}
+<script src="{% static "baseApp/js/clipboard.min.js" %}"></script>
+<!-- URLcopy Button -->
+<script>
+    var btn = document.getElementById('URLcopy');
+    var clipboard = new ClipboardJS(btn);
+
+    clipboard.on('success', function(e) {
+        console.log(e);
+        btn.style.color = "#dc3545";
+        $('#copy-notification').removeClass('noshow-notification');
+        $('#copy-notification').addClass('show-notification');
+    });
+
+    clipboard.on('error', function(e) {
+        console.log(e);
+    });
+</script>
+
+{% endblock body_JS %}

@@ -2,11 +2,11 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import IntegrityError
 from urllib.parse import urlparse
 from apps.scrapeApp import models
-from apps.scrapeApp.scrapers import Trendyol
+from apps.scrapeApp.scrapers import Trendyol, LC_WAIKIKI
 
 
 domain_list = {'www.trendyol.com': Trendyol.GoScrape,
-                # 'www.lcwaikiki.com': Trendyol.GoScrape
+                'www.lcwaikiki.com': LC_WAIKIKI.GoScrape
 }
 
 class Command(BaseCommand):

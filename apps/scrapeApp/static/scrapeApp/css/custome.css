@@ -25,8 +25,51 @@
   color: rgba(112, 112, 121, 0.2) !important;
 }
 
+.pd-details-social {
+	position: absolute;
+	left: -35px;
+	top: 15px;
+	max-width: 40px;
+}
+.pd-details-social a {
+	display: inline-block;
+	font-size: 25px;
+	color: #707079;
+	width: 40px;
+	text-align: center;
+	line-height: 50px;
+	margin-bottom: 15px;
+  -webkit-transition: all 1s ease;
+  -moz-transition: all 1s ease;
+  -o-transition: all 1s ease;
+  -ms-transition: all 1s ease;
+  transition: all 1s ease;
+}
+.pd-details-social a:hover {
+	color: var(--forSale-tag-color);
+  -webkit-transform: scale(1.09, 1.12);
+  transform: scale(1.09, 1.12);
+  -webkit-transition: all 0.4s ease;
+  -moz-transition: all 0.4s ease;
+  -o-transition: all 0.4s ease;
+  -ms-transition: all 0.4s ease;
+  transition: all 0.4s ease;
+}
 
+#copy-notification {
+  position: absolute;
+  top: 10px;
+  right: 40px;
+  width: 50px;
+}
 
+.noshow-notification {
+    display:none;
+}
+
+.show-notification {
+    display:block;
+}
 /*==================================================
  * Effect 7
  * ===============================================*/
@@ -147,6 +190,11 @@
   padding: 8px;
   font-size: 25px;
   color: black;
+  -webkit-transition: all 1.2s ease;
+  -moz-transition: all 1.2s ease;
+  -o-transition: all 1.2s ease;
+  -ms-transition: all 1.2s ease;
+  transition: all 1.2s ease;
 }
 
 .back-btn i {
@@ -160,6 +208,11 @@
   text-decoration: none;
   background-color: var(--forSale-tag-color);
   color: white;
+  -webkit-transition: all 0.4s ease;
+  -moz-transition: all 0.4s ease;
+  -o-transition: all 0.4s ease;
+  -ms-transition: all 0.4s ease;
+  transition: all 0.4s ease;
 }
 /*==================================================
  * Mobile
@@ -190,5 +243,14 @@
   }
   .final-price-table {
     font-size:15px;
+  }
+  .pd-details-social {
+    position: relative;
+    left: 0;
+    top: 16px;
+    max-width: initial;
+  }
+  #copy-notification {
+    left: 40px;
   }
  }
