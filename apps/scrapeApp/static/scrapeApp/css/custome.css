@@ -84,7 +84,7 @@
     cursor: default;
 }
 .hovereffect .overlay {
-  width: 50%;
+  width: 100%;
   position: absolute;
   overflow: hidden;
   left: 12%;
