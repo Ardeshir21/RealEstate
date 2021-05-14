@@ -18,13 +18,15 @@ class IntegerRangeField(models.IntegerField):
 # Variables
 YES_NO_CHOICES = [(True, 'Yes'), (False, 'No')]
 
-WEIGHT_CHOICES = [('200gr', '1 - 200 gr'),
-                    ('400gr', '200 - 400 gr'),
-                    ('600gr', '400 - 600 gr'),
-                    ('800gr', '600 - 800 gr'),
-                    ('1000gr', '800 - 1000 gr'),
-                    ('1500gr', '1 - 1.5 kg'),
-                    ('2000gr', '1.5 - 2 kg'),
+WEIGHT_CHOICES = [  ('50gr',  '50 - 100 gr'),
+                    ('100gr', '100 - 150 gr'),
+                    ('150gr', '150 - 200 gr'),
+                    ('200gr', '200 - 300 gr'),
+                    ('300gr', '300 - 400 gr'),
+                    ('400gr', '400 - 600 gr'),
+                    ('600gr', '600 - 1 kg'),
+                    ('1000gr', '1 - 1.5 kg'),
+                    ('1500gr', '1.5 - 2 kg'),
                     ('2001gr', ' >2 kg'),]
 
 WEIGHT_CATEGORIES = [('Garment', 'پوشاک'),
@@ -38,13 +40,15 @@ GENDER_CHOICES = [('Female', 'زنانه'),
 AGE_CHOICES = [('Adults', 'بزرگسال'),
                     ('Kids', 'بچه گانه')]
 # Convert Variables
-WEIGHT_CHOICES_Converted = {'200gr': [0.05, 0.2],
-                            '400gr': [0.2, 0.4],
-                            '600gr': [0.4, 0.6],
-                            '800gr': [0.6, 0.8],
-                            '1000gr': [0.8, 1],
-                            '1500gr': [1, 1.5],
-                            '2000gr': [1.5, 2],
+WEIGHT_CHOICES_Converted = {'50gr': [0.05, 0.1],
+                            '100gr': [0.1, 0.15],
+                            '150gr': [0.15, 0.2],
+                            '200gr': [0.2, 0.3],
+                            '300gr': [0.3, 0.4],
+                            '400gr': [0.4, 0.6],
+                            '600gr': [0.6, 1],
+                            '1000gr': [1, 1.5],
+                            '1500gr': [1.5, 2],
                             '2001gr': [2, 10]}
 
 class RequestedLinks(models.Model):
