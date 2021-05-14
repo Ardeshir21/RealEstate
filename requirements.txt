@@ -19,7 +19,7 @@ django-appconf==1.0.4
 django-ckeditor==5.9.0
 django-compressor==2.4
 django-debug-toolbar==2.2
-django-google-maps==0.12.1
+django-google-maps==0.12.4
 django-js-asset==1.2.2
 django-libsass==0.8
 django-maintenance-mode==0.15.0
