@@ -1,7 +1,7 @@
 #product-item-wrapper {
   padding: 1%;
   margin: 1%;
-  max-width: 23%
+  max-width: 31%
 }
 
 #product-item-wrapper a {
@@ -70,8 +70,128 @@
 .show-notification {
     display:block;
 }
+
+
+
 /*==================================================
- * Effect 7
+ * Effect to hover on product Thumbnails
+ * ===============================================*/
+.hovereffect {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    text-align: center;
+    cursor: default;
+}
+.hovereffect .overlay {
+  width: 50%;
+  position: absolute;
+  overflow: hidden;
+  left: 0;
+	top: auto;
+	bottom: 0;
+	padding: 1em;
+	height: 100%;
+	background: #79FAC4;
+	color: #3c4a50;
+	-webkit-transition: -webkit-transform 0.35s;
+	transition: transform 0.35s;
+	-webkit-transform: translate3d(0,100%,0);
+	transform: translate3d(0,100%,0);
+	visibility: hidden;
+
+}
+
+.hovereffect img {
+  display: block;
+  position: relative;
+	-webkit-transition: -webkit-transform 0.35s;
+	transition: transform 0.35s;
+}
+
+.hovereffect:hover img {
+  -webkit-transform: translate3d(0,-10%,0);
+	transform: translate3d(0,-10%,0);
+}
+
+.hovereffect h2 {
+  text-transform: uppercase;
+  color: #fff;
+  text-align: center;
+  position: relative;
+  font-size: 17px;
+  padding: 10px;
+  bottom: 10%;
+  background: rgba(0, 0, 0, 0.6);
+	float: left;
+	margin: 0px;
+	display: inline-block;
+}
+
+.hovereffect p.sizes-hover span {
+	float: left;
+	color: white;
+	font-size: 1.6em;
+  font-weight: 600;
+  direction: ltr;
+  width: 100%;
+  position: relative;
+  right: 30%;
+}
+
+
+.hovereffect:hover p.sizes-hover span:hover,
+.hovereffect:hover p.sizes-hover span:focus {
+	color: white;
+}
+
+.hovereffect h2,
+.hovereffect p.sizes-hover span {
+	-webkit-transition: -webkit-transform 0.35s;
+	transition: transform 0.35s;
+	-webkit-transform: translate3d(0,200%,0);
+	transform: translate3d(0,200%,0);
+	visibility: visible;
+}
+
+.hovereffect p.sizes-hover span:before {
+	display: inline-block;
+	padding: 8px 10px;
+	speak: none;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+
+.hovereffect:hover .overlay,
+.hovereffect:hover p.sizes-hover span {
+	-webkit-transform: translate3d(0px,5%,0px);
+	transform: translate3d(0px,5%,0px);
+}
+
+.hovereffect:hover h2 {
+	-webkit-transition-delay: 0.05s;
+	transition-delay: 0.05s;
+}
+
+.hovereffect:hover p.sizes-hover span:nth-child(3) {
+	-webkit-transition-delay: 0.1s;
+	transition-delay: 0.1s;
+}
+
+.hovereffect:hover p.sizes-hover span:nth-child(2) {
+	-webkit-transition-delay: 0.15s;
+	transition-delay: 0.15s;
+}
+
+.hovereffect:hover p.sizes-hover span:first-child {
+	-webkit-transition-delay: 0.2s;
+	transition-delay: 0.2s;
+}
+
+
+/*==================================================
+ * Effect 7, for the Product Thumbnail Box
  * ===============================================*/
 .effect7
 {
@@ -110,7 +230,7 @@
 .effect7:hover img {
     -webkit-filter: none;
     filter: none;
-    -webkit-filter: brightness(80%);
+    -webkit-filter: brightness(60%);
     -webkit-transition: all 1s ease;
     -moz-transition: all 1s ease;
     -o-transition: all 1s ease;
@@ -132,7 +252,7 @@
 .product-info h2{
   text-align: right;
   margin-top: 7px;
-  margin-right: 3px;
+  margin-right: 10px;
   font-size: 15px;
 }
 .product-info .original-price h4 {
@@ -150,7 +270,8 @@
 .product-info .final-price h4 {
   text-align: right;
   margin-top: 15px;
-  margin-left: 5px;
+  margin-left: 10px;
+  margin-left: 10px;
   font-size: 19px;
   color: green;
 }
@@ -223,8 +344,16 @@
     margin: 2%;
     max-width: 45%
   }
+  .hovereffect .overlay{
+    display: none;
+  }
+  .hovereffect:hover img {
+    -webkit-transform: translate3d(0,0,0);
+  	transform: translate3d(0,0,0);
+  }
   .product-info h2{
     font-size: 12px;
+    margin-right: 5px;
   }
   .product-info .original-price h4{
     font-size: 18px;
@@ -252,5 +381,9 @@
   }
   #copy-notification {
     left: 40px;
+  }
+  .product-info .final-price h4 {
+    margin-right: 5px;
+    margin-left: 5px;
   }
  }

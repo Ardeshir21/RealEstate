@@ -2,4 +2,5 @@ from django.apps import AppConfig
 
 
 class FablogappConfig(AppConfig):
-    name = 'FAblogApp'
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'apps.FAblogApp'

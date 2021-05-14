@@ -2,4 +2,5 @@ from django.apps import AppConfig
 
 
 class ScrapeappConfig(AppConfig):
-    name = 'scrapeApp'
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'apps.scrapeApp'

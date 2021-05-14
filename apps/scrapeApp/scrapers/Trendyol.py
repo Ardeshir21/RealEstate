@@ -37,7 +37,7 @@ def GoScrape(URL):
         temp_dict['Size'] = variant.attributeValue
         # if there is no size variant i.e. One Size only
         if temp_dict['Size'] == "":
-            temp_dict['Size'] = "محصول"
+            temp_dict['Size'] = "تک سایز"
         temp_dict['Original_Price'] = priceMaker(variant.price.originalPrice.text)
         temp_dict['Discounted_Price'] = priceMaker(variant.price.discountedPrice.text)
         # in Trendyol Stock:null or Stock:int means Available

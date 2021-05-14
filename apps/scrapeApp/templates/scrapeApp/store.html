@@ -36,10 +36,20 @@
             <div class="row" style="direction:rtl;">
               {% for product in products %}
                 {% if product.is_image_url_valid %}
-                <div id="product-item-wrapper" class="col-6 col-xs-6 col-sm-6 col-md-3 effect7">
+                <div id="product-item-wrapper" class="col-6 col-xs-6 col-sm-6 col-md-4 effect7">
                   <a href="{% url "scrapeApp:product_page" store=the_store.slug product_id=product.pk product_slug=product.slug %}">
-                    <div class="product-thumbnail">
-                      <img src="{{product.image_url}}" alt="">
+                    <div class="product-thumbnail hovereffect">
+                        <img class="img-responsive" src="{{product.image_url}}" alt="">
+                        <div class="overlay">
+                            <p class="sizes-hover">
+                              {% for SizeVariant in product.size_variants.all %}
+                                {% if SizeVariant.active %}
+                                  <span>{{SizeVariant.size}}</span>
+                                {% endif %}
+                              {% endfor %}
+                            </p>
+                            <h2>سایزهای موجود</h2>
+                        </div>
                     </div>
                     <div class="product-info">
                       <div class="product-name">

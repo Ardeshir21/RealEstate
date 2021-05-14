@@ -32,7 +32,7 @@ def GoScrape(URL):
         temp_dict['Size'] = variant['size_name']
         # if there is One Size only
         if len(size_variants) == 1:
-            temp_dict['Size'] = "محصول"
+            temp_dict['Size'] = "تک سایز"
         temp_dict['Original_Price'] = original_price
         temp_dict['Discounted_Price'] = discounted_price
         # If not available the value is 0, other values means available
