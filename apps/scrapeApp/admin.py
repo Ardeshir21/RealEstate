@@ -38,7 +38,7 @@ class ProductAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
     readonly_fields = ['image_tag']
     search_fields = ['id', 'store__name']
-    list_editable = ['weight', 'featured']
+    list_editable = ['weight', 'featured', 'active']
     # other Inlines
     inlines = [
         ProductSizeVariantsInline,
