@@ -34,10 +34,11 @@ class ProductSizeVariantsInline(admin.TabularInline):
     list_display = ['product', 'size', 'active']
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['id', 'store', 'image_tag', 'weight_category', 'main_url', 'updated_on']
+    list_display = ['id', 'store', 'brand', 'image_tag', 'weight_category', 'weight', 'final_price', 'featured', 'updated_on']
     prepopulated_fields = {'slug': ('name',)}
     readonly_fields = ['image_tag']
     search_fields = ['id', 'store__name']
+    list_editable = ['weight', 'featured']
     # other Inlines
     inlines = [
         ProductSizeVariantsInline,
