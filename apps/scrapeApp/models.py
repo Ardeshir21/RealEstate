@@ -117,6 +117,9 @@ class Store(models.Model):
             self.created_on = timezone.now()
         return super(Store, self).save(*args, **kwargs)
 
+    def get_absolute_url(self):
+        return reverse('scrapeApp:store_page', args=(self.slug,))
+
 class ProductBrand(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField(max_length=500, null=True, blank=True)
@@ -164,6 +167,9 @@ class Product(models.Model):
         else:
             self.updated_on = timezone.now()
         return super(Product, self).save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse('scrapeApp:product_page', args=(self.store.slug, self.id, self.slug))
 
     # Display Thumbnails
     def image_tag(self):

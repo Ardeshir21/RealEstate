@@ -12,7 +12,9 @@ sitemaps_dict = {'Static_sitemap': sitemaps.StaticSitemap,
                 'Post_sitemap': sitemaps.PostSitemap,
                 'PostFa_sitemap': sitemaps.PostFaSitemap,
                 'FAQ_sitemap': sitemaps.FAQCategoriesSitemap,
-                'FAQFa_sitemap': sitemaps.FAQCategoriesFaSitemap
+                'FAQFa_sitemap': sitemaps.FAQCategoriesFaSitemap,
+                'Store_sitemap': sitemaps.StoreSitemap,
+                'Product_sitemap': sitemaps.ProductSitemap
                 }
 
 urlpatterns = [
