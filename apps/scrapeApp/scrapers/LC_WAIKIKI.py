@@ -14,8 +14,9 @@ def GoScrape(URL):
     image_main = mainImageScraper(page_soup)
     images_urls_list = imagesScraper(page_soup)
     original_price = priceMaker(originalPriceScraper(page_soup))
+    regular_price = priceMaker(regularPriceScraper(page_soup))
     discounted_price = priceMaker(discountedPriceScraper(page_soup))
-    prices_list = [original_price, discounted_price]
+    prices_list = [original_price, discounted_price, regular_price]
 
     try:
         final_price = min(i for i in prices_list if i is not None)
@@ -78,11 +79,34 @@ def originalPriceScraper(soup):
     if temp_:
         return temp_.attrs['content']
 
+    # seconde way
+    temp_= soup.find("span", {"class" : "old-price"})
+    if temp_:
+        temp_ = temp_.text.replace('TL', '').strip()
+        return temp_
+
+def regularPriceScraper(soup):
+    temp_= soup.find("span", {"class" : "price-regular"})
+    if temp_:
+        temp_ = temp_.text.replace('TL', '').strip()
+        return temp_
 
 def discountedPriceScraper(soup):
     temp_= soup.find("meta", {"name" : "DiscountPrice_1"})
     if temp_:
         return temp_.attrs['content']
+
+    # seconde way
+    temp_= soup.find("span", {"class" : "price"})
+    if temp_:
+        temp_ = temp_.text.replace('TL', '').strip()
+        return temp_
+
+    # third way
+    temp_= soup.find("div", {"class" : "basket-discount"})
+    if temp_:
+        temp_ = temp_.text.replace('TL', '').strip()
+        return temp_
 
 def sizeVariantsScraper(soup):
     # This the result list
@@ -123,6 +147,7 @@ def sizeVariantsScraper(soup):
     return result
 
 def priceMaker(text):
+    ''' Just the number, NOT the currency '''
     try:
         text = text.replace(',', '.')
         price = float(text)
