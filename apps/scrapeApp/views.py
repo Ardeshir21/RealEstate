@@ -24,7 +24,7 @@ def get_extra_context():
         }
     return extraContext
 
-class AllStoreView(generic.ListView):
+class HomeStoreView(generic.ListView):
     context_object_name = 'stores'
     template_name = 'scrapeApp/all-stores.html'
     model = models.Store
@@ -37,6 +37,8 @@ class AllStoreView(generic.ListView):
 
         # This title is different for this view
         context['slideContent'] = baseAppModel.Slide.objects.get(useFor__exact='STORE_HOME', active__exact=True)
+        context['pageTitle'] = 'خرید کالا از ترکیه'
+        context['featured_brands'] = models.ProductBrand.objects.filter(featured=True)
 
         return context
 

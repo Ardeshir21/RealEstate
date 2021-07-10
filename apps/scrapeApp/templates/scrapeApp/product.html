@@ -122,8 +122,19 @@
                                                     <div class="property-more-table" style="padding-right:0;border:none;">
                                                       <div class="text-center">
                                                         <!-- Title & Price -->
-                                                        <div>
-                                                          <h6 class="mt-4" style="color:#25d366; font-size:25px;">{{size_variant.variant_obj.final_price}} لیر </h6>
+                                                        <div class="row">
+                                                          {% if size_variant.variant_obj.is_discounted %}
+                                                          <div class="col-6">
+                                                            <h6 class="mt-4" style="color:#25d366; font-size:25px;">{{size_variant.variant_obj.final_price}} لیر </h6>
+                                                          </div>
+                                                          <div class="col-6">
+                                                            <h6 class="mt-4" style="color:#25d366; font-size:25px;">%{{size_variant.calculated_values.Discount_Percent}} تخفیف</h6>
+                                                          </div>
+                                                          {% else %}
+                                                          <div class="col-12">
+                                                            <h6 class="mt-4" style="color:#25d366; font-size:25px;">{{size_variant.variant_obj.final_price}} لیر </h6>
+                                                          </div>
+                                                          {% endif %}
                                                         </div>
                                                         <!-- Quotation Details -->
                                                         <table class="table table-bordered table-hover" style="direction: rtl;">
@@ -206,8 +217,19 @@
                                                   <div class="property-more-table" style="padding-right:0;border:none;">
                                                     <div class="text-center">
                                                       <!-- Title & Price -->
-                                                      <div>
-                                                        <h6 class="mt-4" style="color:#25d366; font-size:25px;">{{size_variant.variant_obj.final_price}} لیر </h6>
+                                                      <div class="row">
+                                                        {% if size_variant.variant_obj.is_discounted %}
+                                                        <div class="col-6">
+                                                          <h6 class="mt-4" style="color:#25d366; font-size:25px;">{{size_variant.variant_obj.final_price}} لیر </h6>
+                                                        </div>
+                                                        <div class="col-6">
+                                                          <h6 class="mt-4" style="color:#25d366; font-size:25px;">%{{size_variant.calculated_values.Discount_Percent}} تخفیف</h6>
+                                                        </div>
+                                                        {% else %}
+                                                        <div class="col-12">
+                                                          <h6 class="mt-4" style="color:#25d366; font-size:25px;">{{size_variant.variant_obj.final_price}} لیر </h6>
+                                                        </div>
+                                                        {% endif %}
                                                       </div>
                                                       <!-- Quotation Details -->
                                                       <table class="table table-bordered table-hover" style="direction: rtl;">

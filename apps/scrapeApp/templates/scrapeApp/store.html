@@ -37,7 +37,11 @@
               {% for product in products %}
                 {% if product.is_image_url_valid %}
                 <div id="product-item-wrapper" class="col-6 col-xs-6 col-sm-6 col-md-4 effect7">
+
                   <a href="{% url "scrapeApp:product_page" store=the_store.slug product_id=product.pk product_slug=product.slug %}">
+                    {% if product.is_discounted %}
+                    <h5 class="discount-percent">%{{product.calc_tomans.Discount_Percent}}</h5>
+                    {% endif %}
                     <div class="product-thumbnail hovereffect">
                         <img class="img-responsive" src="{{product.image_url}}" alt="">
                         <div class="overlay">

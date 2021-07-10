@@ -1,3 +1,11 @@
+.category-page-container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  overflow: hidden;
+  padding: 0 6px;
+}
+
 #product-item-wrapper {
   padding: 1%;
   margin: 1%;
@@ -11,6 +19,11 @@
 .product-section-padding{
   padding-top: 200px;
   padding-bottom: 150px;
+}
+
+.storesection-padding-50{
+  padding-top: 50px;
+  padding-bottom: 50px;
 }
 
 .final-price-table {
@@ -71,8 +84,38 @@
     display:block;
 }
 
+.store-home-title h3 {
+  font-size: 33px;
+}
 
+#grid {
+    margin: 0 6px;
+}
 
+.grid-item {
+  width: 590px;
+  height: 590px;
+  display:block;
+  overflow: hidden;
+}
+.grid-item-size2 {
+  width: 810px;
+  height: 290px;
+  display:block;
+  overflow: hidden;
+}
+
+.grid-item h2 {
+  font-size: 22px;
+}
+
+.grid-item p {
+  font-size: 16px;
+}
+
+.text-margin-right-10 {
+  margin-right: 10px;
+}
 /*==================================================
  * Effect to hover on product Thumbnails
  * ===============================================*/
@@ -249,9 +292,9 @@
   line-height: 1em;
 }
 
-.product-info h2{
+.product-info h2 {
   text-align: right;
-  margin-top: 7px;
+  margin-top: 15px;
   margin-right: 10px;
   font-size: 15px;
 }
@@ -274,6 +317,27 @@
   margin-left: 10px;
   font-size: 19px;
   color: green;
+}
+
+.discount-percent {
+  float: right;
+  font-size: 17px;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 10;
+  border: 1px solid var(--main-color);
+  background: radial-gradient(
+      circle farthest-side,
+      var(--forSale-tag-color) 65%,
+      var(--main-color)
+    );
+  -moz-border-radius:50%;
+  -webkit-border-radius:50%;
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  line-height: 53px;
 }
 
 .store {
@@ -335,6 +399,90 @@
   -ms-transition: all 0.4s ease;
   transition: all 0.4s ease;
 }
+
+
+/*==================================================
+ * Brands
+ * ===============================================*/
+
+ .presentation {
+   display: flex;
+   direction: rtl;
+   overflow: hidden;
+   padding: 0;
+   margin-bottom: 2px;
+ }
+ .presentation.sixhundred .article {
+   height: 600px;
+ }
+ .presentation.fourhundred .article {
+   height: 400px;
+ }
+ .presentation.threehundred .article {
+   height: 300px;
+ }
+ .presentation .article {
+   position: relative;
+   width: 25%;
+   overflow: hidden;
+   transition: .8s;
+   max-height: 300px;
+ }
+ .presentation .article h2 {
+   font-weight: bold;
+ }
+ .presentation .article figure:after {
+   position: absolute;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   content: "";
+   transition: .4s;
+   z-index: 1;
+ }
+ .presentation .article figure img {
+   position: relative;
+   right: 50%;
+   width: auto;
+   max-width: 600px;
+   min-width: 100%;
+   transform: translateX(50%);
+ }
+ .presentation .article figcaption {
+   position: absolute;
+   bottom: 0;
+   width: 100%;
+   padding: 20px;
+   z-index: 2;
+ }
+ .presentation .article:hover {
+   width: 40%;
+ }
+ .presentation .article:hover figure:after {
+   background-color: transparent !important;
+ }
+ .presentation:hover .article figure:after {
+   background-color: rgba(0, 0, 0, 0.7);
+ }
+
+
+
+ /*==================================================
+  * Middle Screen Size
+  * ===============================================*/
+ @media only screen and (max-width: 768px){
+   .presentation .article {
+       width: 50%;
+   }
+  .presentation {
+      flex-wrap: wrap;
+    }
+  .presentation .article figure {
+    margin: 0;
+  }
+}
+
 /*==================================================
  * Mobile
  * ===============================================*/
@@ -356,10 +504,12 @@
     margin-right: 5px;
   }
   .product-info .original-price h4{
-    font-size: 18px;
+    font-size: 14px;
+    margin-top: 3px;
   }
   .product-info .final-price h4 {
-    font-size: 15px;
+    font-size: 14px;
+    margin-top: 3px;
   }
   .back-btn a {
     font-size: 20px;
@@ -385,5 +535,51 @@
   .product-info .final-price h4 {
     margin-right: 5px;
     margin-left: 5px;
+  }
+
+  .grid-item {
+    width: 314px;
+    height: 314px;
+    display:block;
+    overflow: hidden;
+  }
+  .grid-item-size2 {
+    width: 314px;
+    height: auto;
+    display:block;
+    overflow: hidden;
+  }
+  .presentation .article {
+      width: 100%;
+  }
+  .presentation .article figure img {
+    width: 100%;
+  }
+  .presentation .article figure {
+    margin: 0;
+  }
+  .presentation {
+      flex-wrap: wrap;
+  }
+  .grid-item h2 {
+    font-size: 14px;
+  }
+
+  .grid-item p {
+    font-size: 12px;
+  }
+  .store-home-title h3 {
+    font-size: 25px;
+  }
+  .product-info .product-name {
+    height: 1.4em;
+  }
+  .discount-percent {
+    font-size: 11px;
+    top: 5px;
+    right: 5px;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
   }
  }

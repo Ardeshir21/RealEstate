@@ -42,6 +42,7 @@ MEASURE_TYPES_FA = {'K': 'کیلومتر',
                     'M': 'دقیقه'}
 
 PAGE_CHOICES = [('HOME', 'Homepage'),
+                ('ABOUT_US', 'About Us'),
                 ('PROPERTY_SEARCH', 'Property Search'),
                 ('BLOG_HOME', 'Blog Homepage'),
                 ('BLOG_SEARCH', 'Blog Search'),

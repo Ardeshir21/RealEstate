@@ -4,7 +4,7 @@ from django.urls import path, re_path
 app_name = 'scrapeApp'
 
 urlpatterns = [
-    path('', views.AllStoreView.as_view(), name='all_stores'),
+    path('', views.HomeStoreView.as_view(), name='all_stores'),
     path('stores/<slug:store>/', views.StoreView.as_view(), name='store_page'),
     re_path(r'^stores/(?P<store>[-\w]+)/(?P<product_id>[0-9]+)/(?P<product_slug>[-\w]+)/$', views.ProductView.as_view(), name='product_page'),
     path('scraper/url', views.AJAX_SCRAPE.as_view(), name='link_scraper'),

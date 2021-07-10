@@ -325,7 +325,7 @@ class ContactView(generic.edit.FormView):
         context = super().get_context_data(**kwargs)
         # Append extraContext
         context.update(get_extra_context())
-        context['slideContent'] = models.Slide.objects.get(useFor__exact='PROPERTY_PAGE', active__exact=True)
+        context['slideContent'] = models.Slide.objects.get(useFor__exact='ABOUT_US', active__exact=True)
         context['pageTitle'] = 'ABOUT US'
         return context
 

@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.utils.html import mark_safe
 import requests
 
+
 # Customer field for limited range integers
 class IntegerRangeField(models.IntegerField):
     def __init__(self, verbose_name=None, name=None, min_value=None, max_value=None, **kwargs):
@@ -30,6 +31,10 @@ WEIGHT_CHOICES = [  ('50gr',  '50 - 100 gr'),
                     ('2001gr', ' >2 kg'),]
 
 WEIGHT_CATEGORIES = [('Garment', 'پوشاک'),
+                    ('Bag_Shoes', 'کیف و کفش'),
+                    ('Cosmetics', 'آرایشی')]
+
+PRODUCT_CATEGORIES = [('Garment', 'پوشاک'),
                     ('Bag_Shoes', 'کیف و کفش'),
                     ('Cosmetics', 'آرایشی')]
 
@@ -124,7 +129,10 @@ class ProductBrand(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField(max_length=500, null=True, blank=True)
     logo = models.ImageField(upload_to='scrapeApp/brands/', null=True, blank=True,
-                                help_text='Thumbnail Image 600x600')
+                                help_text='Logo Image 600x600')
+    image = models.ImageField(upload_to='scrapeApp/brands/', null=True, blank=True,
+                                help_text='Thumbnail Image 600x300')
+    featured = models.BooleanField(choices=YES_NO_CHOICES, default=False)
     created_on = models.DateTimeField(editable=False)
 
     def __str__(self):
@@ -202,13 +210,20 @@ class Product(models.Model):
         # Sum all the cost and prices of LOWER
         final_price_with_cost = product_final_price + transport_plus_margin_lower
 
+        # Discount percent
+        if self.is_discounted():
+            final_discount_percent = (product_original_price - product_final_price) / product_original_price
+        else:
+            final_discount_percent = 0
+
         calculated_data = {
         'Currency_Rate': int(currency_rate),
         'Product_Original_Price': int(product_original_price),
         'Product_Final_Price': int(product_final_price),
         'Transport_Margin_Upper': transport_plus_margin_upper,
         'Transport_Margin_Lower': int(transport_plus_margin_lower),
-        'Final_Price_With_Cost': int(final_price_with_cost)
+        'Final_Price_With_Cost': int(final_price_with_cost),
+        'Discount_Percent': int(final_discount_percent*100)
         }
 
         return calculated_data
@@ -300,13 +315,20 @@ class ProductSizeVariants(models.Model):
         # Sum all the cost and prices of LOWER
         final_price_with_cost = product_final_price + transport_plus_margin_lower
 
+        # Discount percent
+        if self.is_discounted():
+            final_discount_percent = (product_original_price - product_final_price) / product_original_price
+        else:
+            final_discount_percent = 0
+
         calculated_data = {
         'Currency_Rate': int(currency_rate),
         'Product_Original_Price': int(product_original_price),
         'Product_Final_Price': int(product_final_price),
         'Transport_Margin_Upper': transport_plus_margin_upper,
         'Transport_Margin_Lower': int(transport_plus_margin_lower),
-        'Final_Price_With_Cost': int(final_price_with_cost)
+        'Final_Price_With_Cost': int(final_price_with_cost),
+        'Discount_Percent': int(final_discount_percent*100)
         }
         return calculated_data
 
