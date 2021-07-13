@@ -42,7 +42,7 @@
                                 <p>{{post.created_on | date:"d M Y"}} |
                                    <small><i class="fa fa-eye"></i> {{post.view}}</small>
                                 </p>
-                                <p>نویسنده: <a href="#">{{post.author}}</a> | در
+                                <p>
                                   {% for category in post.categories.all %}
                                     <a href="{% url 'FAblogApp:category_list' category=category.slug %}">{{category}}, </a>
                                   {% endfor %}

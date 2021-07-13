@@ -41,7 +41,7 @@ A Turkish passport allows visa free travel (or visa on arrival) to 114 countries
                                 <p>{{post.created_on | date:"d M Y"}} |
                                    <small><i class="fa fa-eye"></i> {{post.view}}</small>
                                 </p>
-                                <p>By <a href="#">{{post.author}}</a> | in
+                                <p>
                                   {% for category in post.categories.all %}
                                     <a href="{% url 'blogApp:category_list' category=category.slug %}">{{category}}, </a>
                                   {% endfor %}
