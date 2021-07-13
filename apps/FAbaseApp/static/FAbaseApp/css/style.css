@@ -1254,7 +1254,7 @@ img {
     z-index: 1;
     padding: 100px 5%; }
     .south-editor-area .editor-content-area .section-heading {
-      text-align: left;
+      text-align: right;
       margin-bottom: 50px; }
     .south-editor-area .editor-content-area .address {
       margin-top: 30px; }
@@ -1307,7 +1307,14 @@ img {
         font-size: 16px; } }
 
 /* :: 15.0 Footer Area CSS */
+.link-no-underscore {
+  text-decoration: none !important;
 
+}
+
+ .link-no-underscore:hover h6 {
+  color: var(--forSale-tag-color) !important;
+ }
 .footer-area {
   position: relative;
   z-index: 1;

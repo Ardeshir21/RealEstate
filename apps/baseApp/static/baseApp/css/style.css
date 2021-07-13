@@ -1886,6 +1886,14 @@ img {
     z-index: -300;
   } */
 
+.link-no-underscore {
+  text-decoration: none !important;
+
+}
+
+ .link-no-underscore:hover h6 {
+  color: var(--forSale-tag-color) !important;
+ }
 @media only screen and (max-width: 575px) {
       .single-blog-area p {
         font-size: 15px;
