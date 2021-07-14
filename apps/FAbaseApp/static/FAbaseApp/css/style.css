@@ -1766,6 +1766,15 @@ img {
   z-index: 1;
   text-align: justify;}
 
+  .single-blog-area .backlink-refer,
+  .single-blog-area .backlink-refer:hover {
+    text-decoration: none;
+    font-size: 15px;
+    text-indent: 25px;
+    font-weight: 600;
+    color: inherit;
+  }
+  
   .single-blog-area p {
     font-family: IranSans-UltraLight;
     font-size: 17px;
