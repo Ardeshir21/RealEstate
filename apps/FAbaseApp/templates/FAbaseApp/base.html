@@ -7,7 +7,7 @@
   <head>
     <meta name="author" content="Ardeshir Damavandi - a.damavandi@hotmail.com">
 
-    
+
     {% if not DEBUG_VALUE %}
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -40,6 +40,20 @@
 
     <!-- Style CSS -->
     <link rel="stylesheet" href="{% static "FAbaseApp/css/style.css" %}">
+
+    <!-- yektanet.com -->
+    <script type="text/javascript">
+      (function(){
+      var now = new Date();
+      var head = document.getElementsByTagName('head')[0];
+      var script = document.createElement('script');
+      script.async = true;
+      var script_address = 'https://cdn.yektanet.com/js/gammaturkey.com/native-gammaturkey.com-20473.js';
+      script.src = script_address + '?v=' + now.getFullYear().toString() + '0' + now.getMonth() + '0' + now.getDate() + '0' + now.getHours();
+      head.appendChild(script);
+      })();
+    </script>
+    <!-- yektanet.com -->
 
     {% block head %}
       <!-- Something HERE -->
