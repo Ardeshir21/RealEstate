@@ -19,7 +19,7 @@ import os
 # This file is different in Server and my local PC
 secret_file = 'RealEstateKEYS.txt'
 secrets = ['SECRET_KEY', 'DEBUG' , 'DATABASE_NAME', 'DATABASE_USERNAME', 'DATABASE_PASSWORD',
- 'EMAIL_HOST', 'EMAIL_HOST_USER', 'EMAIL_HOST_PASSWORD']
+ 'EMAIL_HOST', 'EMAIL_HOST_USER', 'EMAIL_HOST_PASSWORD', 'CHATGPT_API']
 SECRETS_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 filepath = os.path.join(SECRETS_DIR, secret_file)
 secrets_dict = {}
@@ -39,6 +39,10 @@ TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = secrets_dict['SECRET_KEY']
+
+# Chat gpt API key
+CHATGPT_API = secrets_dict['CHATGPT_API']
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # The DEBUG value in 'RealEstateKEYS.txt' is an empty string ''

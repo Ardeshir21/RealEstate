@@ -12,6 +12,7 @@ from django.core import serializers
 import json
 import io
 import xlsxwriter
+import openai
 
 
 # Here is the Extra Context ditionary which is used in get_context_data of Views classes
@@ -514,3 +515,65 @@ def error_500(request):
     #         return self.form_valid(form)
     #     else:
     #         return self.form_invalid(form)
+
+
+
+# Chatbot
+class ChatbotView(generic.TemplateView):
+    template_name = 'baseApp/chat_gpt.html'
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Append extraContext
+        context.update(get_extra_context())
+        context['slideContent'] = models.Slide.objects.get(useFor__exact='ABOUT_US', active__exact=True)
+        context['pageTitle'] = 'CHAT BOT'
+        return context
+
+    def post(self, request):
+
+        # Get the user's message from the query string
+        message = request.POST.get('message', '')
+
+        # Get the current chat log from the cookie
+        chat_log = request.COOKIES.get('chat_log')
+        if chat_log:
+            chat_log = json.loads(chat_log)
+        else:
+            chat_log = [{"role": "system", "content": "You are a helpful assistant."}]
+
+        # Initialize the OpenAI API client
+        openai.api_key = settings.CHATGPT_API
+
+        # Create a new chat completion if there is no previous chat log
+        if not chat_log:
+            bot_response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                # prompt=message,
+                temperature=0.7,
+                max_tokens=250,
+                messages=chat_log,
+            )
+            chat_log.append({"role": "user", "content": message})
+            chat_log.append({"role": "system", "content": bot_response['choices'][0]['message']['content']})
+        else:
+            chat_log[-1]["role"] = "user"
+            chat_log[-1]["content"] = message
+            bot_response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                # prompt=chat_log[-1]["content"],
+                temperature=0.7,
+                max_tokens=250,
+                messages=chat_log,
+            )
+            chat_log.append({"role": "system", "content": bot_response['choices'][0]['message']['content']})
+
+        # Store the updated chat log in a cookie
+        chat_log_json = json.dumps(chat_log)
+        response = JsonResponse({'question': message,
+                                 'message': bot_response['choices'][0]['message']['content']})
+        response.set_cookie('chat_log', chat_log_json)
+
+        # Return the chatbot's response as a JSON object
+        return response

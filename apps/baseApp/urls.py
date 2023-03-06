@@ -29,6 +29,9 @@ urlpatterns = [
     # AJAX test
     path('ajaxtest/', views.AJAX_TEST.as_view(), name='ajax_test'),
 
+    # CHAT BOT
+    path('chatbot/', views.ChatbotView.as_view(), name='chat_bot'),
+
     # All Asset Download Excel file
     path('export-page/', login_required(views.ExcelOutputAssets.as_view()), name='export_page'),
 
