@@ -44,7 +44,7 @@ isodate==0.6.0
 libsass==0.20.0
 lxml==4.6.2
 more-itertools==8.6.0
-multidict==6.0.4
+multidict==5.2.0
 openai==0.27.0
 packaging==20.7
 parsel==1.5.2
