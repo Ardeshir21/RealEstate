@@ -528,7 +528,7 @@ class ChatbotView(generic.TemplateView):
         # Append extraContext
         context.update(get_extra_context())
         context['slideContent'] = models.Slide.objects.get(useFor__exact='ABOUT_US', active__exact=True)
-        context['pageTitle'] = 'CHAT BOT'
+        context['pageTitle'] = 'ASK ME'
         return context
 
     def post(self, request):
@@ -551,8 +551,8 @@ class ChatbotView(generic.TemplateView):
             bot_response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
                 # prompt=message,
-                temperature=0.7,
-                max_tokens=250,
+                temperature=0.8,
+                max_tokens=3000,
                 messages=chat_log,
             )
             chat_log.append({"role": "user", "content": message})
@@ -563,8 +563,8 @@ class ChatbotView(generic.TemplateView):
             bot_response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
                 # prompt=chat_log[-1]["content"],
-                temperature=0.7,
-                max_tokens=250,
+                temperature=0.8,
+                max_tokens=3000,
                 messages=chat_log,
             )
             chat_log.append({"role": "system", "content": bot_response['choices'][0]['message']['content']})
