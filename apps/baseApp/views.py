@@ -16,6 +16,9 @@ import openai
 import asyncio
 import telegram
 from django.utils.decorators import method_decorator
+import requests
+from django.views.decorators.csrf import csrf_exempt
+
 
 
 # Here is the Extra Context ditionary which is used in get_context_data of Views classes
@@ -684,7 +687,7 @@ WEBHOOK_URL = 'https://www.gammaturkey.com/telegram-dictionary-bot/'
 # OpenAI API client
 openai_client = openai.OpenAI(api_key=settings.CHATGPT_API)
 
- def send_message(chat_id, text):
+def send_message(chat_id, text):
     url = f"https://api.telegram.org/bot{settings.TELEGRAM_BOT_TOKEN}/sendMessage"
     data = {"chat_id": chat_id, "text": text}
     response = requests.post(url, json=data)
