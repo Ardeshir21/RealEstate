@@ -6,7 +6,6 @@ argon2-cffi==19.2.0
 asgiref==3.3.4
 async-timeout==4.0.2
 atomicwrites==1.4.0
-attrs @ file:///tmp/build/80754af9/attrs_1604765588209/work
 Automat @ file:///tmp/build/80754af9/automat_1600298431173/work
 Babel==2.8.0
 backcall @ file:///home/ktietz/src/ci/backcall_1611930011877/work
