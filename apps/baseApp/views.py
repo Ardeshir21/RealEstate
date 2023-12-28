@@ -728,6 +728,10 @@ class TelegramDictionaryBotView(generic.View):
         #     bot.set_webhook(url=WEBHOOK_URL)
         return super().dispatch(request, *args, **kwargs)
 
+    def get(self, request, *args, **kwargs):
+        # handle_update(request.data)
+        return HttpResponse('Bot update received')
+    
     def post(self, request, *args, **kwargs):
         # handle_update(request.data)
         return HttpResponse('Bot update received')
