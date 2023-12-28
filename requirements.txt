@@ -1,6 +1,5 @@
 aiohttp==3.8.4
 aiosignal==1.2.0
-anyio==4.2.0
 argon2-cffi==19.2.0
 asgiref==3.3.4
 async-timeout==4.0.2
@@ -9,7 +8,7 @@ attrs==20.3.0
 Automat==22.10.0
 Babel==2.8.0
 backcall==0.2.0
-bcrypt==2.19
+bcrypt==4.0.0
 beautifulsoup4==4.9.3
 cached-property==1.5.2
 captcha==0.3
@@ -39,16 +38,12 @@ django-maintenance-mode==0.15.0
 django-phonenumber-field==4.0.0
 django-robots==4.0
 django-user-agents==0.4.0
-exceptiongroup==1.2.0
 frozenlist==1.2.0
 ghasedak==0.1.9
 gunicorn==20.1.0
-h11==0.14.0
-httpcore==1.0.2
-httpx==0.26.0
+h11==0.13.0
 hyperlink==20.0.1
 idna==2.10
-importlib-metadata==6.0.0
 incremental==17.5.0
 install==1.3.5
 isodate==0.6.0
