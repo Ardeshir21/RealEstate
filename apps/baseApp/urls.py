@@ -32,6 +32,9 @@ urlpatterns = [
     # CHAT BOT
     path('chatbot/', views.ChatbotView.as_view(), name='chat_bot'),
 
+    # Dictionary BOT
+    path('dictionary/', views.DictionarybotView.as_view(), name='dictionary_bot'),
+
     # All Asset Download Excel file
     path('export-page/', login_required(views.ExcelOutputAssets.as_view()), name='export_page'),
 

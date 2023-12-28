@@ -544,11 +544,11 @@ class ChatbotView(generic.TemplateView):
             chat_log = [{"role": "system", "content": "You are a helpful assistant."}]
 
         # Initialize the OpenAI API client
-        openai.api_key = settings.CHATGPT_API
+        client = openai.OpenAI(api_key=settings.CHATGPT_API,)
 
         # Create a new chat completion if there is no previous chat log
         if not chat_log:
-            bot_response = openai.ChatCompletion.create(
+            bot_response = client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 # prompt=message,
                 temperature=0.8,
@@ -556,24 +556,74 @@ class ChatbotView(generic.TemplateView):
                 messages=chat_log,
             )
             chat_log.append({"role": "user", "content": message})
-            chat_log.append({"role": "system", "content": bot_response['choices'][0]['message']['content']})
+            chat_log.append({"role": "system", "content": bot_response.choices[0].message.content})
         else:
             chat_log[-1]["role"] = "user"
             chat_log[-1]["content"] = message
-            bot_response = openai.ChatCompletion.create(
+            bot_response = client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 # prompt=chat_log[-1]["content"],
                 temperature=0.8,
                 max_tokens=3000,
                 messages=chat_log,
             )
-            chat_log.append({"role": "system", "content": bot_response['choices'][0]['message']['content']})
+            chat_log.append({"role": "system", "content": bot_response.choices[0].message.content})
 
         # Store the updated chat log in a cookie
         chat_log_json = json.dumps(chat_log)
         response = JsonResponse({'question': message,
-                                 'message': bot_response['choices'][0]['message']['content']})
+                                 'message': bot_response.choices[0].message.content})
         response.set_cookie('chat_log', chat_log_json)
 
         # Return the chatbot's response as a JSON object
         return response
+    
+
+
+
+# Dictionary Bot
+class DictionarybotView(generic.TemplateView):
+    template_name = 'baseApp/dictionary_bot.html'
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Append extraContext
+        context.update(get_extra_context())
+        context['slideContent'] = models.Slide.objects.get(useFor__exact='ABOUT_US', active__exact=True)
+        context['pageTitle'] = 'Dictionary'
+        return context
+
+    def post(self, request):
+
+        # Get the user's message from the query string
+        word = request.POST.get('message', '')
+
+
+        # Initialize the OpenAI API client
+        client = openai.OpenAI(api_key=settings.CHATGPT_API,)
+
+        # Construct dictionary-specific prompt
+        prompt = f"Define the word {word}"
+
+        # Create a new chat completion if there is no previous chat log
+        bot_response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages = [
+                {"role": "user", "content": f'{prompt}'},
+                {"role": "system", "content": f'Provide a comprehensive dictionary entry for the word {prompt}, including:  \n- Part of speech \
+                 \n- Definition  \n- Phonetics (how to pronounce the word) \n- Two examples of how to use the word in a sentence \
+                 \n- Can it be used in informal dialog? Give two examples of that. \n-What other alternative words that I can use instead of {prompt}? \
+                 \n- Give some of the common collocation for this word. \n Do we have any phrasal verb which contains {prompt}, give me an example of them.'}
+            ],
+            temperature=0.8,
+            max_tokens=3000,
+        )
+       
+        # Extract definition from response
+        print(bot_response)
+        definition = bot_response.choices[0].message.content
+
+        # Return structured response
+        return JsonResponse({'word': word, 'definition': definition})
+    
