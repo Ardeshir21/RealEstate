@@ -729,5 +729,5 @@ class TelegramDictionaryBotView(generic.View):
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        handle_update(request.data)
-        return HttpResponse('Bot response sent')
+        # handle_update(request.data)
+        return HttpResponse('Bot update received')
