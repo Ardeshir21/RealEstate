@@ -13,8 +13,9 @@ import json
 import io
 import xlsxwriter
 import openai
+import asyncio
 from telegram import Bot
-from telegram.ext import Updater, MessageHandler, filters
+from telegram.ext import Updater, MessageHandler, Filters
 
 
 # Here is the Extra Context ditionary which is used in get_context_data of Views classes
@@ -630,18 +631,19 @@ class DictionaryBotView(generic.TemplateView):
 
 
 # Telegram Bot
-# Initialize the bot instance outside the view
+# Token and webhook URL
 bot = Bot(token=settings.TELEGRAM_BOT_TOKEN)
 WEBHOOK_URL = 'https://www.gammaturkey.com/telegram-dictionary-bot/'
 
-# Initialize the OpenAI API client outside the view
+# OpenAI API client
 openai_client = openai.OpenAI(api_key=settings.CHATGPT_API)
 
-# Initialize the Updater instance outside the view
-updater = Updater(settings.TELEGRAM_BOT_TOKEN, use_context=True)
+# Create update queue and updater
+update_queue = asyncio.Queue()
+updater = Updater(bot=bot, update_queue=update_queue)
 dispatcher = updater.dispatcher
 
-# Logic behind the replies
+# Handle incoming messages
 def handle_message(update, context):
     text = update.message.text
     user = update.effective_user
@@ -649,41 +651,35 @@ def handle_message(update, context):
     if text == '/start':
         context.bot.send_message(chat_id=update.effective_chat.id, text="Hello, I'm your dictionary bot! Send me a word to get its definition.")
     else:
-        # Construct dictionary-specific prompt
-        prompt = f"Define the word {text}"  # Change 'word' to 'text'
-
+        # Construct prompt and get definition from OpenAI
+        prompt = f"Define the word {text}"
         try:
-            # Create a new chat completion if there is no previous chat log
             bot_response = openai_client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=[
                     {"role": "user", "content": f'{prompt}'},
-                    {"role": "system", "content": f'Provide a comprehensive dictionary entry for the word {text}, including:  \n- Part of speech \
-                     \n- Definition  \n- Phonetics (how to pronounce the word) \n- Two examples of how to use the word in a sentence \
-                     \n- Can it be used in informal dialog? Give two examples of that. \n- What other alternative words that I can use instead of {text}? \
-                     \n- Give some of the common collocation for this word. \n Do we have any phrasal verb which contains {text}, give me an example of them.'}
+                    # ... (rest of your prompt)
                 ],
                 temperature=0.8,
                 max_tokens=3000,
             )
-           
-            # Extract definition from response
             definition = bot_response.choices[0].message.content
             context.bot.send_message(chat_id=update.effective_chat.id, text=definition)
         except Exception as e:
             context.bot.send_message(chat_id=update.effective_chat.id, text=f"An error occurred: {e}")
 
+# Add message handler
+dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, handle_message))
+
+# View to handle webhook
 class TelegramDictionaryBotView(generic.View):
-    # the set_webhook needs to be called only once
     def dispatch(self, request, *args, **kwargs):
-        # Set up the webhook if not set
         if not bot.get_webhook_info().url:
             bot.set_webhook(url=WEBHOOK_URL)
         return super().dispatch(request, *args, **kwargs)
 
-    def post(self, request, *args, **kwargs):
-        # Process incoming Telegram updates
-        data = request.body.decode('utf-8')
-        dispatcher.add_handler(MessageHandler(filters.Text, handle_message))
-
+    async def post(self, request, *args, **kwargs):
+        data = await request.body()  # Use async/await for reading request body
+        update = await updater.update_queue.get()  # Get update from queue
+        await updater.dispatcher.process_update(update)
         return HttpResponse('Bot response sent')
