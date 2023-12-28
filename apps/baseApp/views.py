@@ -14,8 +14,8 @@ import io
 import xlsxwriter
 import openai
 import asyncio
-from telegram import Bot
-from telegram.ext import Updater, MessageHandler, filters
+import telegram
+from django.utils.decorators import method_decorator
 
 
 # Here is the Extra Context ditionary which is used in get_context_data of Views classes
@@ -631,55 +631,100 @@ class DictionaryBotView(generic.TemplateView):
 
 
 # Telegram Bot
+
+# @csrf_exempt
+# def handle_update(request):
+#     data = request.data
+#     update_id = data.get("update_id")
+#     message = data.get("message")
+#     chat = message.get("chat")
+#     text = message.get("text")
+#     send_message(chat["id"], text)
+#     return JsonResponse(status=200, data={"update_id": update_id})
+
+
+# url = f"https://api.telegram.org/bot{settings.TELEGRAM_BOT_TOKEN}/setWebhook"
+# params = {"url": "http://localhost:8000/telegram_bot/webhook/"}
+# response = requests.get(url, params=params)
+# print(response.json())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Token and webhook URL
-bot = Bot(token=settings.TELEGRAM_BOT_TOKEN)
+# bot = Bot(token=settings.TELEGRAM_BOT_TOKEN)
 WEBHOOK_URL = 'https://www.gammaturkey.com/telegram-dictionary-bot/'
 
 # OpenAI API client
 openai_client = openai.OpenAI(api_key=settings.CHATGPT_API)
 
-# Create update queue and updater
-update_queue = asyncio.Queue()
-updater = Updater(bot=bot, update_queue=update_queue)
-dispatcher = updater.dispatcher
+ def send_message(chat_id, text):
+    url = f"https://api.telegram.org/bot{settings.TELEGRAM_BOT_TOKEN}/sendMessage"
+    data = {"chat_id": chat_id, "text": text}
+    response = requests.post(url, json=data)
+    return response.json()   
 
 # Handle incoming messages
-def handle_message(update, context):
-    text = update.message.text
-    user = update.effective_user
+def handle_update(update_obj):
+    message_obj = update_obj.message
+    send_message('dddd', "Working Bot!")
 
-    if text == '/start':
-        context.bot.send_message(chat_id=update.effective_chat.id, text="Hello, I'm your dictionary bot! Send me a word to get its definition.")
-    else:
-        # Construct prompt and get definition from OpenAI
-        prompt = f"Define the word {text}"
-        try:
-            bot_response = openai_client.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "user", "content": f'{prompt}'},
-                    # ... (rest of your prompt)
-                ],
-                temperature=0.8,
-                max_tokens=3000,
-            )
-            definition = bot_response.choices[0].message.content
-            context.bot.send_message(chat_id=update.effective_chat.id, text=definition)
-        except Exception as e:
-            context.bot.send_message(chat_id=update.effective_chat.id, text=f"An error occurred: {e}")
 
-# Add message handler
-dispatcher.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+    # if text == '/start':
+    #     context.bot.send_message(chat_id=update.effective_chat.id, text="Hello, I'm your dictionary bot! Send me a word to get its definition.")
+    # else:
+    #     # Construct prompt and get definition from OpenAI
+    #     prompt = f"Define the word {text}"
+    #     try:
+    #         bot_response = openai_client.chat.completions.create(
+    #             model="gpt-3.5-turbo",
+    #             messages=[
+    #                 {"role": "user", "content": f'{prompt}'},
+    #                 # ... (rest of your prompt)
+    #             ],
+    #             temperature=0.8,
+    #             max_tokens=3000,
+    #         )
+    #         definition = bot_response.choices[0].message.content
+    #         context.bot.send_message(chat_id=update.effective_chat.id, text=definition)
+    #     except Exception as e:
+    #         context.bot.send_message(chat_id=update.effective_chat.id, text=f"An error occurred: {e}")
+
 
 # View to handle webhook
 class TelegramDictionaryBotView(generic.View):
+    @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
-        if not bot.get_webhook_info().url:
-            bot.set_webhook(url=WEBHOOK_URL)
+        # if not bot.get_webhook_info().url:
+        #     bot.set_webhook(url=WEBHOOK_URL)
         return super().dispatch(request, *args, **kwargs)
 
-    async def post(self, request, *args, **kwargs):
-        data = await request.body()  # Use async/await for reading request body
-        update = await updater.update_queue.get()  # Get update from queue
-        await updater.dispatcher.process_update(update)
+    def post(self, request, *args, **kwargs):
+        handle_update(request.data)
         return HttpResponse('Bot response sent')
