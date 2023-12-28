@@ -15,7 +15,7 @@ import xlsxwriter
 import openai
 import asyncio
 from telegram import Bot
-from telegram.ext import Updater, MessageHandler, Filters
+from telegram.ext import Updater, MessageHandler, filters
 
 
 # Here is the Extra Context ditionary which is used in get_context_data of Views classes
@@ -669,7 +669,7 @@ def handle_message(update, context):
             context.bot.send_message(chat_id=update.effective_chat.id, text=f"An error occurred: {e}")
 
 # Add message handler
-dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, handle_message))
+dispatcher.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
 # View to handle webhook
 class TelegramDictionaryBotView(generic.View):
