@@ -661,6 +661,9 @@ def handle_update(request):
         if message_text == '/start':
             send_message(chat_id=update.effective_chat.id, text="Hello, I'm your dictionary bot! Send me a word to get its definition.")
         else:
+            # OpenAI API client
+            openai_client = openai.OpenAI(api_key=settings.CHATGPT_API)
+            
             # Construct prompt and get definition from OpenAI
             prompt = f"{message_text}"
 
@@ -694,10 +697,7 @@ def handle_update(request):
 # View to handle webhook
 class TelegramDictionaryBotView(generic.View):
     @method_decorator(csrf_exempt)
-    def dispatch(self, request, *args, **kwargs):
-        # OpenAI API client
-        openai_client = openai.OpenAI(api_key=settings.CHATGPT_API)
-        
+    def dispatch(self, request, *args, **kwargs):       
         # if not bot.get_webhook_info().url:
         #     bot.set_webhook(url=WEBHOOK_URL)
         return super().dispatch(request, *args, **kwargs)
