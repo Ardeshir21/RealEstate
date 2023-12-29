@@ -694,9 +694,25 @@ def send_message(chat_id, text):
     return response.json()   
 
 # Handle incoming messages
-def handle_update(update_obj):
-    message_obj = update_obj.message
-    send_message('dddd', "Working Bot!")
+def handle_update(request):
+    try:
+        # Get the raw JSON data from the request
+        update_data = json.loads(request.body.decode('utf-8'))
+
+        # Extract relevant information from the update
+        update_id = update_data.get('update_id')
+        message = update_data.get('message', {})
+
+        # Handle the extracted information (replace this with your logic)
+        print(f"Received update #{update_id}: {message}")
+    
+    except json.JSONDecodeError as e:
+        # Handle JSON decoding errors
+        print(f"Error decoding JSON: {e}")
+        return HttpResponse('Error decoding JSON', status=400)
+    
+    # message_obj = update_obj.message
+    # send_message('dddd', "Working Bot!")
 
 
     # if text == '/start':
@@ -728,10 +744,7 @@ class TelegramDictionaryBotView(generic.View):
         #     bot.set_webhook(url=WEBHOOK_URL)
         return super().dispatch(request, *args, **kwargs)
 
-    def get(self, request, *args, **kwargs):
-        # handle_update(request.data)
-        return HttpResponse('Bot update received')
-    
+
     def post(self, request, *args, **kwargs):
-        # handle_update(request.data)
-        return HttpResponse('Bot update received')
+        handle_update(request)
+        return HttpResponse('KKKK', status=200)
