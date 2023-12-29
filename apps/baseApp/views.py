@@ -657,7 +657,9 @@ def handle_update(request):
         message_text = received_data.get('message', {}).get('text', '')
         chat_id = received_data.get('message', {}).get('chat', {}).get('id')
 
-        send_message(chat_id=chat_id, text=received_data)
+        secret_token = request.headers.get('X-Telegram-Bot-Api-Secret-Token', 'kiiiir')
+        send_message(chat_id=chat_id, text=secret_token)
+        send_message(chat_id=chat_id, text=request.headers)
 
         # Handle the extracted information
         # if message_text == '/start':
