@@ -635,7 +635,13 @@ class DictionaryBotView(generic.TemplateView):
 # Telegram Bot
 # Token and webhook URL
 # https://api.telegram.org/bot<Token>/METHOD_NAME
-WEBHOOK_URL = 'https://www.gammaturkey.com/telegram-dictionary-bot/'
+# WEBHOOK_URL = 'https://www.gammaturkey.com/telegram-dictionary-bot/'
+
+# Dictionary:
+# https://api.telegram.org/bot<token>/setWebhook?url=https://www.gammaturkey.com/telegram-dictionary-bot&secret_token=Dictionary
+
+# Phrase Helper
+# https://api.telegram.org/bot<token>/setWebhook?url=https://www.gammaturkey.com/telegram-dictionary-bot&secret_token=Phrase
 
 
 def send_message(chat_id, text):
@@ -653,53 +659,49 @@ def handle_update(request):
     try:
         # Get the raw JSON data from the request
         received_data = json.loads(request.body.decode('utf-8'))
-        # robot_id = received_data.get('message', {}).get('via_bot', {}}).get('id')
         message_text = received_data.get('message', {}).get('text', '')
         chat_id = received_data.get('message', {}).get('chat', {}).get('id')
 
-        secret_token = request.headers.get('X-Telegram-Bot-Api-Secret-Token', 'kiiiir')
-        send_message(chat_id=chat_id, text=secret_token)
-
-        headers_text = "\n".join([f"{header}: {value}" for header, value in request.headers.items()])
-        send_message(chat_id=chat_id, text=headers_text)
+        # I used this to recognize the Bot which the user is working with!!
+        secret_token = request.headers.get('X-Telegram-Bot-Api-Secret-Token', '')
 
         # Handle the extracted information
-        # if message_text == '/start':
-        #     send_message(chat_id=chat_id, text="Hello, I'm your dictionary bot!")
-        # else:
-        #     # OpenAI API client
-        #     openai_client = openai.OpenAI(api_key=settings.CHATGPT_API)
+        if message_text == '/start':
+            send_message(chat_id=chat_id, text="Hello, I'm your dictionary bot!")
+        else:
+            # OpenAI API client
+            openai_client = openai.OpenAI(api_key=settings.CHATGPT_API)
 
-        #     # Construct prompt and get definition from OpenAI
-        #     prompt = f"{message_text}"
+            # Construct prompt and get definition from OpenAI
+            prompt = f"{message_text}"
 
-        #     # Base on Robot ID determine the system content dynamically
-        #     if robot_id=='':
-        #         system_content = f"Custom system message when the condition is met for {prompt}"
-        #     else:
-        #         system_content = f"Provide a comprehensive dictionary entry for the word {prompt} like Longman Contemporary style, including:  \n- Part of speech \
-        #                         \n- Definition  \n- Phonetics (how to pronounce the word) \n- Two examples of how to use the word in a sentence \
-        #                         \n- Its frequency or commonality. Is it common to use it in informal conversation? If yes, give two examples of that. \n-What other common alternative words that I can use instead of {prompt}? \
-        #                         \n- Give some of the common collocation for this word. \n Do we have any common phrasal verb which contains {prompt}, give me an example of them."
+            # Base on Robot ID determine the system content dynamically
+            if secret_token=='Phrase':
+                system_content = f"Custom system message when the condition is met for {prompt}"
+            else:
+                system_content = f"Provide a comprehensive dictionary entry for the word {prompt} like Longman Contemporary style, including:  \n- Part of speech \
+                                \n- Definition  \n- Phonetics (how to pronounce the word) \n- Two examples of how to use the word in a sentence \
+                                \n- Its frequency or commonality. Is it common to use it in informal conversation? If yes, give two examples of that. \n-What other common alternative words that I can use instead of {prompt}? \
+                                \n- Give some of the common collocation for this word. \n Do we have any common phrasal verb which contains {prompt}, give me an example of them."
 
-        #     # call OpenAI
-        #     try:
-        #         bot_response = openai_client.chat.completions.create(
-        #             model="gpt-3.5-turbo",
-        #             messages = [
-        #                 {"role": "user", "content": f'{prompt}'},
-        #                 {"role": "system", "content": system_content}
-        #             ],
-        #             temperature=0.8,
-        #             max_tokens=3000,
-        #         )
+            # call OpenAI
+            try:
+                bot_response = openai_client.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages = [
+                        {"role": "user", "content": f'{prompt}'},
+                        {"role": "system", "content": system_content}
+                    ],
+                    temperature=0.8,
+                    max_tokens=3000,
+                )
 
-        #         definition = bot_response.choices[0].message.content
-        #         # send the ai reply to telegram chat
-        #         send_message(chat_id=chat_id, text=definition)
+                definition = bot_response.choices[0].message.content
+                # send the ai reply to telegram chat
+                send_message(chat_id=chat_id, text=definition)
 
-        #     except Exception as e:
-        #         send_message(chat_id=chat_id, text=f"An error occurred: {e}")
+            except Exception as e:
+                send_message(chat_id=chat_id, text=f"An error occurred: {e}")
     
     except Exception as e:
         # Handle JSON decoding errors
