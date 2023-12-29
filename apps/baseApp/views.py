@@ -705,11 +705,11 @@ def handle_update(request):
                 send_message(bot_secret_word=secret_token, chat_id=chat_id, text=definition)
 
             except Exception as e:
-                send_message(bot_secret_word=secret_token,,chat_id=chat_id, text=f"An error occurred: {e}")
+                send_message(bot_secret_word=secret_token, chat_id=chat_id, text=f"An error occurred: {e}")
     
     except Exception as e:
         # Handle JSON decoding errors
-        send_message(bot_secret_word=secret_token,,chat_id=chat_id, text=f"Error decoding JSON: {e}")
+        send_message(bot_secret_word=secret_token, chat_id=chat_id, text=f"Error decoding JSON: {e}")
 
 
 # View to handle webhook
