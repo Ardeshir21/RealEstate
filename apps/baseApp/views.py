@@ -638,10 +638,10 @@ class DictionaryBotView(generic.TemplateView):
 # WEBHOOK_URL = 'https://www.gammaturkey.com/telegram-dictionary-bot/'
 
 # Dictionary:
-# https://api.telegram.org/bot<token>/setWebhook?url=https://www.gammaturkey.com/telegram-dictionary-bot&secret_token=Dictionary
+# https://api.telegram.org/bot<token>/setWebhook?url=https://www.gammaturkey.com/telegram-dictionary-bot/&secret_token=Dictionary
 
 # Phrase Helper
-# https://api.telegram.org/bot<token>/setWebhook?url=https://www.gammaturkey.com/telegram-dictionary-bot&secret_token=Phrase
+# https://api.telegram.org/bot<token>/setWebhook?url=https://www.gammaturkey.com/telegram-dictionary-bot/&secret_token=Phrase
 
 
 def send_message(chat_id, text):
@@ -677,7 +677,8 @@ def handle_update(request):
 
             # Base on Robot ID determine the system content dynamically
             if secret_token=='Phrase':
-                system_content = f"Custom system message when the condition is met for {prompt}"
+                system_content = f"I'm looking to enhance my English vocabulary for discussions about {prompt}. Could you provide me with some words or phrases, \
+                                    along with examples of how they are used in informal situations? This way, I can better express myself when talking about {prompt}."
             else:
                 system_content = f"Provide a comprehensive dictionary entry for the word {prompt} like Longman Contemporary style, including:  \n- Part of speech \
                                 \n- Definition  \n- Phonetics (how to pronounce the word) \n- Two examples of how to use the word in a sentence \
