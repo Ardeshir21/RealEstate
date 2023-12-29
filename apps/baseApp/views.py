@@ -656,38 +656,37 @@ def handle_update(request):
         received_data = json.loads(request.body.decode('utf-8'))
         message_text = received_data.get('message', {})
         chat_id = received_data.get('message', {}).get('chat', {}).get('id')
-        send_message(chat_id=chat_id, text=message_text)
         
         # Handle the extracted information
-        # if message_text == '/start':
-        #     send_message(chat_id=chat_id, text="Hello, I'm your dictionary bot! Send me a word to get its definition.")
-        # else:
-        #     # OpenAI API client
-        #     openai_client = openai.OpenAI(api_key=settings.CHATGPT_API)
+        if message_text == '/start':
+            send_message(chat_id=chat_id, text="Hello, I'm your dictionary bot! Send me a word to get its definition.")
+        else:
+            # OpenAI API client
+            openai_client = openai.OpenAI(api_key=settings.CHATGPT_API)
 
-        #     # Construct prompt and get definition from OpenAI
-        #     prompt = f"{message_text}"
+            # Construct prompt and get definition from OpenAI
+            prompt = f"{message_text}"
 
-        #     try:
-        #         bot_response = openai_client.chat.completions.create(
-        #             model="gpt-3.5-turbo",
-        #             messages = [
-        #                 {"role": "user", "content": f'{prompt}'},
-        #                 {"role": "system", "content": f'Provide a comprehensive dictionary entry for the word {prompt} like Longman Contemporary style, including:  \n- Part of speech \
-        #                 \n- Definition  \n- Phonetics (how to pronounce the word) \n- Two examples of how to use the word in a sentence \
-        #                 \n- Can it be used in informal dialog? Give two examples of that. \n-What other alternative words that I can use instead of {prompt}? \
-        #                 \n- Give some of the common collocation for this word. \n Do we have any phrasal verb which contains {prompt}, give me an example of them.'}
-        #             ],
-        #             temperature=0.8,
-        #             max_tokens=3000,
-        #         )
+            try:
+                bot_response = openai_client.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages = [
+                        {"role": "user", "content": f'{prompt}'},
+                        {"role": "system", "content": f'Provide a comprehensive dictionary entry for the word {prompt} like Longman Contemporary style, including:  \n- Part of speech \
+                        \n- Definition  \n- Phonetics (how to pronounce the word) \n- Two examples of how to use the word in a sentence \
+                        \n- Can it be used in informal dialog? Give two examples of that. \n-What other alternative words that I can use instead of {prompt}? \
+                        \n- Give some of the common collocation for this word. \n Do we have any phrasal verb which contains {prompt}, give me an example of them.'}
+                    ],
+                    temperature=0.8,
+                    max_tokens=3000,
+                )
 
-        #         definition = bot_response.choices[0].message.content
-        #         # send the ai reply to telegram chat
-        #         send_message(chat_id=chat_id, text=definition)
+                definition = bot_response.choices[0].message.content
+                # send the ai reply to telegram chat
+                send_message(chat_id=chat_id, text=definition)
 
-        #     except Exception as e:
-        #         send_message(chat_id=chat_id, text=f"An error occurred: {e}")
+            except Exception as e:
+                send_message(chat_id=chat_id, text=f"An error occurred: {e}")
     
     except Exception as e:
         # Handle JSON decoding errors
