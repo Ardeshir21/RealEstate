@@ -617,7 +617,7 @@ class DictionaryBotView(generic.TemplateView):
             model="gpt-3.5-turbo",
             messages = [
                 {"role": "user", "content": f'{prompt}'},
-                {"role": "system", "content": f'Provide a comprehensive dictionary entry for the word {prompt}, including:  \n- Part of speech \
+                {"role": "system", "content": f'Provide a comprehensive dictionary entry for the word {prompt} like Longman Contemporary style, including:  \n- Part of speech \
                  \n- Definition  \n- Phonetics (how to pronounce the word) \n- Two examples of how to use the word in a sentence \
                  \n- Can it be used in informal dialog? Give two examples of that. \n-What other alternative words that I can use instead of {prompt}? \
                  \n- Give some of the common collocation for this word. \n Do we have any phrasal verb which contains {prompt}, give me an example of them.'}
@@ -634,58 +634,10 @@ class DictionaryBotView(generic.TemplateView):
 
 
 # Telegram Bot
-
-# @csrf_exempt
-# def handle_update(request):
-#     data = request.data
-#     update_id = data.get("update_id")
-#     message = data.get("message")
-#     chat = message.get("chat")
-#     text = message.get("text")
-#     send_message(chat["id"], text)
-#     return JsonResponse(status=200, data={"update_id": update_id})
-
-
-# url = f"https://api.telegram.org/bot{settings.TELEGRAM_BOT_TOKEN}/setWebhook"
-# params = {"url": "http://localhost:8000/telegram_bot/webhook/"}
-# response = requests.get(url, params=params)
-# print(response.json())
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Token and webhook URL
 # bot = Bot(token=settings.TELEGRAM_BOT_TOKEN)
 WEBHOOK_URL = 'https://www.gammaturkey.com/telegram-dictionary-bot/'
 
-# OpenAI API client
-openai_client = openai.OpenAI(api_key=settings.CHATGPT_API)
 
 def send_message(chat_id, text):
     url = f"https://api.telegram.org/bot{settings.TELEGRAM_BOT_TOKEN}/sendMessage"
@@ -695,53 +647,57 @@ def send_message(chat_id, text):
 
 # Handle incoming messages
 def handle_update(request):
+    # Extract relevant information from the Update (JSONized)
+    # read the structure from here
+    # https://core.telegram.org/bots/api#update
+
     try:
         # Get the raw JSON data from the request
         received_data = json.loads(request.body.decode('utf-8'))
-
-        # Extract relevant information from the update
-        update_id = received_data.get('update_id')
-        message = received_data.get('message', {})
+        message_text = received_data["message"]["text"]
         chat_id = received_data["message"]["chat"]["id"]
 
         # Handle the extracted information
-        print(f"Received update #{update_id}: {message}")
-        send_message(chat_id, text="Hoooora")
+        if message_text == '/start':
+            send_message(chat_id=update.effective_chat.id, text="Hello, I'm your dictionary bot! Send me a word to get its definition.")
+        else:
+            # Construct prompt and get definition from OpenAI
+            prompt = f"{message_text}"
+
+            try:
+                bot_response = openai_client.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages = [
+                        {"role": "user", "content": f'{prompt}'},
+                        {"role": "system", "content": f'Provide a comprehensive dictionary entry for the word {prompt} like Longman Contemporary style, including:  \n- Part of speech \
+                        \n- Definition  \n- Phonetics (how to pronounce the word) \n- Two examples of how to use the word in a sentence \
+                        \n- Can it be used in informal dialog? Give two examples of that. \n-What other alternative words that I can use instead of {prompt}? \
+                        \n- Give some of the common collocation for this word. \n Do we have any phrasal verb which contains {prompt}, give me an example of them.'}
+                    ],
+                    temperature=0.8,
+                    max_tokens=3000,
+                )
+
+                definition = bot_response.choices[0].message.content
+                # send the ai reply to telegram chat
+                send_message(chat_id=chat_id, text=definition)
+
+            except Exception as e:
+                send_message(chat_id=chat_id, text=f"An error occurred: {e}")
     
     except json.JSONDecodeError as e:
         # Handle JSON decoding errors
         print(f"Error decoding JSON: {e}")
-        return HttpResponse('Error decoding JSON', status=400)
-    
-    # message_obj = update_obj.message
-    # send_message('dddd', "Working Bot!")
-
-
-    # if text == '/start':
-    #     context.bot.send_message(chat_id=update.effective_chat.id, text="Hello, I'm your dictionary bot! Send me a word to get its definition.")
-    # else:
-    #     # Construct prompt and get definition from OpenAI
-    #     prompt = f"Define the word {text}"
-    #     try:
-    #         bot_response = openai_client.chat.completions.create(
-    #             model="gpt-3.5-turbo",
-    #             messages=[
-    #                 {"role": "user", "content": f'{prompt}'},
-    #                 # ... (rest of your prompt)
-    #             ],
-    #             temperature=0.8,
-    #             max_tokens=3000,
-    #         )
-    #         definition = bot_response.choices[0].message.content
-    #         context.bot.send_message(chat_id=update.effective_chat.id, text=definition)
-    #     except Exception as e:
-    #         context.bot.send_message(chat_id=update.effective_chat.id, text=f"An error occurred: {e}")
+        send_message(chat_id=chat_id, text=f"Error decoding JSON: {e}")
 
 
 # View to handle webhook
 class TelegramDictionaryBotView(generic.View):
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
+        # OpenAI API client
+        openai_client = openai.OpenAI(api_key=settings.CHATGPT_API)
+        
         # if not bot.get_webhook_info().url:
         #     bot.set_webhook(url=WEBHOOK_URL)
         return super().dispatch(request, *args, **kwargs)
