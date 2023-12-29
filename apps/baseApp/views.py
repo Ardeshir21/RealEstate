@@ -654,7 +654,7 @@ def handle_update(request):
     try:
         # Get the raw JSON data from the request
         received_data = json.loads(request.body.decode('utf-8'))
-        message_text = received_data.get('message', {})
+        message_text = received_data.get('message', {}).get('text', '')
         chat_id = received_data.get('message', {}).get('chat', {}).get('id')
         
         # Handle the extracted information
