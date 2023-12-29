@@ -697,14 +697,16 @@ def send_message(chat_id, text):
 def handle_update(request):
     try:
         # Get the raw JSON data from the request
-        update_data = json.loads(request.body.decode('utf-8'))
+        received_data = json.loads(request.body.decode('utf-8'))
 
         # Extract relevant information from the update
-        update_id = update_data.get('update_id')
-        message = update_data.get('message', {})
+        update_id = received_data.get('update_id')
+        message = received_data.get('message', {})
+        chat_id = received_data["message"]["chat"]["id"]
 
-        # Handle the extracted information (replace this with your logic)
+        # Handle the extracted information
         print(f"Received update #{update_id}: {message}")
+        send_message(chat_id, text="Hoooora")
     
     except json.JSONDecodeError as e:
         # Handle JSON decoding errors
@@ -747,4 +749,4 @@ class TelegramDictionaryBotView(generic.View):
 
     def post(self, request, *args, **kwargs):
         handle_update(request)
-        return HttpResponse('KKKK', status=200)
+        return HttpResponse('Success', status=200)
