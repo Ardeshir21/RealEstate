@@ -19,7 +19,7 @@ import os
 # This file is different in Server and my local PC
 secret_file = 'RealEstateKEYS.txt'
 secrets = ['SECRET_KEY', 'DEBUG' , 'DATABASE_NAME', 'DATABASE_USERNAME', 'DATABASE_PASSWORD',
- 'EMAIL_HOST', 'EMAIL_HOST_USER', 'EMAIL_HOST_PASSWORD', 'CHATGPT_API', 'TELEGRAM_DICTIONARY_BOT_TOKEN', TELEGRAM_TOPIC_BOT_TOKEN]
+ 'EMAIL_HOST', 'EMAIL_HOST_USER', 'EMAIL_HOST_PASSWORD', 'CHATGPT_API', 'TELEGRAM_DICTIONARY_BOT_TOKEN', 'TELEGRAM_TOPIC_BOT_TOKEN']
 SECRETS_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 filepath = os.path.join(SECRETS_DIR, secret_file)
 secrets_dict = {}
