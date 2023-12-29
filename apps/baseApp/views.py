@@ -644,8 +644,11 @@ class DictionaryBotView(generic.TemplateView):
 # https://api.telegram.org/bot<token>/setWebhook?url=https://www.gammaturkey.com/telegram-dictionary-bot/&secret_token=Phrase
 
 
-def send_message(chat_id, text):
-    url = f"https://api.telegram.org/bot{settings.TELEGRAM_BOT_TOKEN}/sendMessage"
+def send_message(bot_secret_word, chat_id, text):
+    if bot_secret_word == 'Phrase':
+        url = f"https://api.telegram.org/bot{settings.TELEGRAM_TOPIC_BOT_TOKEN}/sendMessage"
+    else:
+        url = f"https://api.telegram.org/bot{settings.TELEGRAM_DICTIONARY_BOT_TOKEN}/sendMessage"
     data = {"chat_id": chat_id, "text": text}
     response = requests.post(url, json=data)
     return response.json()   
@@ -667,7 +670,7 @@ def handle_update(request):
 
         # Handle the extracted information
         if message_text == '/start':
-            send_message(chat_id=chat_id, text="Hello, I'm your dictionary bot!")
+            send_message(bot_secret_word=secret_token, chat_id=chat_id, text="Hello, I'm your dictionary bot!")
         else:
             # OpenAI API client
             openai_client = openai.OpenAI(api_key=settings.CHATGPT_API)
@@ -699,14 +702,14 @@ def handle_update(request):
 
                 definition = bot_response.choices[0].message.content
                 # send the ai reply to telegram chat
-                send_message(chat_id=chat_id, text=definition)
+                send_message(bot_secret_word=secret_token, chat_id=chat_id, text=definition)
 
             except Exception as e:
-                send_message(chat_id=chat_id, text=f"An error occurred: {e}")
+                send_message(bot_secret_word=secret_token,,chat_id=chat_id, text=f"An error occurred: {e}")
     
     except Exception as e:
         # Handle JSON decoding errors
-        send_message(chat_id=chat_id, text=f"Error decoding JSON: {e}")
+        send_message(bot_secret_word=secret_token,,chat_id=chat_id, text=f"Error decoding JSON: {e}")
 
 
 # View to handle webhook
