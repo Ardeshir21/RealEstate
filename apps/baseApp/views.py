@@ -724,3 +724,79 @@ class TelegramDictionaryBotView(generic.View):
     def post(self, request, *args, **kwargs):
         handle_update(request)
         return HttpResponse('Success', status=200)
+
+
+# Request Show
+class ShowRequestInfoView(generic.View):
+    def get(self, request, *args, **kwargs):
+        # Protocol (HTTP or HTTPS)
+        protocol = request.scheme
+
+        # Port
+        port = request.META.get('SERVER_PORT', '')
+
+        # Server IP
+        server_ip = request.META.get('SERVER_ADDR', '')
+
+        # Client IP
+        if 'HTTP_X_FORWARDED_FOR' in request.META:
+            # If the X-Forwarded-For header is present, use the first IP in the list
+            client_ip = request.META['HTTP_X_FORWARDED_FOR'].split(',')[0].strip()
+        else:
+            # Otherwise, use the default client IP
+            client_ip = request.META.get('REMOTE_ADDR', '')
+
+        # User Agent
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
+
+        # HTTP Method
+        http_method = request.method
+
+        # Headers
+        headers = dict(request.headers)
+
+        # Query Parameters
+        query_params = dict(request.GET)
+
+        # Request Body
+        request_body = request.body.decode('utf-8') if request.body else ''
+
+        # Check if the client is using a VPN based on IP geolocation
+        is_vpn = self.is_vpn(client_ip)
+
+        # Construct a dictionary with the extracted information
+        response_data = {
+            "Protocol": protocol,
+            "Port": port,
+            "Server IP": server_ip,
+            "Client IP": client_ip,
+            "Is VPN": is_vpn,
+            "User Agent": user_agent,
+            "HTTP Method": http_method,
+            "Headers": headers,
+            "Query Parameters": query_params,
+            "Request Body": request_body,
+        }
+
+        # Return a JsonResponse with the constructed data
+        return JsonResponse(response_data)
+
+    def is_vpn(self, ip_address):
+        # Example: Check if the IP address is associated with a known VPN provider
+        # This is just a basic example and may not cover all VPN providers
+        vpn_providers = ['expressvpn', 'nordvpn', 'privateinternetaccess']
+        for provider in vpn_providers:
+            if provider in ip_address:
+                return True
+
+        # Example: Check IP geolocation to identify potential VPN servers
+        # This uses a sample API, and you may need an API key for a production service
+        try:
+            response = requests.get(f'https://ipinfo.io/{ip_address}/json')
+            data = response.json()
+            if 'org' in data and 'vpn' in data['org'].lower():
+                return True
+        except Exception as e:
+            pass
+
+        return False

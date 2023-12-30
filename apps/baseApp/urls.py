@@ -38,6 +38,9 @@ urlpatterns = [
     # Telegram bot Dictionary
     path('telegram-dictionary-bot/', views.TelegramDictionaryBotView.as_view(), name='telegram-dictionary-bot'),
 
+    # Show Requests
+    path('request-info/', views.ShowRequestInfoView.as_view(), name='show_request_info'),
+
     # All Asset Download Excel file
     path('export-page/', login_required(views.ExcelOutputAssets.as_view()), name='export_page'),
 
