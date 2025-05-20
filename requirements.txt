@@ -1,6 +1,7 @@
 aiohttp==3.8.4
 aiosignal==1.2.0
-anyio==4.2.0
+annotated-types
+anyio
 argon2-cffi==19.2.0
 asgiref==3.3.4
 async-timeout==4.0.2
