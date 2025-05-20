@@ -39,7 +39,6 @@ django-phonenumber-field==4.0.0
 django-robots==4.0
 django-user-agents==0.4.0
 djangorestframework==3.3.2
-exceptiongroup==1.2.0
 frozenlist==1.2.0
 future==0.18.3
 ghasedak==0.1.9
