@@ -13,8 +13,6 @@ sitemaps_dict = {'Static_sitemap': sitemaps.StaticSitemap,
                 'PostFa_sitemap': sitemaps.PostFaSitemap,
                 'FAQ_sitemap': sitemaps.FAQCategoriesSitemap,
                 'FAQFa_sitemap': sitemaps.FAQCategoriesFaSitemap,
-                'Store_sitemap': sitemaps.StoreSitemap,
-                'Product_sitemap': sitemaps.ProductSitemap
                 }
 
 urlpatterns = [
@@ -28,15 +26,6 @@ urlpatterns = [
 
     # AJAX test
     path('ajaxtest/', views.AJAX_TEST.as_view(), name='ajax_test'),
-
-    # CHAT BOT
-    path('chatbot/', views.ChatbotView.as_view(), name='chat_bot'),
-
-    # Dictionary BOT
-    path('dictionary/', views.DictionaryBotView.as_view(), name='dictionary_bot'),
-
-    # Telegram bot Dictionary
-    path('telegram-dictionary-bot/', views.TelegramDictionaryBotView.as_view(), name='telegram-dictionary-bot'),
 
     # Show Requests
     path('request-info/', views.ShowRequestInfoView.as_view(), name='show_request_info'),

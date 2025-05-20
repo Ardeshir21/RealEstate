@@ -1,0 +1,21 @@
+services:
+  web:
+    build: .  # Use the Dockerfile in the current directory to build the image
+    volumes:
+      - .:/app  # Bind mount the current directory to the container
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf  # Mount the Nginx config
+      - ./static:/app/static
+    ports:
+      - "80:80"  # Map host port 80 to container port 80
+    depends_on:
+      - web
+
+
+# To run code inside the web container
+# docker exec -it turkeymode-web-1 bash
+
+# sudo service nginx restart

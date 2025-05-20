@@ -3,7 +3,6 @@ from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
 from apps.baseApp.models import Asset, FAQCategories
 from apps.blogApp.models import Post
-from apps.scrapeApp.models import Store, Product
 from django.db.models import F
 
 class StaticSitemap(Sitemap):
@@ -13,8 +12,7 @@ class StaticSitemap(Sitemap):
 
     def items(self):
         return ['baseApp:index', 'baseApp:properties', 'baseApp:about_us',
-                'FAbaseApp:index', 'FAbaseApp:properties', 'FAbaseApp:about_us',
-                'scrapeApp:all_stores']
+                'FAbaseApp:index', 'FAbaseApp:properties', 'FAbaseApp:about_us',]
 
     def location(self, item):
         return reverse(item)
@@ -187,43 +185,3 @@ class FAQCategoriesFaSitemap(Sitemap):
                 latest_item = latest_created_item
                 return latest_item.created
         else: return timezone.now().date()
-
-# Store Pages
-class StoreSitemap(Sitemap):
-    changefreq = "weekly"
-    priority = 0.8
-    protocol = 'https'
-
-    def items(self):
-        return Store.objects.all()
-
-    def lastmod(self, item):
-        # This part check between created and updated date of lastest Asset and use the latest date
-        latest_updated_item = Product.objects.filter(store=item.id).order_by(F('updated_on').desc(nulls_last=True))[0]
-        latest_created_item = Product.objects.filter(store=item.id).order_by(F('created_on').desc(nulls_last=True))[0]
-        if latest_updated_item.updated_on:
-            if latest_updated_item.updated_on >= latest_created_item.created_on:
-                latest_item = latest_updated_item
-                return latest_item.updated_on
-            else:
-                # Use the last created of Asset for each page
-                latest_item = latest_created_item
-                return latest_item.created_on
-        else:
-            latest_item = latest_created_item
-            return latest_item.created_on
-    # for method location it will use the get_absolute_url of the main models
-
-# Products pages
-class ProductSitemap(Sitemap):
-    changefreq = "daily"
-    priority = 0.8
-    protocol = 'https'
-
-    def items(self):
-        return Product.objects.filter(active=True)
-
-    def lastmod(self, item):
-        if item.updated_on:
-            return item.updated_on
-        else: return item.created_on

@@ -25,12 +25,13 @@ urlpatterns = [
     path('blog/', include('apps.blogApp.urls')),
     path('fa/', include('apps.FAbaseApp.urls')),
     path('fa/راهنمای-ترکیه/', include('apps.FAblogApp.urls')),
-    path('fa/خرید-ترکیه/', include('apps.scrapeApp.urls')),
+    path('chat/', include('apps.chatApp.urls')),
+    path('telegram/', include('apps.telegramApp.urls')),
 
     # This is for Blog Editor in blogApp.models.py
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path('robots.txt', include('robots.urls')),
-    path('management-login-page/', admin.site.urls),
+    path('captain/', admin.site.urls),
     ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

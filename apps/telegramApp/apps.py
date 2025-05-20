@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class ScrapeappConfig(AppConfig):
+class TelegramappConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'apps.scrapeApp'
+    name = 'apps.telegramApp'

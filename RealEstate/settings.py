@@ -87,8 +87,9 @@ INSTALLED_APPS = [
     'apps.blogApp',
     'apps.FAbaseApp',
     'apps.FAblogApp',
-    'apps.scrapeApp',
-
+    'apps.chatApp',
+    'apps.telegramApp',
+    
     # for templates to sperate digits
     'django.contrib.humanize',
     # for models phone number field
@@ -100,6 +101,7 @@ INSTALLED_APPS = [
     'compressor',
     # for debug analysis
     # 'debug_toolbar',
+
 ]
 
 MIDDLEWARE = [
@@ -173,7 +175,7 @@ DATABASES = {
         'NAME': secrets_dict['DATABASE_NAME'],
         'USER': secrets_dict['DATABASE_USERNAME'],
         'PASSWORD': secrets_dict['DATABASE_PASSWORD'],
-        'HOST': 'localhost',
+        'HOST': 'host.docker.internal' if DEBUG else 'localhost',
         'PORT': '',
     }
 }
