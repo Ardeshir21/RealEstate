@@ -15,7 +15,7 @@ from django.utils import timezone
 # Telegram Bot
 # Token and webhook URL
 # https://api.telegram.org/bot<Token>/METHOD_NAME
-# WEBHOOK_URL = 'https://www.gammaturkey.com/telegram-dictionary-bot/'
+# WEBHOOK_URL = 'https://www.gammaturkey.com/telegram/'
 
 # set webhook for your bots by calling the following url
 # Dictionary:
@@ -184,12 +184,12 @@ def handle_update(request):
         # I used this to recognize the Bot which the user is working with!!
         secret_token = request.headers.get('X-Telegram-Bot-Api-Secret-Token', '')
 
-        # Handle Birthday Bot
-        if secret_token == 'Birthday':
-            response = handle_birthday_commands(message_text, chat_id, user_id, user_name)
-            if response:
-                send_message(bot_secret_word=secret_token, chat_id=chat_id, text=response)
-                return
+        # # Handle Birthday Bot
+        # if secret_token == 'Birthday':
+        #     response = handle_birthday_commands(message_text, chat_id, user_id, user_name)
+        #     if response:
+        #         send_message(bot_secret_word=secret_token, chat_id=chat_id, text=response)
+        #         return
 
         # Handle the extracted information
         if message_text == '/start':
