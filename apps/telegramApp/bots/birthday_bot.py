@@ -334,9 +334,14 @@ class BirthdayBot(TelegramBot):
                 return
 
             elif callback_data == "view_excluded":
-                response, keyboard = self.get_excluded_birthdays(user_id)
-                self.answer_callback_query(callback_query_id)
-                self.send_message(user_id, response, keyboard)
+                response = self.get_excluded_birthdays(user_id)
+                if isinstance(response, tuple):
+                    response, keyboard = response
+                    self.answer_callback_query(callback_query_id)
+                    self.send_message(user_id, response, keyboard)
+                else:
+                    self.answer_callback_query(callback_query_id)
+                    self.send_message(user_id, response, self.get_visibility_keyboard())
                 return
 
             elif callback_data.startswith("exclude_id_"):
@@ -387,17 +392,25 @@ class BirthdayBot(TelegramBot):
                 return
 
             elif callback_data == "exclude_birthday":
-                response, keyboard = self.get_excluded_birthdays(user_id)
-                self.answer_callback_query(callback_query_id)
-                self.send_message(user_id, response, keyboard)
+                response, keyboard = self.get_birthday_list_for_exclusion(user_id)
+                if response == "No birthdays available to exclude!":
+                    self.answer_callback_query(callback_query_id)
+                    self.send_message(user_id, response, self.get_main_menu_keyboard(show_cancel=False))
+                else:
+                    self.answer_callback_query(callback_query_id)
+                    self.send_message(user_id, response, keyboard)
                 return
 
             elif callback_data == "include_birthday":
-                response, keyboard = self.get_excluded_birthdays(user_id, for_inclusion=True)
-                if isinstance(response, tuple):
-                    response, keyboard = response
-                self.answer_callback_query(callback_query_id)
-                self.send_message(user_id, response, keyboard)
+                response = self.get_excluded_birthdays(user_id, for_inclusion=True)
+                if response == "You haven't excluded any birthdays yet!":
+                    self.answer_callback_query(callback_query_id)
+                    self.send_message(user_id, response, self.get_main_menu_keyboard(show_cancel=False))
+                else:
+                    if isinstance(response, tuple):
+                        response, keyboard = response
+                    self.answer_callback_query(callback_query_id)
+                    self.send_message(user_id, response, keyboard)
                 return
 
             elif callback_data == "back_to_main":
