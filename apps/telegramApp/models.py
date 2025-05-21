@@ -49,3 +49,18 @@ class ChatMember(models.Model):
 
     def __str__(self):
         return f"{self.user_name} in chat {self.chat_id}"
+
+class UserState(models.Model):
+    """Track user conversation state for multi-step interactions"""
+    chat_id = models.CharField(max_length=100)
+    user_id = models.CharField(max_length=100)
+    state = models.CharField(max_length=50)  # Current state in conversation
+    context = models.JSONField(default=dict)  # Store any context needed for the state
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ['chat_id', 'user_id']
+
+    def __str__(self):
+        return f"State for {self.user_id} in chat {self.chat_id}: {self.state}"

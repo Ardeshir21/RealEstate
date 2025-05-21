@@ -4,7 +4,7 @@ from django.utils import timezone
 from typing import Optional, Dict, Any
 import logging
 
-from ..models import BirthdayReminder, ChatMember
+from ..models import BirthdayReminder, ChatMember, UserState
 from .base import TelegramBot
 
 logger = logging.getLogger(__name__)
@@ -15,8 +15,7 @@ class BirthdayBot(TelegramBot):
         super().__init__(token)
         self.commands = {
             '/start': self.cmd_start,
-            '/setbirthday': self.cmd_set_birthday,
-            '/setreminder': self.cmd_set_reminder,
+            '/cancel': self.cmd_cancel,
             '/mybirthday': self.cmd_my_birthday,
             '/listbirthdays': self.cmd_list_birthdays,
             '/help': self.cmd_help
@@ -29,7 +28,8 @@ class BirthdayBot(TelegramBot):
             [{"text": "⏰ Set Reminder", "callback_data": "set_reminder"}],
             [{"text": "🎈 My Birthday Info", "callback_data": "my_birthday"}],
             [{"text": "📋 List All Birthdays", "callback_data": "list_birthdays"}],
-            [{"text": "❓ Help", "callback_data": "help"}]
+            [{"text": "❓ Help", "callback_data": "help"}],
+            [{"text": "❌ Cancel", "callback_data": "cancel"}]
         ]
         return self.create_inline_keyboard(buttons)
 
@@ -55,6 +55,11 @@ class BirthdayBot(TelegramBot):
                 self.send_message(chat_id, welcome_text, self.get_main_menu_keyboard())
                 return None
 
+            # Check if user is in a conversation state
+            user_state = UserState.objects.filter(chat_id=chat_id, user_id=user_id).first()
+            if user_state:
+                return self.handle_state_response(message_text, chat_id, user_id, user_name, user_state)
+
             command = message_text.split()[0].lower()
             handler = self.commands.get(command)
             
@@ -69,6 +74,66 @@ class BirthdayBot(TelegramBot):
             logger.error(f"Error handling birthday command: {e}")
             return f"An error occurred while processing your request: {str(e)}"
 
+    def handle_state_response(self, message_text: str, chat_id: str, user_id: str, user_name: str, user_state: UserState) -> Optional[str]:
+        """Handle responses based on user's current state."""
+        try:
+            if user_state.state == "waiting_for_birthday":
+                try:
+                    # Try to parse the date
+                    birth_date = datetime.strptime(message_text.strip(), '%Y-%m-%d').date()
+                    
+                    # Save the birthday
+                    reminder, created = BirthdayReminder.objects.get_or_create(
+                        chat_id=chat_id,
+                        user_id=user_id,
+                        defaults={
+                            'birth_date': birth_date,
+                            'user_name': user_name
+                        }
+                    )
+                    if not created:
+                        reminder.birth_date = birth_date
+                        reminder.save()
+
+                    # Clear the state
+                    user_state.delete()
+
+                    persian_date = reminder.get_persian_date()
+                    self._notify_chat_members(chat_id, user_id, user_name, birth_date, persian_date)
+                    
+                    response = f"✅ Birthday successfully set to:\nGregorian: {birth_date}\nPersian: {persian_date}"
+                    self.send_message(chat_id, response, self.get_main_menu_keyboard())
+                    return None
+                except ValueError:
+                    return "❌ Invalid date format. Please use YYYY-MM-DD (e.g., 1990-12-31)\nOr click Cancel to go back to main menu."
+
+            elif user_state.state == "waiting_for_reminder":
+                try:
+                    days = int(message_text.strip())
+                    if days < 0:
+                        return "❌ Please enter a positive number of days\nOr click Cancel to go back to main menu."
+
+                    reminder = BirthdayReminder.objects.filter(chat_id=chat_id, user_id=user_id).first()
+                    if not reminder:
+                        return "Please set your birthday first!"
+
+                    reminder.reminder_days = days
+                    reminder.save()
+
+                    # Clear the state
+                    user_state.delete()
+
+                    response = f"✅ You will be notified {days} days before each birthday in this chat"
+                    self.send_message(chat_id, response, self.get_main_menu_keyboard())
+                    return None
+                except ValueError:
+                    return "❌ Please enter a valid number\nOr click Cancel to go back to main menu."
+
+        except Exception as e:
+            logger.error(f"Error in handle_state_response: {e}")
+            user_state.delete()  # Clear state on error
+            return "An error occurred. Please try again."
+
     def handle_callback_query(self, callback_query: Dict[str, Any]) -> None:
         """Handle callback queries from inline keyboard buttons."""
         try:
@@ -79,15 +144,37 @@ class BirthdayBot(TelegramBot):
             callback_query_id = callback_query['id']
 
             if callback_data == "set_birthday":
-                response = "Please send your birthday in the format:\nYYYY-MM-DD Your Name"
+                # Set state for birthday input
+                UserState.objects.update_or_create(
+                    chat_id=chat_id,
+                    user_id=user_id,
+                    defaults={'state': 'waiting_for_birthday'}
+                )
+                response = ("Please enter your birthday in YYYY-MM-DD format\n"
+                          "For example: 1990-12-31\n\n"
+                          "Click Cancel to go back to main menu.")
+
             elif callback_data == "set_reminder":
-                response = "Please send the number of days before birthdays you want to be reminded:"
+                # Set state for reminder input
+                UserState.objects.update_or_create(
+                    chat_id=chat_id,
+                    user_id=user_id,
+                    defaults={'state': 'waiting_for_reminder'}
+                )
+                response = ("Please enter the number of days before birthdays you want to be reminded\n"
+                          "For example: 7\n\n"
+                          "Click Cancel to go back to main menu.")
+
             elif callback_data == "my_birthday":
                 response = self.cmd_my_birthday("", chat_id, user_id, user_name)
             elif callback_data == "list_birthdays":
                 response = self.cmd_list_birthdays("", chat_id, user_id, user_name)
             elif callback_data == "help":
                 response = self.cmd_help()
+            elif callback_data == "cancel":
+                # Clear any existing state
+                UserState.objects.filter(chat_id=chat_id, user_id=user_id).delete()
+                response = "Operation cancelled. What would you like to do?"
             else:
                 response = "Unknown command"
 
@@ -98,77 +185,22 @@ class BirthdayBot(TelegramBot):
             logger.error(f"Error handling callback query: {e}")
             self.send_message(chat_id, f"An error occurred: {str(e)}", self.get_main_menu_keyboard())
 
+    def cmd_cancel(self, *args) -> str:
+        """Cancel current operation and clear state."""
+        chat_id = args[1]
+        user_id = args[2]
+        UserState.objects.filter(chat_id=chat_id, user_id=user_id).delete()
+        return "Operation cancelled. What would you like to do?"
+
     def cmd_start(self, *args) -> str:
-        return ("Welcome to Birthday Reminder Bot!\n\nCommands:\n"
-               "/setbirthday YYYY-MM-DD Your Name - Set your birthday\n"
-               "/setreminder X - Set reminder X days before birthdays\n"
-               "/mybirthday - Show your birthday info\n"
-               "/listbirthdays - List all birthdays in this chat\n"
-               "/help - Show this help message")
-
-    def cmd_set_birthday(self, message_text: str, chat_id: str, user_id: str, user_name: str) -> str:
-        parts = message_text.split()
-        try:
-            if len(parts) < 3:
-                return "Please use format: /setbirthday YYYY-MM-DD Your Name"
-            
-            birth_date = datetime.strptime(parts[1], '%Y-%m-%d').date()
-            display_name = ' '.join(parts[2:])
-            
-            reminder, created = BirthdayReminder.objects.get_or_create(
-                chat_id=chat_id,
-                user_id=user_id,
-                defaults={
-                    'birth_date': birth_date,
-                    'user_name': display_name
-                }
-            )
-            if not created:
-                reminder.birth_date = birth_date
-                reminder.user_name = display_name
-                reminder.save()
-
-            persian_date = reminder.get_persian_date()
-            self._notify_chat_members(chat_id, user_id, display_name, birth_date, persian_date)
-            
-            return f"Birthday set to:\nGregorian: {birth_date}\nPersian: {persian_date}"
-
-        except ValueError:
-            return "Invalid date format. Please use: /setbirthday YYYY-MM-DD Your Name"
-
-    def _notify_chat_members(self, chat_id: str, user_id: str, display_name: str, 
-                           birth_date: datetime.date, persian_date: str) -> None:
-        """Notify all chat members about a new birthday."""
-        all_members = ChatMember.objects.filter(chat_id=chat_id).exclude(user_id=user_id)
-        notification = (
-            f"🎉 New Birthday Added! 🎉\n"
-            f"{display_name} has set their birthday to:\n"
-            f"Gregorian: {birth_date}\n"
-            f"Persian: {persian_date}"
-        )
-        for member in all_members:
-            self.send_message(member.user_id, notification)
-
-    def cmd_set_reminder(self, message_text: str, chat_id: str, user_id: str, *args) -> str:
-        parts = message_text.split()
-        try:
-            if len(parts) != 2:
-                return "Please use format: /setreminder X (where X is number of days)"
-            
-            days = int(parts[1])
-            if days < 0:
-                return "Please enter a positive number of days"
-
-            reminder = BirthdayReminder.objects.filter(chat_id=chat_id, user_id=user_id).first()
-            if not reminder:
-                return "Please set your birthday first using /setbirthday YYYY-MM-DD Your Name"
-
-            reminder.reminder_days = days
-            reminder.save()
-            return f"You will be notified {days} days before each birthday in this chat"
-
-        except ValueError:
-            return "Please enter a valid number of days"
+        return ("Welcome to Birthday Reminder Bot! 🎉\n\n"
+               "Use the buttons below to:\n"
+               "• Set your birthday\n"
+               "• Set reminder days\n"
+               "• View your birthday info\n"
+               "• List all birthdays\n"
+               "• Get help\n\n"
+               "You can also use /cancel at any time to cancel the current operation.")
 
     def cmd_my_birthday(self, message_text: str, chat_id: str, user_id: str, *args) -> str:
         reminder = BirthdayReminder.objects.filter(chat_id=chat_id, user_id=user_id).first()
@@ -207,4 +239,17 @@ class BirthdayBot(TelegramBot):
         return response
 
     def cmd_help(self, *args) -> str:
-        return self.cmd_start() 
+        return self.cmd_start()
+
+    def _notify_chat_members(self, chat_id: str, user_id: str, display_name: str, 
+                           birth_date: datetime.date, persian_date: str) -> None:
+        """Notify all chat members about a new birthday."""
+        all_members = ChatMember.objects.filter(chat_id=chat_id).exclude(user_id=user_id)
+        notification = (
+            f"🎉 New Birthday Added! 🎉\n"
+            f"{display_name} has set their birthday to:\n"
+            f"Gregorian: {birth_date}\n"
+            f"Persian: {persian_date}"
+        )
+        for member in all_members:
+            self.send_message(member.user_id, notification) 
