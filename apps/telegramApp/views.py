@@ -12,7 +12,7 @@ import jdatetime
 from .models import BirthdayReminder, ChatMember
 from django.utils import timezone
 from abc import ABC, abstractmethod
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 import logging
 
 logger = logging.getLogger(__name__)
@@ -39,20 +39,35 @@ class TelegramBot(ABC):
         self.token = token
         self.base_url = f"https://api.telegram.org/bot{token}"
 
-    def send_message(self, chat_id: str, text: str) -> Dict[str, Any]:
-        """Send a message to a specific chat."""
+    def send_message(self, chat_id: str, text: str, reply_markup: Optional[Dict] = None) -> Dict[str, Any]:
+        """Send a message to a specific chat with optional keyboard markup."""
         url = f"{self.base_url}/sendMessage"
-        data = {"chat_id": chat_id, "text": text}
+        data = {"chat_id": chat_id, "text": text, "parse_mode": "HTML"}
+        if reply_markup:
+            data["reply_markup"] = reply_markup
         try:
-            logger.info(f"Sending message to chat_id {chat_id} with URL: {url}")
-            logger.debug(f"Message data: {data}")
             response = requests.post(url, json=data)
-            response_json = response.json()
-            logger.info(f"Telegram API response: {response_json}")
-            return response_json
+            return response.json()
         except Exception as e:
             logger.error(f"Error sending message: {e}")
             logger.error(f"Response content: {getattr(response, 'content', 'N/A')}")
+            return {"error": str(e)}
+
+    def create_inline_keyboard(self, buttons: List[List[Dict[str, str]]]) -> Dict:
+        """Create an inline keyboard markup from a list of button rows."""
+        return {"inline_keyboard": buttons}
+
+    def answer_callback_query(self, callback_query_id: str, text: Optional[str] = None) -> Dict[str, Any]:
+        """Answer a callback query from an inline keyboard button."""
+        url = f"{self.base_url}/answerCallbackQuery"
+        data = {"callback_query_id": callback_query_id}
+        if text:
+            data["text"] = text
+        try:
+            response = requests.post(url, json=data)
+            return response.json()
+        except Exception as e:
+            logger.error(f"Error answering callback query: {e}")
             return {"error": str(e)}
 
     @abstractmethod
@@ -60,10 +75,14 @@ class TelegramBot(ABC):
         """Handle incoming commands - to be implemented by specific bots."""
         pass
 
+    @abstractmethod
+    def handle_callback_query(self, callback_query: Dict[str, Any]) -> None:
+        """Handle callback queries from inline keyboards - to be implemented by specific bots."""
+        pass
+
 class BirthdayBot(TelegramBot):
     def __init__(self):
         token = settings.TELEGRAM_BIRTHDAY_BOT_TOKEN
-        logger.info(f"Initializing BirthdayBot with token length: {token if token else 0}")
         super().__init__(token)
         self.commands = {
             '/start': self.cmd_start,
@@ -73,6 +92,17 @@ class BirthdayBot(TelegramBot):
             '/listbirthdays': self.cmd_list_birthdays,
             '/help': self.cmd_help
         }
+
+    def get_main_menu_keyboard(self) -> Dict:
+        """Create the main menu keyboard."""
+        buttons = [
+            [{"text": "🎂 Set My Birthday", "callback_data": "set_birthday"}],
+            [{"text": "⏰ Set Reminder", "callback_data": "set_reminder"}],
+            [{"text": "🎈 My Birthday Info", "callback_data": "my_birthday"}],
+            [{"text": "📋 List All Birthdays", "callback_data": "list_birthdays"}],
+            [{"text": "❓ Help", "callback_data": "help"}]
+        ]
+        return self.create_inline_keyboard(buttons)
 
     def handle_command(self, message: Dict[str, Any]) -> Optional[str]:
         """Main command handler for Birthday Bot."""
@@ -90,16 +120,54 @@ class BirthdayBot(TelegramBot):
                 defaults={'user_name': user_name}
             )
 
+            if message_text == '/start':
+                welcome_text = ("Welcome to Birthday Reminder Bot! 🎉\n\n"
+                              "Please use the buttons below to interact with me:")
+                self.send_message(chat_id, welcome_text, self.get_main_menu_keyboard())
+                return None
+
             command = message_text.split()[0].lower()
             handler = self.commands.get(command)
             
             if handler:
-                return handler(message_text, chat_id, user_id, user_name)
+                response = handler(message_text, chat_id, user_id, user_name)
+                if response:
+                    self.send_message(chat_id, response, self.get_main_menu_keyboard())
+                return None
             return None
             
         except Exception as e:
             logger.error(f"Error handling birthday command: {e}")
             return f"An error occurred while processing your request: {str(e)}"
+
+    def handle_callback_query(self, callback_query: Dict[str, Any]) -> None:
+        """Handle callback queries from inline keyboard buttons."""
+        try:
+            chat_id = str(callback_query['message']['chat']['id'])
+            user_id = str(callback_query['from']['id'])
+            user_name = f"{callback_query['from'].get('first_name', '')} {callback_query['from'].get('last_name', '')}".strip()
+            callback_data = callback_query['data']
+            callback_query_id = callback_query['id']
+
+            if callback_data == "set_birthday":
+                response = "Please send your birthday in the format:\nYYYY-MM-DD Your Name"
+            elif callback_data == "set_reminder":
+                response = "Please send the number of days before birthdays you want to be reminded:"
+            elif callback_data == "my_birthday":
+                response = self.cmd_my_birthday("", chat_id, user_id, user_name)
+            elif callback_data == "list_birthdays":
+                response = self.cmd_list_birthdays("", chat_id, user_id, user_name)
+            elif callback_data == "help":
+                response = self.cmd_help()
+            else:
+                response = "Unknown command"
+
+            self.answer_callback_query(callback_query_id)
+            self.send_message(chat_id, response, self.get_main_menu_keyboard())
+
+        except Exception as e:
+            logger.error(f"Error handling callback query: {e}")
+            self.send_message(chat_id, f"An error occurred: {str(e)}", self.get_main_menu_keyboard())
 
     def cmd_start(self, *args) -> str:
         return ("Welcome to Birthday Reminder Bot!\n\nCommands:\n"
@@ -311,20 +379,18 @@ class TelegramWebhookView(generic.View):
             data = json.loads(request.body.decode('utf-8'))
             secret_token = request.headers.get('X-Telegram-Bot-Api-Secret-Token', '')
             
-            # Log the incoming message
-            logger.info("Received Telegram webhook with token: %s", secret_token)
-            logger.debug("Incoming Telegram message data: %s", json.dumps(data, indent=2))
-
             # Create appropriate bot instance
             bot = BotFactory.create_bot(secret_token)
             if not bot:
                 logger.error("Invalid bot token received: %s", secret_token)
                 return HttpResponse('Invalid bot token', status=400)
 
-            # Log which bot is handling the message
-            logger.info("Message being handled by bot type: %s", bot.__class__.__name__)
+            # Handle callback query if present
+            if 'callback_query' in data:
+                bot.handle_callback_query(data['callback_query'])
+                return HttpResponse('Success', status=200)
 
-            # Handle the message
+            # Handle regular message
             message = data.get('message', {})
             chat_id = str(message.get('chat', {}).get('id'))
             user = message.get('from', {})
@@ -332,18 +398,11 @@ class TelegramWebhookView(generic.View):
             username = user.get('username', '')
             first_name = user.get('first_name', '')
             last_name = user.get('last_name', '')
-            
-            # Log user and chat information
-            logger.info("Processing message from User ID: %s, Username: %s, Name: %s %s, Chat ID: %s",
-                       user_id, username, first_name, last_name, chat_id)
 
             response = bot.handle_command(message)
             if response:
-                # Log the bot's response
-                logger.debug("Bot response: %s", response)
                 bot.send_message(chat_id, response)
             
-            logger.info("Successfully processed message from chat_id: %s", chat_id)
             return HttpResponse('Success', status=200)
 
         except json.JSONDecodeError as e:
