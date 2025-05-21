@@ -303,24 +303,46 @@ class TelegramWebhookView(generic.View):
             # Parse incoming update
             data = json.loads(request.body.decode('utf-8'))
             secret_token = request.headers.get('X-Telegram-Bot-Api-Secret-Token', '')
+            
+            # Log the incoming message
+            logger.info("Received Telegram webhook with token: %s", secret_token)
+            logger.debug("Incoming Telegram message data: %s", json.dumps(data, indent=2))
 
             # Create appropriate bot instance
             bot = BotFactory.create_bot(secret_token)
             if not bot:
+                logger.error("Invalid bot token received: %s", secret_token)
                 return HttpResponse('Invalid bot token', status=400)
 
-            # Handle the message
-            response = bot.handle_command(data.get('message', {}))
-            if response:
-                chat_id = str(data.get('message', {}).get('chat', {}).get('id'))
-                bot.send_message(chat_id, response)
+            # Log which bot is handling the message
+            logger.info("Message being handled by bot type: %s", bot.__class__.__name__)
 
+            # Handle the message
+            message = data.get('message', {})
+            chat_id = str(message.get('chat', {}).get('id'))
+            user = message.get('from', {})
+            user_id = str(user.get('id'))
+            username = user.get('username', '')
+            first_name = user.get('first_name', '')
+            last_name = user.get('last_name', '')
+            
+            # Log user and chat information
+            logger.info("Processing message from User ID: %s, Username: %s, Name: %s %s, Chat ID: %s",
+                       user_id, username, first_name, last_name, chat_id)
+
+            response = bot.handle_command(message)
+            if response:
+                # Log the bot's response
+                logger.debug("Bot response: %s", response)
+                bot.send_message(chat_id, response)
+            
+            logger.info("Successfully processed message from chat_id: %s", chat_id)
             return HttpResponse('Success', status=200)
 
         except json.JSONDecodeError as e:
-            logger.error(f"JSON decode error: {e}")
+            logger.error("JSON decode error: %s", str(e))
             return HttpResponse('Invalid JSON', status=400)
         except Exception as e:
-            logger.error(f"Unexpected error: {e}")
+            logger.error("Unexpected error processing telegram update: %s", str(e), exc_info=True)
             return HttpResponse('Internal Server Error', status=500)
 
