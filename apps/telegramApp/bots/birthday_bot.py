@@ -6,7 +6,7 @@ import logging
 import jdatetime
 import re
 
-from ..models import BirthdayReminder, ChatMember, UserState
+from ..models import BirthdayReminder, UserState
 from .base import TelegramBot
 
 logger = logging.getLogger(__name__)
