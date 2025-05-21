@@ -353,6 +353,12 @@ LOGGING = {
             'filename': os.path.join(BASE_DIR, 'logs/django.log'),
             'formatter': 'verbose',
         },
+        'telegram_file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs/telegram.log'),
+            'formatter': 'verbose',
+        },
         'mail_admins': {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
@@ -398,6 +404,12 @@ LOGGING = {
             'handlers': ['gunicorn'],
             'level': 'INFO',
             'propagate': False,
+        },
+        # Add specific logger for telegramApp
+        'apps.telegramApp': {
+            'handlers': ['console', 'telegram_file', 'mail_admins'],
+            'level': 'DEBUG',
+            'propagate': True,
         },
     },
 }
