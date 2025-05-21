@@ -18,18 +18,15 @@ class BirthdayReminder(models.Model):
         unique_together = ['chat_id', 'user_id']  # One birthday per user per chat
 
     def save(self, *args, **kwargs):
-        # Update Persian date whenever Gregorian date is saved
+        # Automatically convert and store Persian date whenever Gregorian date is saved
         if self.birth_date:
             persian_date = jdatetime.date.fromgregorian(date=self.birth_date)
             self.persian_birth_date = persian_date.strftime('%Y-%m-%d')
         super().save(*args, **kwargs)
 
     def get_persian_date(self):
-        """Get Persian date object from stored Persian date string"""
-        if self.persian_birth_date:
-            year, month, day = map(int, self.persian_birth_date.split('-'))
-            return jdatetime.date(year, month, day)
-        return jdatetime.date.fromgregorian(date=self.birth_date)
+        """Get Persian date string"""
+        return self.persian_birth_date
 
     def get_next_birthday(self):
         today = timezone.now().date()
