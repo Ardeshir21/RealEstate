@@ -23,8 +23,12 @@ class BirthdayBot(TelegramBot):
             '/help': self.cmd_help
         }
 
-    def get_main_menu_keyboard(self) -> Dict:
-        """Create the main menu keyboard."""
+    def get_main_menu_keyboard(self, show_cancel: bool = True) -> Dict:
+        """Create the main menu keyboard.
+        
+        Args:
+            show_cancel: Whether to show the cancel button
+        """
         buttons = [
             [{"text": "🎂 Set My Birthday", "callback_data": "set_birthday"}],
             [{"text": "🗓️ Set Persian Birthday", "callback_data": "set_persian_birthday"}],
@@ -32,8 +36,11 @@ class BirthdayBot(TelegramBot):
             [{"text": "🎈 My Birthday Info", "callback_data": "my_birthday"}],
             [{"text": "📋 List All Birthdays", "callback_data": "list_birthdays"}],
             [{"text": "❓ Help", "callback_data": "help"}],
-            [{"text": "❌ Cancel", "callback_data": "cancel"}]
         ]
+        
+        if show_cancel:
+            buttons.append([{"text": "❌ Cancel", "callback_data": "cancel"}])
+            
         return self.create_inline_keyboard(buttons)
 
     def parse_persian_date(self, date_str: str) -> Optional[datetime.date]:
@@ -202,16 +209,26 @@ class BirthdayBot(TelegramBot):
 
             elif callback_data == "my_birthday":
                 response = self.cmd_my_birthday("", chat_id, user_id, user_name)
+                self.answer_callback_query(callback_query_id)
+                self.send_message(chat_id, response, self.get_main_menu_keyboard(show_cancel=False))
+                return
+
             elif callback_data == "list_birthdays":
                 response = self.cmd_list_birthdays("", chat_id, user_id, user_name)
+                self.answer_callback_query(callback_query_id)
+                self.send_message(chat_id, response, self.get_main_menu_keyboard(show_cancel=False))
+                return
+
             elif callback_data == "help":
                 response = self.cmd_help()
+                self.answer_callback_query(callback_query_id)
+                self.send_message(chat_id, response, self.get_main_menu_keyboard(show_cancel=False))
+                return
+
             elif callback_data == "cancel":
                 # Clear any existing state
                 UserState.objects.filter(chat_id=chat_id, user_id=user_id).delete()
                 response = "Operation cancelled. What would you like to do?"
-            else:
-                response = "Unknown command"
 
             self.answer_callback_query(callback_query_id)
             self.send_message(chat_id, response, self.get_main_menu_keyboard())
@@ -240,18 +257,27 @@ class BirthdayBot(TelegramBot):
     def cmd_my_birthday(self, message_text: str, chat_id: str, user_id: str, *args) -> str:
         reminder = BirthdayReminder.objects.filter(chat_id=chat_id, user_id=user_id).first()
         if not reminder:
-            return "You haven't set your birthday yet. Use /setbirthday YYYY-MM-DD Your Name"
+            return "You haven't set your birthday yet. Use the Set Birthday button to add your birthday."
 
         next_birthday = reminder.get_next_birthday()
         days_until = (next_birthday - timezone.now().date()).days
         age = reminder.get_age()
         persian_date = reminder.get_persian_date()
 
-        return (f"Your birthday:\nGregorian: {reminder.birth_date}\n"
-                f"Persian: {persian_date}\n"
-                f"Current age: {age}\n"
-                f"Days until next birthday: {days_until}\n"
-                f"Reminder set for: {reminder.reminder_days} days before")
+        response = [
+            "🎂 Your Birthday Information:",
+            f"\n📅 Gregorian Date: {reminder.birth_date}",
+            f"🗓️ Persian Date: {persian_date}",
+            f"\n🎈 Current Age: {age}",
+            f"⏳ Days until next birthday: {days_until}"
+        ]
+
+        if reminder.reminder_days:
+            response.append(f"⏰ Reminder set for: {reminder.reminder_days} days before")
+        else:
+            response.append("⏰ No reminder set")
+
+        return "\n".join(response)
 
     def cmd_list_birthdays(self, message_text: str, chat_id: str, *args) -> str:
         birthdays = BirthdayReminder.objects.filter(chat_id=chat_id).order_by('birth_date')
