@@ -12,8 +12,6 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 
-
-
 # This part of code is for keep secret variables secure and also it to change some parameters for Development/Production
 # It returns the secrets_dict which can be used in the main code
 # This file is different in Server and my local PC
@@ -53,9 +51,6 @@ TELEGRAM_BIRTHDAY_BOT_TOKEN = secrets_dict['TELEGRAM_BIRTHDAY_BOT_TOKEN']
 # The DEBUG value in 'RealEstateKEYS.txt' is an empty string ''
 # I used bool() to return False
 DEBUG = bool(secrets_dict['DEBUG'])
-
-# This helps to get the errors even if the DEBUG is False
-# DEBUG_PROPAGATE_EXCEPTIONS = True
 
 ALLOWED_HOSTS = ['161.35.103.31',
                  'localhost',
@@ -319,3 +314,94 @@ CKEDITOR_CONFIGS = {
         ]),
     }
 }
+
+
+
+
+# Logging configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+        'file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs/django.log'),
+            'formatter': 'verbose',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler',
+            'formatter': 'verbose',
+        },
+        'gunicorn': {
+            'level': 'ERROR',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs/gunicorn.log'),
+            'maxBytes': 1024 * 1024 * 100,  # 100MB
+            'backupCount': 5,
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'file', 'mail_admins'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['file', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.server': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'django.db.backends': {
+            'handlers': ['console', 'file'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'gunicorn.error': {
+            'handlers': ['gunicorn', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'gunicorn.access': {
+            'handlers': ['gunicorn'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}
+
+
+# This helps to get the errors even if the DEBUG is False
+DEBUG_PROPAGATE_EXCEPTIONS = True

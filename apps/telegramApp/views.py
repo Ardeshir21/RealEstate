@@ -29,6 +29,8 @@ logger = logging.getLogger(__name__)
 # Phrase Helper
 # https://api.telegram.org/bot<token>/setWebhook?url=https://www.gammaturkey.com/telegram/&secret_token=Phrase
 
+# Birthday Reminder
+# https://api.telegram.org/bot<token>/setWebhook?url=https://www.gammaturkey.com/telegram/&secret_token=Birthday
 
 
 
