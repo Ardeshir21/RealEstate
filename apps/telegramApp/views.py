@@ -44,10 +44,15 @@ class TelegramBot(ABC):
         url = f"{self.base_url}/sendMessage"
         data = {"chat_id": chat_id, "text": text}
         try:
+            logger.info(f"Sending message to chat_id {chat_id} with URL: {url}")
+            logger.debug(f"Message data: {data}")
             response = requests.post(url, json=data)
-            return response.json()
+            response_json = response.json()
+            logger.info(f"Telegram API response: {response_json}")
+            return response_json
         except Exception as e:
             logger.error(f"Error sending message: {e}")
+            logger.error(f"Response content: {getattr(response, 'content', 'N/A')}")
             return {"error": str(e)}
 
     @abstractmethod
@@ -57,7 +62,9 @@ class TelegramBot(ABC):
 
 class BirthdayBot(TelegramBot):
     def __init__(self):
-        super().__init__(settings.TELEGRAM_BIRTHDAY_BOT_TOKEN)
+        token = settings.TELEGRAM_BIRTHDAY_BOT_TOKEN
+        logger.info(f"Initializing BirthdayBot with token length: {token if token else 0}")
+        super().__init__(token)
         self.commands = {
             '/start': self.cmd_start,
             '/setbirthday': self.cmd_set_birthday,
