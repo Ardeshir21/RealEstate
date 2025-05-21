@@ -24,6 +24,24 @@ class TelegramBot(ABC):
             logger.error(f"Response content: {getattr(response, 'content', 'N/A')}")
             return {"error": str(e)}
 
+    def edit_message(self, chat_id: str, message_id: int, text: str, reply_markup: Optional[Dict] = None) -> Dict[str, Any]:
+        """Edit an existing message."""
+        url = f"{self.base_url}/editMessageText"
+        data = {
+            "chat_id": chat_id,
+            "message_id": message_id,
+            "text": text,
+            "parse_mode": "HTML"
+        }
+        if reply_markup:
+            data["reply_markup"] = reply_markup
+        try:
+            response = requests.post(url, json=data)
+            return response.json()
+        except Exception as e:
+            logger.error(f"Error editing message: {e}")
+            return {"error": str(e)}
+
     def create_inline_keyboard(self, buttons: List[List[Dict[str, str]]]) -> Dict:
         """Create an inline keyboard markup from a list of button rows."""
         return {"inline_keyboard": buttons}

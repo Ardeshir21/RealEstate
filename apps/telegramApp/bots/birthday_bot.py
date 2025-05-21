@@ -29,12 +29,18 @@ class BirthdayBot(TelegramBot):
     def get_main_menu_keyboard(self, show_cancel: bool = True) -> Dict:
         """Create the main menu keyboard."""
         buttons = [
-            [{"text": "🎂 Add Birthday", "callback_data": "add_birthday"}],
-            [{"text": "⏰ Set Reminder", "callback_data": "set_reminder"}],
-            [{"text": "🎈 My Birthday Info", "callback_data": "my_birthday"}],
-            [{"text": "📋 List All Birthdays", "callback_data": "list_birthdays"}],
-            [{"text": "👁️ Manage Visibility", "callback_data": "manage_visibility"}],
-            [{"text": "❓ Help", "callback_data": "help"}],
+            [
+                {"text": "🎂 Add Birthday", "callback_data": "add_birthday"},
+                {"text": "⏰ Set Reminder", "callback_data": "set_reminder"}
+            ],
+            [
+                {"text": "🎈 My Birthday Info", "callback_data": "my_birthday"},
+                {"text": "📋 List All Birthdays", "callback_data": "list_birthdays"}
+            ],
+            [
+                {"text": "👁️ Manage Visibility", "callback_data": "manage_visibility"},
+                {"text": "❓ Help", "callback_data": "help"}
+            ]
         ]
         
         if show_cancel:
@@ -45,10 +51,14 @@ class BirthdayBot(TelegramBot):
     def get_visibility_keyboard(self) -> Dict:
         """Create the visibility management keyboard."""
         buttons = [
-            [{"text": "🔍 View Excluded Birthdays", "callback_data": "view_excluded"}],
-            [{"text": "➕ Include Birthday", "callback_data": "include_birthday"}],
-            [{"text": "➖ Exclude Birthday", "callback_data": "exclude_birthday"}],
-            [{"text": "🔙 Back to Main Menu", "callback_data": "back_to_main"}],
+            [
+                {"text": "🔍 View Excluded", "callback_data": "view_excluded"},
+                {"text": "➕ Include Birthday", "callback_data": "include_birthday"}
+            ],
+            [
+                {"text": "➖ Exclude Birthday", "callback_data": "exclude_birthday"},
+                {"text": "🔙 Back to Main", "callback_data": "back_to_main"}
+            ]
         ]
         return self.create_inline_keyboard(buttons)
 
@@ -160,7 +170,7 @@ class BirthdayBot(TelegramBot):
                               f"Name: {birthday.name}\n"
                               f"Gregorian: {birthday.birth_date}\n"
                               f"Persian: {birthday.get_persian_date()}")
-                    self.send_message(user_id, response, self.get_main_menu_keyboard())
+                    self.send_message(user_id, response, self.get_main_menu_keyboard(show_cancel=False))
                     return None
 
                 except ValueError:
@@ -217,7 +227,7 @@ class BirthdayBot(TelegramBot):
 
                 # Clear the state
                 user_state.delete()
-                self.send_message(user_id, response, self.get_main_menu_keyboard())
+                self.send_message(user_id, response, self.get_main_menu_keyboard(show_cancel=False))
                 return None
 
             elif user_state.state == "waiting_for_reminder":
@@ -238,7 +248,7 @@ class BirthdayBot(TelegramBot):
                     user_state.delete()
 
                     response = f"✅ You will be notified {days} days before each birthday"
-                    self.send_message(user_id, response, self.get_main_menu_keyboard())
+                    self.send_message(user_id, response, self.get_main_menu_keyboard(show_cancel=False))
                     return None
 
                 except ValueError:
@@ -264,7 +274,7 @@ class BirthdayBot(TelegramBot):
 
                     # Clear the state
                     user_state.delete()
-                    self.send_message(user_id, response, self.get_main_menu_keyboard())
+                    self.send_message(user_id, response, self.get_main_menu_keyboard(show_cancel=False))
                     return None
 
                 except (ValueError, GlobalBirthday.DoesNotExist):
@@ -324,37 +334,76 @@ class BirthdayBot(TelegramBot):
                 return
 
             elif callback_data == "view_excluded":
-                response = self.get_excluded_birthdays(user_id)
+                response, keyboard = self.get_excluded_birthdays(user_id)
                 self.answer_callback_query(callback_query_id)
-                self.send_message(user_id, response, self.get_visibility_keyboard())
+                self.send_message(user_id, response, keyboard)
+                return
+
+            elif callback_data.startswith("exclude_id_"):
+                birthday_id = int(callback_data.split("_")[-1])
+                birthday = GlobalBirthday.objects.get(id=birthday_id)
+                UserBirthdayExclusion.objects.get_or_create(
+                    user_id=user_id,
+                    birthday=birthday
+                )
+                # Get updated list
+                response, keyboard = self.get_excluded_birthdays(user_id)
+                self.answer_callback_query(callback_query_id, f"Excluded {birthday.name}")
+                self.edit_message(
+                    user_id,
+                    callback_query['message']['message_id'],
+                    response,
+                    keyboard
+                )
+                return
+
+            elif callback_data.startswith("include_id_"):
+                birthday_id = int(callback_data.split("_")[-1])
+                birthday = GlobalBirthday.objects.get(id=birthday_id)
+                UserBirthdayExclusion.objects.filter(
+                    user_id=user_id,
+                    birthday=birthday
+                ).delete()
+                # Get updated list
+                response, keyboard = self.get_excluded_birthdays(user_id, for_inclusion=True)
+                self.answer_callback_query(callback_query_id, f"Included {birthday.name}")
+                self.edit_message(
+                    user_id,
+                    callback_query['message']['message_id'],
+                    response,
+                    keyboard
+                )
+                return
+
+            elif callback_data in ["exclude_done", "include_done"]:
+                response = "✅ Changes saved successfully!"
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(
+                    user_id,
+                    callback_query['message']['message_id'],
+                    response,
+                    self.get_main_menu_keyboard(show_cancel=False)
+                )
                 return
 
             elif callback_data == "exclude_birthday":
-                response = self.get_birthday_list_for_exclusion(user_id)
-                if response:
-                    UserState.objects.update_or_create(
-                        user_id=user_id,
-                        defaults={'state': 'waiting_for_exclude'}
-                    )
+                response, keyboard = self.get_excluded_birthdays(user_id)
                 self.answer_callback_query(callback_query_id)
-                self.send_message(user_id, response, self.get_main_menu_keyboard())
+                self.send_message(user_id, response, keyboard)
                 return
 
             elif callback_data == "include_birthday":
-                response = self.get_excluded_birthdays(user_id, for_inclusion=True)
-                if response:
-                    UserState.objects.update_or_create(
-                        user_id=user_id,
-                        defaults={'state': 'waiting_for_include'}
-                    )
+                response, keyboard = self.get_excluded_birthdays(user_id, for_inclusion=True)
+                if isinstance(response, tuple):
+                    response, keyboard = response
                 self.answer_callback_query(callback_query_id)
-                self.send_message(user_id, response, self.get_main_menu_keyboard())
+                self.send_message(user_id, response, keyboard)
                 return
 
             elif callback_data == "back_to_main":
                 response = "What would you like to do?"
                 self.answer_callback_query(callback_query_id)
-                self.send_message(user_id, response, self.get_main_menu_keyboard())
+                self.send_message(user_id, response, self.get_main_menu_keyboard(show_cancel=False))
                 return
 
             elif callback_data == "help":
@@ -367,6 +416,9 @@ class BirthdayBot(TelegramBot):
                 # Clear any existing state
                 UserState.objects.filter(user_id=user_id).delete()
                 response = "Operation cancelled. What would you like to do?"
+                self.answer_callback_query(callback_query_id)
+                self.send_message(user_id, response, self.get_main_menu_keyboard(show_cancel=False))
+                return
 
             self.answer_callback_query(callback_query_id)
             self.send_message(user_id, response, self.get_main_menu_keyboard())
@@ -441,34 +493,8 @@ class BirthdayBot(TelegramBot):
         
         return response
 
-    def get_excluded_birthdays(self, user_id: str, for_inclusion: bool = False) -> str:
-        excluded_birthdays = GlobalBirthday.objects.filter(
-            id__in=UserBirthdayExclusion.objects.filter(user_id=user_id).values_list('birthday_id', flat=True)
-        ).order_by('birth_date')
-
-        if not excluded_birthdays:
-            return "You haven't excluded any birthdays yet!"
-
-        today = timezone.now().date()
-        if for_inclusion:
-            response = "🎂 Select a birthday to include by sending its ID:\n\n"
-        else:
-            response = "🎂 Currently excluded birthdays:\n\n"
-        
-        for birthday in excluded_birthdays:
-            next_birthday = birthday.get_next_birthday()
-            days_until = (next_birthday - today).days
-            persian_date = birthday.get_persian_date()
-            
-            response += (f"ID: {birthday.id}\n"
-                        f"👤 {birthday.name}\n"
-                        f"📅 Gregorian: {birthday.birth_date}\n"
-                        f"📅 Persian: {persian_date}\n"
-                        f"⏳ Days until birthday: {days_until}\n\n")
-        
-        return response
-
     def get_birthday_list_for_exclusion(self, user_id: str) -> str:
+        """Get all birthdays except already excluded ones with interactive buttons."""
         # Get all birthdays except already excluded ones
         excluded_ids = UserBirthdayExclusion.objects.filter(user_id=user_id).values_list('birthday_id', flat=True)
         birthdays = GlobalBirthday.objects.exclude(id__in=excluded_ids).order_by('birth_date')
@@ -476,15 +502,72 @@ class BirthdayBot(TelegramBot):
         if not birthdays:
             return "No birthdays available to exclude!"
 
-        response = "🎂 Select a birthday to exclude by sending its ID:\n\n"
+        response = "🎂 Select birthdays to exclude:\n\n"
+        buttons = []
+        current_row = []
         
         for birthday in birthdays:
-            response += (f"ID: {birthday.id}\n"
-                        f"👤 {birthday.name}\n"
-                        f"📅 Gregorian: {birthday.birth_date}\n"
-                        f"📅 Persian: {birthday.get_persian_date()}\n\n")
+            current_row.append({
+                "text": f"❌ {birthday.name}",
+                "callback_data": f"exclude_id_{birthday.id}"
+            })
+            
+            if len(current_row) == 2:  # Create rows of 2 buttons
+                buttons.append(current_row)
+                current_row = []
         
-        return response
+        if current_row:  # Add any remaining buttons
+            buttons.append(current_row)
+            
+        # Add Done button at the bottom
+        buttons.append([{"text": "✅ Done", "callback_data": "exclude_done"}])
+        
+        keyboard = self.create_inline_keyboard(buttons)
+        return response, keyboard
+
+    def get_excluded_birthdays(self, user_id: str, for_inclusion: bool = False) -> str:
+        """Get list of excluded birthdays with interactive buttons."""
+        excluded_birthdays = GlobalBirthday.objects.filter(
+            id__in=UserBirthdayExclusion.objects.filter(user_id=user_id).values_list('birthday_id', flat=True)
+        ).order_by('birth_date')
+
+        if not excluded_birthdays:
+            return "You haven't excluded any birthdays yet!"
+
+        if for_inclusion:
+            response = "🎂 Select birthdays to include:\n\n"
+        else:
+            response = "🎂 Currently excluded birthdays:\n\n"
+
+        buttons = []
+        current_row = []
+        
+        if for_inclusion:
+            for birthday in excluded_birthdays:
+                current_row.append({
+                    "text": f"✅ {birthday.name}",
+                    "callback_data": f"include_id_{birthday.id}"
+                })
+                
+                if len(current_row) == 2:  # Create rows of 2 buttons
+                    buttons.append(current_row)
+                    current_row = []
+            
+            if current_row:  # Add any remaining buttons
+                buttons.append(current_row)
+                
+            # Add Done button at the bottom
+            buttons.append([{"text": "✅ Done", "callback_data": "include_done"}])
+            
+            keyboard = self.create_inline_keyboard(buttons)
+            return response, keyboard
+        else:
+            for birthday in excluded_birthdays:
+                response += (f"👤 {birthday.name}\n"
+                           f"📅 Gregorian: {birthday.birth_date}\n"
+                           f"📅 Persian: {birthday.get_persian_date()}\n\n")
+            
+            return response
 
     def cmd_help(self, *args) -> str:
         return ("Welcome to Birthday Reminder Bot! 🎉\n\n"
@@ -521,7 +604,7 @@ class BirthdayBot(TelegramBot):
 
     def cmd_exclude(self, message_text: str, user_id: str, user_name: str, *args) -> str:
         """Handle the /exclude command to exclude birthdays from view."""
-        response = self.get_birthday_list_for_exclusion(user_id)
+        response, keyboard = self.get_birthday_list_for_exclusion(user_id)
         if response != "No birthdays available to exclude!":
             # Set state for exclusion
             UserState.objects.update_or_create(
@@ -532,7 +615,7 @@ class BirthdayBot(TelegramBot):
 
     def cmd_include(self, message_text: str, user_id: str, user_name: str, *args) -> str:
         """Handle the /include command to include previously excluded birthdays."""
-        response = self.get_excluded_birthdays(user_id, for_inclusion=True)
+        response, keyboard = self.get_excluded_birthdays(user_id, for_inclusion=True)
         if response != "You haven't excluded any birthdays yet!":
             # Set state for inclusion
             UserState.objects.update_or_create(
