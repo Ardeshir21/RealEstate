@@ -518,3 +518,25 @@ class BirthdayBot(TelegramBot):
         )
         for member in all_members:
             self.send_message(member.user_id, notification) 
+
+    def cmd_exclude(self, message_text: str, user_id: str, user_name: str, *args) -> str:
+        """Handle the /exclude command to exclude birthdays from view."""
+        response = self.get_birthday_list_for_exclusion(user_id)
+        if response != "No birthdays available to exclude!":
+            # Set state for exclusion
+            UserState.objects.update_or_create(
+                user_id=user_id,
+                defaults={'state': 'waiting_for_exclude'}
+            )
+        return response
+
+    def cmd_include(self, message_text: str, user_id: str, user_name: str, *args) -> str:
+        """Handle the /include command to include previously excluded birthdays."""
+        response = self.get_excluded_birthdays(user_id, for_inclusion=True)
+        if response != "You haven't excluded any birthdays yet!":
+            # Set state for inclusion
+            UserState.objects.update_or_create(
+                user_id=user_id,
+                defaults={'state': 'waiting_for_include'}
+            )
+        return response
