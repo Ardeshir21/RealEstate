@@ -8,7 +8,8 @@ class BirthdayReminder(models.Model):
     chat_id = models.CharField(max_length=100)  # The chat where birthday was registered
     user_id = models.CharField(max_length=100)  # Telegram user ID
     user_name = models.CharField(max_length=100)  # Display name
-    birth_date = models.DateField()
+    birth_date = models.DateField()  # Gregorian date
+    persian_birth_date = models.CharField(max_length=20, blank=True)  # Persian date stored as string
     reminder_days = models.IntegerField(default=1)  # Days before birthday to send reminder
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -16,7 +17,18 @@ class BirthdayReminder(models.Model):
     class Meta:
         unique_together = ['chat_id', 'user_id']  # One birthday per user per chat
 
+    def save(self, *args, **kwargs):
+        # Update Persian date whenever Gregorian date is saved
+        if self.birth_date:
+            persian_date = jdatetime.date.fromgregorian(date=self.birth_date)
+            self.persian_birth_date = persian_date.strftime('%Y-%m-%d')
+        super().save(*args, **kwargs)
+
     def get_persian_date(self):
+        """Get Persian date object from stored Persian date string"""
+        if self.persian_birth_date:
+            year, month, day = map(int, self.persian_birth_date.split('-'))
+            return jdatetime.date(year, month, day)
         return jdatetime.date.fromgregorian(date=self.birth_date)
 
     def get_next_birthday(self):
@@ -35,7 +47,7 @@ class BirthdayReminder(models.Model):
         )
 
     def __str__(self):
-        return f"{self.user_name}'s Birthday - {self.birth_date}"
+        return f"{self.user_name}'s Birthday - {self.birth_date} ({self.persian_birth_date})"
 
 class ChatMember(models.Model):
     """Keep track of chat members for notifications"""

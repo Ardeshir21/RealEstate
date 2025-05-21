@@ -3,6 +3,8 @@ from django.conf import settings
 from django.utils import timezone
 from typing import Optional, Dict, Any
 import logging
+import jdatetime
+import re
 
 from ..models import BirthdayReminder, ChatMember, UserState
 from .base import TelegramBot
@@ -25,6 +27,7 @@ class BirthdayBot(TelegramBot):
         """Create the main menu keyboard."""
         buttons = [
             [{"text": "🎂 Set My Birthday", "callback_data": "set_birthday"}],
+            [{"text": "🗓️ Set Persian Birthday", "callback_data": "set_persian_birthday"}],
             [{"text": "⏰ Set Reminder", "callback_data": "set_reminder"}],
             [{"text": "🎈 My Birthday Info", "callback_data": "my_birthday"}],
             [{"text": "📋 List All Birthdays", "callback_data": "list_birthdays"}],
@@ -32,6 +35,19 @@ class BirthdayBot(TelegramBot):
             [{"text": "❌ Cancel", "callback_data": "cancel"}]
         ]
         return self.create_inline_keyboard(buttons)
+
+    def parse_persian_date(self, date_str: str) -> Optional[datetime.date]:
+        """Parse Persian date string and convert to Gregorian date."""
+        try:
+            # Check if the date matches YYYY-MM-DD format
+            if not re.match(r'^\d{4}-\d{1,2}-\d{1,2}$', date_str):
+                return None
+            
+            year, month, day = map(int, date_str.split('-'))
+            persian_date = jdatetime.date(year, month, day)
+            return persian_date.togregorian()
+        except ValueError:
+            return None
 
     def handle_command(self, message: Dict[str, Any]) -> Optional[str]:
         """Main command handler for Birthday Bot."""
@@ -77,10 +93,15 @@ class BirthdayBot(TelegramBot):
     def handle_state_response(self, message_text: str, chat_id: str, user_id: str, user_name: str, user_state: UserState) -> Optional[str]:
         """Handle responses based on user's current state."""
         try:
-            if user_state.state == "waiting_for_birthday":
+            if user_state.state in ["waiting_for_birthday", "waiting_for_persian_birthday"]:
                 try:
-                    # Try to parse the date
-                    birth_date = datetime.strptime(message_text.strip(), '%Y-%m-%d').date()
+                    # Parse the date based on state
+                    if user_state.state == "waiting_for_birthday":
+                        birth_date = datetime.strptime(message_text.strip(), '%Y-%m-%d').date()
+                    else:  # Persian date input
+                        birth_date = self.parse_persian_date(message_text.strip())
+                        if not birth_date:
+                            return "❌ Invalid Persian date format. Please use YYYY-MM-DD (e.g., 1370-06-31)\nOr click Cancel to go back to main menu."
                     
                     # Save the birthday
                     reminder, created = BirthdayReminder.objects.get_or_create(
@@ -105,7 +126,10 @@ class BirthdayBot(TelegramBot):
                     self.send_message(chat_id, response, self.get_main_menu_keyboard())
                     return None
                 except ValueError:
-                    return "❌ Invalid date format. Please use YYYY-MM-DD (e.g., 1990-12-31)\nOr click Cancel to go back to main menu."
+                    if user_state.state == "waiting_for_birthday":
+                        return "❌ Invalid date format. Please use YYYY-MM-DD (e.g., 1990-12-31)\nOr click Cancel to go back to main menu."
+                    else:
+                        return "❌ Invalid Persian date format. Please use YYYY-MM-DD (e.g., 1370-06-31)\nOr click Cancel to go back to main menu."
 
             elif user_state.state == "waiting_for_reminder":
                 try:
@@ -152,6 +176,17 @@ class BirthdayBot(TelegramBot):
                 )
                 response = ("Please enter your birthday in YYYY-MM-DD format\n"
                           "For example: 1990-12-31\n\n"
+                          "Click Cancel to go back to main menu.")
+
+            elif callback_data == "set_persian_birthday":
+                # Set state for Persian birthday input
+                UserState.objects.update_or_create(
+                    chat_id=chat_id,
+                    user_id=user_id,
+                    defaults={'state': 'waiting_for_persian_birthday'}
+                )
+                response = ("Please enter your birthday in Persian calendar format YYYY-MM-DD\n"
+                          "For example: 1370-06-31\n\n"
                           "Click Cancel to go back to main menu.")
 
             elif callback_data == "set_reminder":
