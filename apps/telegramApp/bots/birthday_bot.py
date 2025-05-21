@@ -353,22 +353,13 @@ class BirthdayBot(TelegramBot):
                 )
                 # Get updated list
                 response, keyboard = self.get_birthday_list_for_exclusion(user_id)
-                if response == "No birthdays available to exclude!":
-                    self.answer_callback_query(callback_query_id, f"Excluded {birthday.name}")
-                    self.edit_message(
-                        user_id,
-                        callback_query['message']['message_id'],
-                        response,
-                        self.get_main_menu_keyboard(show_cancel=False)
-                    )
-                else:
-                    self.answer_callback_query(callback_query_id, f"Excluded {birthday.name}")
-                    self.edit_message(
-                        user_id,
-                        callback_query['message']['message_id'],
-                        response,
-                        keyboard
-                    )
+                self.answer_callback_query(callback_query_id, f"Excluded {birthday.name}")
+                self.edit_message(
+                    user_id,
+                    callback_query['message']['message_id'],
+                    response,
+                    keyboard
+                )
                 return
 
             elif callback_data.startswith("include_id_"):
@@ -526,14 +517,14 @@ class BirthdayBot(TelegramBot):
         
         return response
 
-    def get_birthday_list_for_exclusion(self, user_id: str) -> str:
+    def get_birthday_list_for_exclusion(self, user_id: str) -> tuple:
         """Get all birthdays except already excluded ones with interactive buttons."""
         # Get all birthdays except already excluded ones
         excluded_ids = UserBirthdayExclusion.objects.filter(user_id=user_id).values_list('birthday_id', flat=True)
         birthdays = GlobalBirthday.objects.exclude(id__in=excluded_ids).order_by('birth_date')
 
         if not birthdays:
-            return "No birthdays available to exclude!"
+            return "No birthdays available to exclude!", self.get_main_menu_keyboard(show_cancel=False)
 
         response = "🎂 Select birthdays to exclude:\n\n"
         buttons = []
