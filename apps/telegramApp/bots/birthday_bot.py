@@ -59,36 +59,28 @@ class BirthdayBot(TelegramBot):
         """Main command handler for Birthday Bot."""
         try:
             message_text = message.get('text', '')
-            chat_id = str(message.get('chat', {}).get('id'))
             user = message.get('from', {})
             user_id = str(user.get('id'))
             user_name = f"{user.get('first_name', '')} {user.get('last_name', '')}".strip()
 
-            # Register chat member
-            ChatMember.objects.get_or_create(
-                chat_id=chat_id,
-                user_id=user_id,
-                defaults={'user_name': user_name}
-            )
-
             if message_text == '/start':
                 welcome_text = ("Welcome to Birthday Reminder Bot! 🎉\n\n"
                               "Please use the buttons below to interact with me:")
-                self.send_message(chat_id, welcome_text, self.get_main_menu_keyboard())
+                self.send_message(user_id, welcome_text, self.get_main_menu_keyboard())
                 return None
 
             # Check if user is in a conversation state
-            user_state = UserState.objects.filter(chat_id=chat_id, user_id=user_id).first()
+            user_state = UserState.objects.filter(user_id=user_id).first()
             if user_state:
-                return self.handle_state_response(message_text, chat_id, user_id, user_name, user_state)
+                return self.handle_state_response(message_text, user_id, user_name, user_state)
 
             command = message_text.split()[0].lower()
             handler = self.commands.get(command)
             
             if handler:
-                response = handler(message_text, chat_id, user_id, user_name)
+                response = handler(message_text, user_id, user_name)
                 if response:
-                    self.send_message(chat_id, response, self.get_main_menu_keyboard())
+                    self.send_message(user_id, response, self.get_main_menu_keyboard())
                 return None
             return None
             
@@ -96,7 +88,7 @@ class BirthdayBot(TelegramBot):
             logger.error(f"Error handling birthday command: {e}")
             return f"An error occurred while processing your request: {str(e)}"
 
-    def handle_state_response(self, message_text: str, chat_id: str, user_id: str, user_name: str, user_state: UserState) -> Optional[str]:
+    def handle_state_response(self, message_text: str, user_id: str, user_name: str, user_state: UserState) -> Optional[str]:
         """Handle responses based on user's current state."""
         try:
             if user_state.state == "waiting_for_birthday":
@@ -106,7 +98,6 @@ class BirthdayBot(TelegramBot):
                     
                     # Save the birthday
                     reminder, created = BirthdayReminder.objects.get_or_create(
-                        chat_id=chat_id,
                         user_id=user_id,
                         defaults={
                             'birth_date': birth_date,
@@ -121,10 +112,8 @@ class BirthdayBot(TelegramBot):
                     user_state.delete()
 
                     persian_date = reminder.get_persian_date()
-                    self._notify_chat_members(chat_id, user_id, user_name, birth_date, persian_date)
-                    
                     response = f"✅ Birthday successfully set to:\nGregorian: {birth_date}\nPersian: {persian_date}"
-                    self.send_message(chat_id, response, self.get_main_menu_keyboard())
+                    self.send_message(user_id, response, self.get_main_menu_keyboard())
                     return None
                 except ValueError:
                     return "❌ Invalid date format. Please use YYYY-MM-DD (e.g., 1990-12-31)\nOr click Cancel to go back to main menu."
@@ -135,7 +124,7 @@ class BirthdayBot(TelegramBot):
                     if days < 0:
                         return "❌ Please enter a positive number of days\nOr click Cancel to go back to main menu."
 
-                    reminder = BirthdayReminder.objects.filter(chat_id=chat_id, user_id=user_id).first()
+                    reminder = BirthdayReminder.objects.filter(user_id=user_id).first()
                     if not reminder:
                         return "Please set your birthday first!"
 
@@ -145,8 +134,8 @@ class BirthdayBot(TelegramBot):
                     # Clear the state
                     user_state.delete()
 
-                    response = f"✅ You will be notified {days} days before each birthday in this chat"
-                    self.send_message(chat_id, response, self.get_main_menu_keyboard())
+                    response = f"✅ You will be notified {days} days before each birthday"
+                    self.send_message(user_id, response, self.get_main_menu_keyboard())
                     return None
                 except ValueError:
                     return "❌ Please enter a valid number\nOr click Cancel to go back to main menu."
@@ -159,7 +148,6 @@ class BirthdayBot(TelegramBot):
     def handle_callback_query(self, callback_query: Dict[str, Any]) -> None:
         """Handle callback queries from inline keyboard buttons."""
         try:
-            chat_id = str(callback_query['message']['chat']['id'])
             user_id = str(callback_query['from']['id'])
             user_name = f"{callback_query['from'].get('first_name', '')} {callback_query['from'].get('last_name', '')}".strip()
             callback_data = callback_query['data']
@@ -168,7 +156,6 @@ class BirthdayBot(TelegramBot):
             if callback_data == "set_birthday":
                 # Set state for birthday input
                 UserState.objects.update_or_create(
-                    chat_id=chat_id,
                     user_id=user_id,
                     defaults={'state': 'waiting_for_birthday'}
                 )
@@ -179,7 +166,6 @@ class BirthdayBot(TelegramBot):
             elif callback_data == "set_reminder":
                 # Set state for reminder input
                 UserState.objects.update_or_create(
-                    chat_id=chat_id,
                     user_id=user_id,
                     defaults={'state': 'waiting_for_reminder'}
                 )
@@ -188,40 +174,38 @@ class BirthdayBot(TelegramBot):
                           "Click Cancel to go back to main menu.")
 
             elif callback_data == "my_birthday":
-                response = self.cmd_my_birthday("", chat_id, user_id, user_name)
+                response = self.cmd_my_birthday("", user_id, user_name)
                 self.answer_callback_query(callback_query_id)
-                self.send_message(chat_id, response, self.get_main_menu_keyboard(show_cancel=False))
+                self.send_message(user_id, response, self.get_main_menu_keyboard(show_cancel=False))
                 return
 
             elif callback_data == "list_birthdays":
-                response = self.cmd_list_birthdays("", chat_id, user_id, user_name)
+                response = self.cmd_list_birthdays("", user_id, user_name)
                 self.answer_callback_query(callback_query_id)
-                self.send_message(chat_id, response, self.get_main_menu_keyboard(show_cancel=False))
+                self.send_message(user_id, response, self.get_main_menu_keyboard(show_cancel=False))
                 return
 
             elif callback_data == "help":
                 response = self.cmd_help()
                 self.answer_callback_query(callback_query_id)
-                self.send_message(chat_id, response, self.get_main_menu_keyboard(show_cancel=False))
+                self.send_message(user_id, response, self.get_main_menu_keyboard(show_cancel=False))
                 return
 
             elif callback_data == "cancel":
                 # Clear any existing state
-                UserState.objects.filter(chat_id=chat_id, user_id=user_id).delete()
+                UserState.objects.filter(user_id=user_id).delete()
                 response = "Operation cancelled. What would you like to do?"
 
             self.answer_callback_query(callback_query_id)
-            self.send_message(chat_id, response, self.get_main_menu_keyboard())
+            self.send_message(user_id, response, self.get_main_menu_keyboard())
 
         except Exception as e:
             logger.error(f"Error handling callback query: {e}")
-            self.send_message(chat_id, f"An error occurred: {str(e)}", self.get_main_menu_keyboard())
+            self.send_message(user_id, f"An error occurred: {str(e)}", self.get_main_menu_keyboard())
 
-    def cmd_cancel(self, *args) -> str:
+    def cmd_cancel(self, message_text: str, user_id: str, *args) -> str:
         """Cancel current operation and clear state."""
-        chat_id = args[1]
-        user_id = args[2]
-        UserState.objects.filter(chat_id=chat_id, user_id=user_id).delete()
+        UserState.objects.filter(user_id=user_id).delete()
         return "Operation cancelled. What would you like to do?"
 
     def cmd_start(self, *args) -> str:
@@ -234,8 +218,8 @@ class BirthdayBot(TelegramBot):
                "• Get help\n\n"
                "You can also use /cancel at any time to cancel the current operation.")
 
-    def cmd_my_birthday(self, message_text: str, chat_id: str, user_id: str, *args) -> str:
-        reminder = BirthdayReminder.objects.filter(chat_id=chat_id, user_id=user_id).first()
+    def cmd_my_birthday(self, message_text: str, user_id: str, user_name: str, *args) -> str:
+        reminder = BirthdayReminder.objects.filter(user_id=user_id).first()
         if not reminder:
             return "You haven't set your birthday yet. Use the Set Birthday button to add your birthday."
 
@@ -259,8 +243,8 @@ class BirthdayBot(TelegramBot):
 
         return "\n".join(response)
 
-    def cmd_list_birthdays(self, message_text: str, chat_id: str, *args) -> str:
-        birthdays = BirthdayReminder.objects.filter(chat_id=chat_id).order_by('birth_date')
+    def cmd_list_birthdays(self, message_text: str, user_id: str, *args) -> str:
+        birthdays = BirthdayReminder.objects.filter(user_id=user_id).order_by('birth_date')
         if not birthdays:
             return "No birthdays set in this chat yet!"
 
@@ -272,7 +256,8 @@ class BirthdayBot(TelegramBot):
             days_until = (next_birthday - today).days
             persian_date = birthday.get_persian_date()
             
-            response += (f"👤 {birthday.user_name}\n"
+            user_mention = f'<a href="tg://user?id={birthday.user_id}">{birthday.user_name}</a>'
+            response += (f"👤 {user_mention}\n"
                         f"📅 Gregorian: {birthday.birth_date}\n"
                         f"📅 Persian: {persian_date}\n"
                         f"⏳ Days until birthday: {days_until}\n\n")

@@ -5,17 +5,13 @@ import jdatetime
 # Create your models here.
 
 class BirthdayReminder(models.Model):
-    chat_id = models.CharField(max_length=100)  # The chat where birthday was registered
-    user_id = models.CharField(max_length=100)  # Telegram user ID
+    user_id = models.CharField(max_length=100, unique=True)  # Telegram user ID
     user_name = models.CharField(max_length=100)  # Display name
     birth_date = models.DateField()  # Gregorian date
     persian_birth_date = models.CharField(max_length=20, blank=True)  # Persian date stored as string
     reminder_days = models.IntegerField(default=1)  # Days before birthday to send reminder
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        unique_together = ['chat_id', 'user_id']  # One birthday per user per chat
 
     def save(self, *args, **kwargs):
         # Automatically convert and store Persian date whenever Gregorian date is saved
@@ -46,30 +42,13 @@ class BirthdayReminder(models.Model):
     def __str__(self):
         return f"{self.user_name}'s Birthday - {self.birth_date} ({self.persian_birth_date})"
 
-class ChatMember(models.Model):
-    """Keep track of chat members for notifications"""
-    chat_id = models.CharField(max_length=100)
-    user_id = models.CharField(max_length=100)
-    user_name = models.CharField(max_length=100)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ['chat_id', 'user_id']
-
-    def __str__(self):
-        return f"{self.user_name} in chat {self.chat_id}"
-
 class UserState(models.Model):
     """Track user conversation state for multi-step interactions"""
-    chat_id = models.CharField(max_length=100)
-    user_id = models.CharField(max_length=100)
+    user_id = models.CharField(max_length=100, unique=True)  # Telegram user ID
     state = models.CharField(max_length=50)  # Current state in conversation
     context = models.JSONField(default=dict)  # Store any context needed for the state
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    class Meta:
-        unique_together = ['chat_id', 'user_id']
-
     def __str__(self):
-        return f"State for {self.user_id} in chat {self.chat_id}: {self.state}"
+        return f"State for {self.user_id}: {self.state}"
