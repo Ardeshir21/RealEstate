@@ -352,14 +352,23 @@ class BirthdayBot(TelegramBot):
                     birthday=birthday
                 )
                 # Get updated list
-                response, keyboard = self.get_excluded_birthdays(user_id)
-                self.answer_callback_query(callback_query_id, f"Excluded {birthday.name}")
-                self.edit_message(
-                    user_id,
-                    callback_query['message']['message_id'],
-                    response,
-                    keyboard
-                )
+                response, keyboard = self.get_birthday_list_for_exclusion(user_id)
+                if response == "No birthdays available to exclude!":
+                    self.answer_callback_query(callback_query_id, f"Excluded {birthday.name}")
+                    self.edit_message(
+                        user_id,
+                        callback_query['message']['message_id'],
+                        response,
+                        self.get_main_menu_keyboard(show_cancel=False)
+                    )
+                else:
+                    self.answer_callback_query(callback_query_id, f"Excluded {birthday.name}")
+                    self.edit_message(
+                        user_id,
+                        callback_query['message']['message_id'],
+                        response,
+                        keyboard
+                    )
                 return
 
             elif callback_data.startswith("include_id_"):
@@ -370,14 +379,25 @@ class BirthdayBot(TelegramBot):
                     birthday=birthday
                 ).delete()
                 # Get updated list
-                response, keyboard = self.get_excluded_birthdays(user_id, for_inclusion=True)
-                self.answer_callback_query(callback_query_id, f"Included {birthday.name}")
-                self.edit_message(
-                    user_id,
-                    callback_query['message']['message_id'],
-                    response,
-                    keyboard
-                )
+                response = self.get_excluded_birthdays(user_id, for_inclusion=True)
+                if response == "You haven't excluded any birthdays yet!":
+                    self.answer_callback_query(callback_query_id, f"Included {birthday.name}")
+                    self.edit_message(
+                        user_id,
+                        callback_query['message']['message_id'],
+                        response,
+                        self.get_main_menu_keyboard(show_cancel=False)
+                    )
+                else:
+                    if isinstance(response, tuple):
+                        response, keyboard = response
+                    self.answer_callback_query(callback_query_id, f"Included {birthday.name}")
+                    self.edit_message(
+                        user_id,
+                        callback_query['message']['message_id'],
+                        response,
+                        keyboard
+                    )
                 return
 
             elif callback_data in ["exclude_done", "include_done"]:
@@ -520,8 +540,11 @@ class BirthdayBot(TelegramBot):
         current_row = []
         
         for birthday in birthdays:
+            button_text = (f"❌ {birthday.name}\n"
+                         f"🌐 {birthday.birth_date}\n"
+                         f"🗓️ {birthday.get_persian_date()}")
             current_row.append({
-                "text": f"❌ {birthday.name}",
+                "text": button_text,
                 "callback_data": f"exclude_id_{birthday.id}"
             })
             
@@ -557,8 +580,11 @@ class BirthdayBot(TelegramBot):
         
         if for_inclusion:
             for birthday in excluded_birthdays:
+                button_text = (f"✅ {birthday.name}\n"
+                             f"🌐 {birthday.birth_date}\n"
+                             f"🗓️ {birthday.get_persian_date()}")
                 current_row.append({
-                    "text": f"✅ {birthday.name}",
+                    "text": button_text,
                     "callback_data": f"include_id_{birthday.id}"
                 })
                 
