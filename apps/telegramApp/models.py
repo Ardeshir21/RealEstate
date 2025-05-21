@@ -4,14 +4,18 @@ import jdatetime
 
 # Create your models here.
 
-class BirthdayReminder(models.Model):
-    user_id = models.CharField(max_length=100, unique=True)  # Telegram user ID
-    user_name = models.CharField(max_length=100)  # Display name
+class GlobalBirthday(models.Model):
+    """Global birthday entries that can be shared across users"""
+    name = models.CharField(max_length=100)  # Person's name
     birth_date = models.DateField()  # Gregorian date
     persian_birth_date = models.CharField(max_length=20, blank=True)  # Persian date stored as string
-    reminder_days = models.IntegerField(default=1)  # Days before birthday to send reminder
+    added_by = models.CharField(max_length=100)  # Telegram user ID of first person who added this
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        # Ensure uniqueness based on name and date combination
+        unique_together = ['name', 'birth_date']
 
     def save(self, *args, **kwargs):
         # Automatically convert and store Persian date whenever Gregorian date is saved
@@ -40,7 +44,34 @@ class BirthdayReminder(models.Model):
         )
 
     def __str__(self):
-        return f"{self.user_name}'s Birthday - {self.birth_date} ({self.persian_birth_date})"
+        return f"{self.name}'s Birthday - {self.birth_date} ({self.persian_birth_date})"
+
+class UserBirthdaySettings(models.Model):
+    """User-specific settings and birthday mappings"""
+    user_id = models.CharField(max_length=100)  # Telegram user ID
+    user_name = models.CharField(max_length=100)  # Display name
+    birthday = models.ForeignKey(GlobalBirthday, on_delete=models.CASCADE, null=True, blank=True)  # User's own birthday
+    reminder_days = models.IntegerField(default=1)  # Days before birthday to send reminder
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ['user_id', 'birthday']  # Each user can only have one setting per birthday
+
+    def __str__(self):
+        return f"Settings for {self.user_name}"
+
+class UserBirthdayExclusion(models.Model):
+    """Track which birthdays a user has excluded from their view/notifications"""
+    user_id = models.CharField(max_length=100)  # Telegram user ID
+    birthday = models.ForeignKey(GlobalBirthday, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ['user_id', 'birthday']
+
+    def __str__(self):
+        return f"{self.user_id} excluded {self.birthday.name}'s birthday"
 
 class UserState(models.Model):
     """Track user conversation state for multi-step interactions"""

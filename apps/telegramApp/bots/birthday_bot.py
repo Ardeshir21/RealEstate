@@ -5,8 +5,9 @@ from typing import Optional, Dict, Any
 import logging
 import jdatetime
 import re
+from django.db import IntegrityError
 
-from ..models import BirthdayReminder, UserState
+from ..models import GlobalBirthday, UserBirthdaySettings, UserBirthdayExclusion, UserState
 from .base import TelegramBot
 
 logger = logging.getLogger(__name__)
@@ -20,26 +21,35 @@ class BirthdayBot(TelegramBot):
             '/cancel': self.cmd_cancel,
             '/mybirthday': self.cmd_my_birthday,
             '/listbirthdays': self.cmd_list_birthdays,
-            '/help': self.cmd_help
+            '/help': self.cmd_help,
+            '/exclude': self.cmd_exclude,
+            '/include': self.cmd_include
         }
 
     def get_main_menu_keyboard(self, show_cancel: bool = True) -> Dict:
-        """Create the main menu keyboard.
-        
-        Args:
-            show_cancel: Whether to show the cancel button
-        """
+        """Create the main menu keyboard."""
         buttons = [
-            [{"text": "🎂 Set My Birthday", "callback_data": "set_birthday"}],
+            [{"text": "🎂 Add Birthday", "callback_data": "add_birthday"}],
             [{"text": "⏰ Set Reminder", "callback_data": "set_reminder"}],
             [{"text": "🎈 My Birthday Info", "callback_data": "my_birthday"}],
             [{"text": "📋 List All Birthdays", "callback_data": "list_birthdays"}],
+            [{"text": "👁️ Manage Visibility", "callback_data": "manage_visibility"}],
             [{"text": "❓ Help", "callback_data": "help"}],
         ]
         
         if show_cancel:
             buttons.append([{"text": "❌ Cancel", "callback_data": "cancel"}])
             
+        return self.create_inline_keyboard(buttons)
+
+    def get_visibility_keyboard(self) -> Dict:
+        """Create the visibility management keyboard."""
+        buttons = [
+            [{"text": "🔍 View Excluded Birthdays", "callback_data": "view_excluded"}],
+            [{"text": "➕ Include Birthday", "callback_data": "include_birthday"}],
+            [{"text": "➖ Exclude Birthday", "callback_data": "exclude_birthday"}],
+            [{"text": "🔙 Back to Main Menu", "callback_data": "back_to_main"}],
+        ]
         return self.create_inline_keyboard(buttons)
 
     def parse_persian_date(self, date_str: str) -> Optional[datetime.date]:
@@ -91,32 +101,124 @@ class BirthdayBot(TelegramBot):
     def handle_state_response(self, message_text: str, user_id: str, user_name: str, user_state: UserState) -> Optional[str]:
         """Handle responses based on user's current state."""
         try:
-            if user_state.state == "waiting_for_birthday":
+            if user_state.state == "waiting_for_name":
+                # Store the name and move to date input
+                user_state.context['name'] = message_text.strip()
+                user_state.state = 'waiting_for_birthday'
+                user_state.save()
+                
+                return ("Please enter the birthday in YYYY-MM-DD format\n"
+                       "For example: 1990-12-31\n\n"
+                       "Click Cancel to go back to main menu.")
+
+            elif user_state.state == "waiting_for_birthday":
                 try:
-                    # Parse the Gregorian date
+                    name = user_state.context.get('name')
                     birth_date = datetime.strptime(message_text.strip(), '%Y-%m-%d').date()
                     
-                    # Save the birthday
-                    reminder, created = BirthdayReminder.objects.get_or_create(
+                    # Check for existing birthday with same name and date
+                    existing_birthday = GlobalBirthday.objects.filter(
+                        name=name,
+                        birth_date=birth_date
+                    ).first()
+
+                    if existing_birthday:
+                        # Store context for confirmation
+                        user_state.context.update({
+                            'birth_date': birth_date.isoformat(),
+                            'existing_id': existing_birthday.id
+                        })
+                        user_state.state = 'confirm_existing'
+                        user_state.save()
+
+                        return (f"We found an existing entry:\n"
+                               f"Name: {existing_birthday.name}\n"
+                               f"Date: {existing_birthday.birth_date}\n"
+                               f"Added by: <hidden>\n\n"
+                               f"Would you like to use this existing entry? (yes/no)")
+
+                    # Create new birthday entry
+                    birthday = GlobalBirthday.objects.create(
+                        name=name,
+                        birth_date=birth_date,
+                        added_by=user_id
+                    )
+
+                    # Create or update user settings
+                    UserBirthdaySettings.objects.update_or_create(
                         user_id=user_id,
                         defaults={
-                            'birth_date': birth_date,
-                            'user_name': user_name
+                            'user_name': user_name,
+                            'birthday': birthday if name == user_name else None
                         }
                     )
-                    if not created:
-                        reminder.birth_date = birth_date
-                        reminder.save()
 
                     # Clear the state
                     user_state.delete()
 
-                    persian_date = reminder.get_persian_date()
-                    response = f"✅ Birthday successfully set to:\nGregorian: {birth_date}\nPersian: {persian_date}"
+                    response = (f"✅ Birthday successfully added:\n"
+                              f"Name: {birthday.name}\n"
+                              f"Gregorian: {birthday.birth_date}\n"
+                              f"Persian: {birthday.get_persian_date()}")
                     self.send_message(user_id, response, self.get_main_menu_keyboard())
                     return None
+
                 except ValueError:
                     return "❌ Invalid date format. Please use YYYY-MM-DD (e.g., 1990-12-31)\nOr click Cancel to go back to main menu."
+
+            elif user_state.state == "confirm_existing":
+                answer = message_text.strip().lower()
+                if answer not in ['yes', 'no']:
+                    return "Please answer 'yes' or 'no'"
+
+                name = user_state.context.get('name')
+                existing_id = user_state.context.get('existing_id')
+
+                if answer == 'yes':
+                    # Use existing birthday
+                    birthday = GlobalBirthday.objects.get(id=existing_id)
+                    
+                    # Create or update user settings
+                    UserBirthdaySettings.objects.update_or_create(
+                        user_id=user_id,
+                        defaults={
+                            'user_name': user_name,
+                            'birthday': birthday if name == user_name else None
+                        }
+                    )
+
+                    response = (f"✅ Successfully linked to existing birthday:\n"
+                              f"Name: {birthday.name}\n"
+                              f"Gregorian: {birthday.birth_date}\n"
+                              f"Persian: {birthday.get_persian_date()}")
+
+                else:
+                    # Create new birthday entry
+                    birth_date = datetime.fromisoformat(user_state.context.get('birth_date')).date()
+                    birthday = GlobalBirthday.objects.create(
+                        name=name,
+                        birth_date=birth_date,
+                        added_by=user_id
+                    )
+
+                    # Create or update user settings
+                    UserBirthdaySettings.objects.update_or_create(
+                        user_id=user_id,
+                        defaults={
+                            'user_name': user_name,
+                            'birthday': birthday if name == user_name else None
+                        }
+                    )
+
+                    response = (f"✅ New birthday entry created:\n"
+                              f"Name: {birthday.name}\n"
+                              f"Gregorian: {birthday.birth_date}\n"
+                              f"Persian: {birthday.get_persian_date()}")
+
+                # Clear the state
+                user_state.delete()
+                self.send_message(user_id, response, self.get_main_menu_keyboard())
+                return None
 
             elif user_state.state == "waiting_for_reminder":
                 try:
@@ -124,12 +226,13 @@ class BirthdayBot(TelegramBot):
                     if days < 0:
                         return "❌ Please enter a positive number of days\nOr click Cancel to go back to main menu."
 
-                    reminder = BirthdayReminder.objects.filter(user_id=user_id).first()
-                    if not reminder:
-                        return "Please set your birthday first!"
-
-                    reminder.reminder_days = days
-                    reminder.save()
+                    # Update or create user settings
+                    settings, _ = UserBirthdaySettings.objects.get_or_create(
+                        user_id=user_id,
+                        defaults={'user_name': user_name}
+                    )
+                    settings.reminder_days = days
+                    settings.save()
 
                     # Clear the state
                     user_state.delete()
@@ -137,8 +240,35 @@ class BirthdayBot(TelegramBot):
                     response = f"✅ You will be notified {days} days before each birthday"
                     self.send_message(user_id, response, self.get_main_menu_keyboard())
                     return None
+
                 except ValueError:
                     return "❌ Please enter a valid number\nOr click Cancel to go back to main menu."
+
+            elif user_state.state in ["waiting_for_exclude", "waiting_for_include"]:
+                try:
+                    birthday_id = int(message_text.strip())
+                    birthday = GlobalBirthday.objects.get(id=birthday_id)
+                    
+                    if user_state.state == "waiting_for_exclude":
+                        UserBirthdayExclusion.objects.get_or_create(
+                            user_id=user_id,
+                            birthday=birthday
+                        )
+                        response = f"✅ {birthday.name}'s birthday has been excluded from your view"
+                    else:  # waiting_for_include
+                        UserBirthdayExclusion.objects.filter(
+                            user_id=user_id,
+                            birthday=birthday
+                        ).delete()
+                        response = f"✅ {birthday.name}'s birthday has been included in your view"
+
+                    # Clear the state
+                    user_state.delete()
+                    self.send_message(user_id, response, self.get_main_menu_keyboard())
+                    return None
+
+                except (ValueError, GlobalBirthday.DoesNotExist):
+                    return "❌ Invalid birthday ID. Please enter a valid number from the list\nOr click Cancel to go back to main menu."
 
         except Exception as e:
             logger.error(f"Error in handle_state_response: {e}")
@@ -153,14 +283,17 @@ class BirthdayBot(TelegramBot):
             callback_data = callback_query['data']
             callback_query_id = callback_query['id']
 
-            if callback_data == "set_birthday":
-                # Set state for birthday input
+            if callback_data == "add_birthday":
+                # Set state for name input
                 UserState.objects.update_or_create(
                     user_id=user_id,
-                    defaults={'state': 'waiting_for_birthday'}
+                    defaults={
+                        'state': 'waiting_for_name',
+                        'context': {}
+                    }
                 )
-                response = ("Please enter your birthday in YYYY-MM-DD format\n"
-                          "For example: 1990-12-31\n\n"
+                response = ("Please enter the name of the person\n"
+                          "For example: John Doe\n\n"
                           "Click Cancel to go back to main menu.")
 
             elif callback_data == "set_reminder":
@@ -183,6 +316,45 @@ class BirthdayBot(TelegramBot):
                 response = self.cmd_list_birthdays("", user_id, user_name)
                 self.answer_callback_query(callback_query_id)
                 self.send_message(user_id, response, self.get_main_menu_keyboard(show_cancel=False))
+                return
+
+            elif callback_data == "manage_visibility":
+                self.answer_callback_query(callback_query_id)
+                self.send_message(user_id, "Birthday Visibility Management:", self.get_visibility_keyboard())
+                return
+
+            elif callback_data == "view_excluded":
+                response = self.get_excluded_birthdays(user_id)
+                self.answer_callback_query(callback_query_id)
+                self.send_message(user_id, response, self.get_visibility_keyboard())
+                return
+
+            elif callback_data == "exclude_birthday":
+                response = self.get_birthday_list_for_exclusion(user_id)
+                if response:
+                    UserState.objects.update_or_create(
+                        user_id=user_id,
+                        defaults={'state': 'waiting_for_exclude'}
+                    )
+                self.answer_callback_query(callback_query_id)
+                self.send_message(user_id, response, self.get_main_menu_keyboard())
+                return
+
+            elif callback_data == "include_birthday":
+                response = self.get_excluded_birthdays(user_id, for_inclusion=True)
+                if response:
+                    UserState.objects.update_or_create(
+                        user_id=user_id,
+                        defaults={'state': 'waiting_for_include'}
+                    )
+                self.answer_callback_query(callback_query_id)
+                self.send_message(user_id, response, self.get_main_menu_keyboard())
+                return
+
+            elif callback_data == "back_to_main":
+                response = "What would you like to do?"
+                self.answer_callback_query(callback_query_id)
+                self.send_message(user_id, response, self.get_main_menu_keyboard())
                 return
 
             elif callback_data == "help":
@@ -211,61 +383,128 @@ class BirthdayBot(TelegramBot):
     def cmd_start(self, *args) -> str:
         return ("Welcome to Birthday Reminder Bot! 🎉\n\n"
                "Use the buttons below to:\n"
-               "• Set your birthday\n"
-               "• Set reminder days\n"
+               "• Add birthdays to the global list\n"
+               "• Set reminder preferences\n"
                "• View your birthday info\n"
                "• List all birthdays\n"
+               "• Manage birthday visibility\n"
                "• Get help\n\n"
                "You can also use /cancel at any time to cancel the current operation.")
 
     def cmd_my_birthday(self, message_text: str, user_id: str, user_name: str, *args) -> str:
-        reminder = BirthdayReminder.objects.filter(user_id=user_id).first()
-        if not reminder:
-            return "You haven't set your birthday yet. Use the Set Birthday button to add your birthday."
+        settings = UserBirthdaySettings.objects.filter(user_id=user_id).first()
+        if not settings or not settings.birthday:
+            return "You haven't set your birthday yet. Use the Add Birthday button to add your birthday."
 
-        next_birthday = reminder.get_next_birthday()
+        birthday = settings.birthday
+        next_birthday = birthday.get_next_birthday()
         days_until = (next_birthday - timezone.now().date()).days
-        age = reminder.get_age()
-        persian_date = reminder.get_persian_date()
+        age = birthday.get_age()
+        persian_date = birthday.get_persian_date()
 
         response = [
             "🎂 Your Birthday Information:",
-            f"\n📅 Gregorian Date: {reminder.birth_date}",
+            f"\n📅 Gregorian Date: {birthday.birth_date}",
             f"🗓️ Persian Date: {persian_date}",
             f"\n🎈 Current Age: {age}",
             f"⏳ Days until next birthday: {days_until}"
         ]
 
-        if reminder.reminder_days:
-            response.append(f"⏰ Reminder set for: {reminder.reminder_days} days before")
+        if settings.reminder_days:
+            response.append(f"⏰ Reminder set for: {settings.reminder_days} days before")
         else:
             response.append("⏰ No reminder set")
 
         return "\n".join(response)
 
     def cmd_list_birthdays(self, message_text: str, user_id: str, *args) -> str:
-        birthdays = BirthdayReminder.objects.filter(user_id=user_id).order_by('birth_date')
+        # Get all birthdays except excluded ones
+        excluded_ids = UserBirthdayExclusion.objects.filter(user_id=user_id).values_list('birthday_id', flat=True)
+        birthdays = GlobalBirthday.objects.exclude(id__in=excluded_ids).order_by('birth_date')
+
         if not birthdays:
-            return "No birthdays set in this chat yet!"
+            return "No birthdays in your view! Add some birthdays or check your exclusion settings."
 
         today = timezone.now().date()
-        response = "🎂 Birthdays in this chat:\n\n"
+        response = "🎂 All Birthdays:\n\n"
         
         for birthday in birthdays:
             next_birthday = birthday.get_next_birthday()
             days_until = (next_birthday - today).days
             persian_date = birthday.get_persian_date()
             
-            user_mention = f'<a href="tg://user?id={birthday.user_id}">{birthday.user_name}</a>'
-            response += (f"👤 {user_mention}\n"
+            response += (f"ID: {birthday.id}\n"
+                        f"👤 {birthday.name}\n"
                         f"📅 Gregorian: {birthday.birth_date}\n"
                         f"📅 Persian: {persian_date}\n"
                         f"⏳ Days until birthday: {days_until}\n\n")
         
         return response
 
+    def get_excluded_birthdays(self, user_id: str, for_inclusion: bool = False) -> str:
+        excluded_birthdays = GlobalBirthday.objects.filter(
+            id__in=UserBirthdayExclusion.objects.filter(user_id=user_id).values_list('birthday_id', flat=True)
+        ).order_by('birth_date')
+
+        if not excluded_birthdays:
+            return "You haven't excluded any birthdays yet!"
+
+        today = timezone.now().date()
+        if for_inclusion:
+            response = "🎂 Select a birthday to include by sending its ID:\n\n"
+        else:
+            response = "🎂 Currently excluded birthdays:\n\n"
+        
+        for birthday in excluded_birthdays:
+            next_birthday = birthday.get_next_birthday()
+            days_until = (next_birthday - today).days
+            persian_date = birthday.get_persian_date()
+            
+            response += (f"ID: {birthday.id}\n"
+                        f"👤 {birthday.name}\n"
+                        f"📅 Gregorian: {birthday.birth_date}\n"
+                        f"📅 Persian: {persian_date}\n"
+                        f"⏳ Days until birthday: {days_until}\n\n")
+        
+        return response
+
+    def get_birthday_list_for_exclusion(self, user_id: str) -> str:
+        # Get all birthdays except already excluded ones
+        excluded_ids = UserBirthdayExclusion.objects.filter(user_id=user_id).values_list('birthday_id', flat=True)
+        birthdays = GlobalBirthday.objects.exclude(id__in=excluded_ids).order_by('birth_date')
+
+        if not birthdays:
+            return "No birthdays available to exclude!"
+
+        response = "🎂 Select a birthday to exclude by sending its ID:\n\n"
+        
+        for birthday in birthdays:
+            response += (f"ID: {birthday.id}\n"
+                        f"👤 {birthday.name}\n"
+                        f"📅 Gregorian: {birthday.birth_date}\n"
+                        f"📅 Persian: {birthday.get_persian_date()}\n\n")
+        
+        return response
+
     def cmd_help(self, *args) -> str:
-        return self.cmd_start()
+        return ("Welcome to Birthday Reminder Bot! 🎉\n\n"
+               "Use the buttons below to:\n"
+               "• Add birthdays to the global list\n"
+               "• Set reminder preferences\n"
+               "• View your birthday info\n"
+               "• List all birthdays\n"
+               "• Manage birthday visibility\n"
+               "• Get help\n\n"
+               "You can also use these commands:\n"
+               "/cancel - Cancel current operation\n"
+               "/exclude - Exclude a birthday from your view\n"
+               "/include - Include a previously excluded birthday\n\n"
+               "Features:\n"
+               "• Global birthday sharing\n"
+               "• Duplicate detection\n"
+               "• Persian calendar support\n"
+               "• Customizable reminders\n"
+               "• Birthday visibility management")
 
     def _notify_chat_members(self, chat_id: str, user_id: str, display_name: str, 
                            birth_date: datetime.date, persian_date: str) -> None:
