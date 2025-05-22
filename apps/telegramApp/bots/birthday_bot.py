@@ -376,7 +376,10 @@ class BirthdayBot(TelegramBot):
                         birthday.reminder_days = days
                     birthday.save()
                     
-                    settings = UserBirthdaySettings.objects.get(user_id=user_id)
+                    settings, _ = UserBirthdaySettings.objects.get_or_create(
+                        user_id=user_id,
+                        defaults={'user_name': user_name, 'reminder_days': 1}
+                    )
                     current_reminder = birthday.reminder_days if birthday.reminder_days is not None else settings.reminder_days
                     
                     # Show success message
@@ -462,7 +465,10 @@ class BirthdayBot(TelegramBot):
                     }
                 )
                 birthday = GlobalBirthday.objects.get(id=birthday_id)
-                settings = UserBirthdaySettings.objects.get(user_id=user_id)
+                settings, _ = UserBirthdaySettings.objects.get_or_create(
+                    user_id=user_id,
+                    defaults={'user_name': user_name, 'reminder_days': 1}
+                )
                 current_reminder = birthday.reminder_days if birthday.reminder_days is not None else settings.reminder_days
                 
                 response = (f"Current birthday info:\n"
@@ -481,7 +487,10 @@ class BirthdayBot(TelegramBot):
             elif callback_data.startswith("manage_id_"):
                 birthday_id = int(callback_data.split("_")[-1])
                 birthday = GlobalBirthday.objects.get(id=birthday_id)
-                settings = UserBirthdaySettings.objects.get(user_id=user_id)
+                settings, _ = UserBirthdaySettings.objects.get_or_create(
+                    user_id=user_id,
+                    defaults={'user_name': user_name, 'reminder_days': 1}
+                )
                 current_reminder = birthday.reminder_days if birthday.reminder_days is not None else settings.reminder_days
                 
                 response = (f"Birthday Details:\n"
@@ -721,7 +730,10 @@ class BirthdayBot(TelegramBot):
     def cmd_list_birthdays(self, message_text: str, user_id: str, *args) -> str:
         # Get only birthdays added by the current user
         birthdays = GlobalBirthday.objects.filter(added_by=user_id).order_by('name')  # Sort by name
-        settings = UserBirthdaySettings.objects.get(user_id=user_id)
+        settings, _ = UserBirthdaySettings.objects.get_or_create(
+            user_id=user_id,
+            defaults={'user_name': args[0] if args else "", 'reminder_days': 1}
+        )
 
         if not birthdays:
             return "You haven't added any birthdays yet!"
