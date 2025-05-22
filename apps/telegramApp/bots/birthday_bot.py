@@ -722,7 +722,7 @@ class BirthdayBot(TelegramBot):
         # Sort by days until next birthday
         birthday_list.sort(key=lambda x: x[1])
         
-        response = "🎂 Upcoming Birthdays 🎂\n" + "─" * 30 + "\n\n"
+        response = "Upcoming Birthdays 🎂\n" + "─" * 30 + "\n\n"
         
         for birthday, days_until in birthday_list:
             persian_date = birthday.get_persian_date()
@@ -739,14 +739,19 @@ class BirthdayBot(TelegramBot):
             # Add sparkles for birthdays happening today or tomorrow
             name_decoration = "✨ " if days_until <= 1 else ""
             
+            # Calculate padding for centered name
+            name_with_decorations = f"{name_decoration}{birthday.name}{name_decoration}"
+            padding = max(0, (26 - len(name_with_decorations)) // 2)
+            padded_name = " " * padding + name_with_decorations
+            
             response += f"┌{'─' * 28}┐\n"
-            response += f"│ {name_decoration}{birthday.name} {name_decoration}│\n"
+            response += f"│ {padded_name:<28} │\n"
             response += f"├{'─' * 28}┤\n"
-            response += f"│ {days_indicator}│\n"
-            response += f"│ 📅 {birthday.birth_date} (Gregorian)│\n"
-            response += f"│ 🗓️ {persian_date} (Persian)│\n"
-            response += f"│ {zodiac_sign}│\n"
-            response += f"│ 🔔 Reminder: {reminder_days} days before│\n"
+            response += f"│ {days_indicator:<28} │\n"
+            response += f"│ 📅 {birthday.birth_date} (Gregorian)  │\n"
+            response += f"│ 🗓️ {persian_date} (Persian)    │\n"
+            response += f"│ {zodiac_sign:<28} │\n"
+            response += f"│ 🔔 Reminder: {reminder_days} days before  │\n"
             response += f"└{'─' * 28}┘\n\n"
         
         return response
