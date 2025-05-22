@@ -111,11 +111,16 @@ class BirthdayBot(TelegramBot):
             if user_state:
                 response = self.handle_state_response(message_text, user_id, user_name, user_state)
                 if isinstance(response, tuple):
-                    # If we have message_id, edit the message. Otherwise, send a new one
+                    message_text, keyboard = response
+                    # If we have message_id, edit the message
                     if message_id:
-                        self.edit_message(user_id, message_id, response[0], response[1])
+                        if keyboard is None:
+                            # Just update the text, keeping existing keyboard
+                            self.edit_message_text(user_id, message_id, message_text)
+                        else:
+                            self.edit_message(user_id, message_id, message_text, keyboard)
                     else:
-                        self.send_message(user_id, response[0], response[1])
+                        self.send_message(user_id, message_text, keyboard if keyboard else None)
                 return None
 
             command = message_text.split()[0].lower()
@@ -135,7 +140,29 @@ class BirthdayBot(TelegramBot):
     def handle_state_response(self, message_text: str, user_id: str, user_name: str, user_state: UserState) -> Optional[str]:
         """Handle responses based on user's current state."""
         try:
-            if user_state.state == "waiting_for_name":
+            if user_state.state == "waiting_for_edit_date":
+                birthday_id = user_state.context.get('birthday_id')
+                birthday = GlobalBirthday.objects.get(id=birthday_id)
+                try:
+                    new_date_obj = datetime.strptime(message_text.strip(), '%Y-%m-%d').date()
+                    
+                    birthday.birth_date = new_date_obj
+                    birthday.save()
+                    
+                    # Clear the state
+                    user_state.delete()
+                    
+                    buttons = [[{"text": "🔙 Back", "callback_data": "back_to_manage"}]]
+                    keyboard = self.create_inline_keyboard(buttons)
+                    return (f"✅ Successfully updated birthday:\n"
+                           f"Name: {birthday.name}\n"
+                           f"New Gregorian date: {birthday.birth_date}\n"
+                           f"New Persian date: {birthday.get_persian_date()}"), keyboard
+                except ValueError:
+                    # Don't include any buttons for error message
+                    return "❌ Invalid date format. Please use YYYY-MM-DD (e.g., 1990-12-31)", None
+
+            elif user_state.state == "waiting_for_name":
                 # Store the name and move to date input
                 user_state.context['name'] = message_text.strip()
                 user_state.state = 'waiting_for_birthday'
@@ -299,20 +326,6 @@ class BirthdayBot(TelegramBot):
                     buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
                     keyboard = self.create_inline_keyboard(buttons)
                     return "❌ Please enter a valid number", keyboard
-
-            elif user_state.state == "waiting_for_edit_date":
-                birthday_id = user_state.context.get('birthday_id')
-                response = self.handle_birthday_edit(birthday_id, user_id, message_text)
-                
-                if response.startswith("✅"):  # Success
-                    user_state.delete()
-                    buttons = [[{"text": "🔙 Back", "callback_data": "back_to_manage"}]]
-                    keyboard = self.create_inline_keyboard(buttons)
-                    return response, keyboard
-                else:  # Error
-                    buttons = [[{"text": "🔙 Back", "callback_data": "back_to_manage"}]]
-                    keyboard = self.create_inline_keyboard(buttons)
-                    return response, keyboard
 
         except Exception as e:
             logger.error(f"Error in handle_state_response: {e}")
