@@ -19,7 +19,6 @@ class BirthdayBot(TelegramBot):
         self.commands = {
             '/start': self.cmd_start,
             '/cancel': self.cmd_cancel,
-            '/mybirthday': self.cmd_set_my_birthday,
             '/listbirthdays': self.cmd_list_birthdays,
             '/help': self.cmd_help
         }
@@ -32,10 +31,7 @@ class BirthdayBot(TelegramBot):
                 {"text": "⏰ Set Reminder", "callback_data": "set_reminder"}
             ],
             [
-                {"text": "🎈 Set My Birthday", "callback_data": "set_my_birthday"},
-                {"text": "📋 List My Birthdays", "callback_data": "list_birthdays"}
-            ],
-            [
+                {"text": "📋 Birthdays List", "callback_data": "list_birthdays"},
                 {"text": "✏️ Manage My Entries", "callback_data": "manage_entries"}
             ],
             [
@@ -145,7 +141,7 @@ class BirthdayBot(TelegramBot):
                     
                     # After a brief pause, send the birthday list as a new message
                     import time
-                    time.sleep(2)
+                    time.sleep(1)
                     response, keyboard = self.get_user_birthdays(user_id)
                     self.send_message(user_id, response, keyboard)
                     
@@ -315,9 +311,16 @@ class BirthdayBot(TelegramBot):
                     # Clear the state
                     user_state.delete()
 
-                    buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
-                    keyboard = self.create_inline_keyboard(buttons)
-                    return f"✅ You will be notified {days} days before each birthday", keyboard
+                    # Show success message
+                    response = f"✅ You will be notified {days} days before each birthday"
+                    self.send_message(user_id, response)
+                    
+                    # After a brief pause, show main menu
+                    import time
+                    time.sleep(1)
+                    response = "What would you like to do?"
+                    self.send_message(user_id, response, self.get_main_menu_keyboard())
+                    return None
 
                 except ValueError:
                     buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
@@ -345,7 +348,7 @@ class BirthdayBot(TelegramBot):
                     
                     # After a brief pause, send the birthday list as a new message
                     import time
-                    time.sleep(2)
+                    time.sleep(1)
                     response, keyboard = self.get_user_birthdays(user_id)
                     self.send_message(user_id, response, keyboard)
                     
@@ -394,7 +397,7 @@ class BirthdayBot(TelegramBot):
                     
                     # After a brief pause, send the birthday list as a new message
                     import time
-                    time.sleep(2)
+                    time.sleep(1)
                     response, keyboard = self.get_user_birthdays(user_id)
                     self.send_message(user_id, response, keyboard)
                     
@@ -476,7 +479,7 @@ class BirthdayBot(TelegramBot):
                           f"📅 Date: {birthday.birth_date}\n"
                           f"⏰ Current reminder: {current_reminder} days before\n\n"
                           f"Please enter the number of days before the birthday you want to be reminded (0-365):\n"
-                          f"Enter -1 to use the default reminder setting ({settings.reminder_days} days)")
+                          f"Enter -1 to use the default reminder setting which is set ({settings.reminder_days} days)")
                 buttons = [[{"text": "🔙 Back", "callback_data": "back_to_manage"}]]
                 keyboard = self.create_inline_keyboard(buttons)
                 self.answer_callback_query(callback_query_id)
@@ -492,11 +495,13 @@ class BirthdayBot(TelegramBot):
                     defaults={'user_name': user_name, 'reminder_days': 1}
                 )
                 current_reminder = birthday.reminder_days if birthday.reminder_days is not None else settings.reminder_days
+                zodiac_sign = self.get_zodiac_sign(birthday.birth_date)
                 
                 response = (f"Birthday Details:\n"
                           f"👤 Name: {birthday.name}\n"
                           f"📅 Gregorian: {birthday.birth_date}\n"
                           f"🗓️ Persian: {birthday.get_persian_date()}\n"
+                          f"{zodiac_sign}\n"
                           f"⏰ Reminder: {current_reminder} days before\n\n"
                           f"Choose an action:")
                 
@@ -581,7 +586,7 @@ class BirthdayBot(TelegramBot):
                     
                     # After a brief pause, show the updated list
                     import time
-                    time.sleep(2)
+                    time.sleep(1)
                     response, keyboard = self.get_user_birthdays(user_id)
                     self.edit_message(user_id, message_id, response, keyboard)
                     return
@@ -622,23 +627,6 @@ class BirthdayBot(TelegramBot):
                 keyboard = self.create_inline_keyboard(buttons)
                 response = ("Please enter the number of days before birthdays you want to be reminded\n"
                           "For example: 7")
-                self.answer_callback_query(callback_query_id)
-                self.edit_message(user_id, message_id, response, keyboard)
-                return
-
-            elif callback_data == "set_my_birthday":
-                # Set state for birthday input
-                UserState.objects.update_or_create(
-                    user_id=user_id,
-                    defaults={
-                        'state': 'waiting_for_own_birthday',
-                        'context': {'user_name': user_name}
-                    }
-                )
-                buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
-                keyboard = self.create_inline_keyboard(buttons)
-                response = ("Please enter your birthday in YYYY-MM-DD format\n"
-                          "For example: 1990-12-31")
                 self.answer_callback_query(callback_query_id)
                 self.edit_message(user_id, message_id, response, keyboard)
                 return
@@ -704,28 +692,12 @@ class BirthdayBot(TelegramBot):
     def cmd_start(self, *args) -> str:
         return ("Welcome to Birthday Reminder Bot! 🎉\n\n"
                "Use the buttons below to:\n"
-               "• Add birthdays to the global list\n"
+               "• Add birthdays to your list\n"
                "• Set reminder preferences\n"
-               "• View your birthday info\n"
                "• List all birthdays\n"
-               "• Manage birthday visibility\n"
+               "• Manage your entries\n"
                "• Get help\n\n"
                "You can also use /cancel at any time to cancel the current operation.")
-
-    def cmd_set_my_birthday(self, message_text: str, user_id: str, user_name: str) -> str:
-        """Handle the command for setting user's own birthday."""
-        # Set state for birthday input
-        UserState.objects.update_or_create(
-            user_id=user_id,
-            defaults={
-                'state': 'waiting_for_own_birthday',
-                'context': {'user_name': user_name}
-            }
-        )
-        
-        return ("Please enter your birthday in YYYY-MM-DD format\n"
-               "For example: 1990-12-31\n\n"
-               "Click Cancel to go back to main menu.")
 
     def cmd_list_birthdays(self, message_text: str, user_id: str, *args) -> str:
         # Get only birthdays added by the current user
@@ -746,10 +718,12 @@ class BirthdayBot(TelegramBot):
             days_until = (next_birthday - today).days
             persian_date = birthday.get_persian_date()
             reminder_days = birthday.reminder_days if birthday.reminder_days is not None else settings.reminder_days
+            zodiac_sign = self.get_zodiac_sign(birthday.birth_date)
             
             response += (f"👤 {birthday.name}\n"
                         f"📅 Gregorian: {birthday.birth_date}\n"
                         f"📅 Persian: {persian_date}\n"
+                        f"{zodiac_sign}\n"
                         f"⏳ Days until birthday: {days_until}\n"
                         f"⏰ Reminder: {reminder_days} days before\n")
             
@@ -830,3 +804,33 @@ class BirthdayBot(TelegramBot):
                "• Persian calendar support\n"
                "• Customizable reminders\n"
                "• Edit/delete control over your birthdays")
+
+    def get_zodiac_sign(self, date: datetime.date) -> str:
+        """Get zodiac sign based on birth date."""
+        month = date.month
+        day = date.day
+        
+        if (month == 3 and day >= 21) or (month == 4 and day <= 19):
+            return "♈️ Aries"
+        elif (month == 4 and day >= 20) or (month == 5 and day <= 20):
+            return "♉️ Taurus"
+        elif (month == 5 and day >= 21) or (month == 6 and day <= 20):
+            return "♊️ Gemini"
+        elif (month == 6 and day >= 21) or (month == 7 and day <= 22):
+            return "♋️ Cancer"
+        elif (month == 7 and day >= 23) or (month == 8 and day <= 22):
+            return "♌️ Leo"
+        elif (month == 8 and day >= 23) or (month == 9 and day <= 22):
+            return "♍️ Virgo"
+        elif (month == 9 and day >= 23) or (month == 10 and day <= 22):
+            return "♎️ Libra"
+        elif (month == 10 and day >= 23) or (month == 11 and day <= 21):
+            return "♏️ Scorpio"
+        elif (month == 11 and day >= 22) or (month == 12 and day <= 21):
+            return "♐️ Sagittarius"
+        elif (month == 12 and day >= 22) or (month == 1 and day <= 19):
+            return "♑️ Capricorn"
+        elif (month == 1 and day >= 20) or (month == 2 and day <= 18):
+            return "♒️ Aquarius"
+        else:
+            return "♓️ Pisces"
