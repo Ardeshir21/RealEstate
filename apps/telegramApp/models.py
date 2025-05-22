@@ -11,6 +11,7 @@ class GlobalBirthday(models.Model):
     persian_birth_date = models.CharField(max_length=20, blank=True)  # Persian date stored as string
     added_by = models.CharField(max_length=255)  # Telegram user ID of the person who added this
     telegram_id = models.CharField(max_length=255, null=True, blank=True)  # Telegram ID if it's their own birthday
+    reminder_days = models.IntegerField(null=True, blank=True)  # Days before birthday to send reminder (null means use default)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

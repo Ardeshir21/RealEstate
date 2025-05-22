@@ -52,7 +52,10 @@ class BirthdayBot(TelegramBot):
         """Create the manage entries keyboard."""
         buttons = [
             [
-                {"text": "📝 Edit Birthday", "callback_data": "edit_birthday"},
+                {"text": "✏️ Edit Name", "callback_data": "edit_name"},
+                {"text": "📅 Edit Date", "callback_data": "edit_date"}
+            ],
+            [
                 {"text": "🗑️ Delete Birthday", "callback_data": "delete_birthday"}
             ],
             [
@@ -321,6 +324,87 @@ class BirthdayBot(TelegramBot):
                     keyboard = self.create_inline_keyboard(buttons)
                     return "❌ Please enter a valid number", keyboard
 
+            elif user_state.state == "waiting_for_edit_name":
+                birthday_id = user_state.context.get('birthday_id')
+                try:
+                    birthday = GlobalBirthday.objects.get(id=birthday_id)
+                    new_name = message_text.strip()
+                    
+                    birthday.name = new_name
+                    birthday.save()
+                    
+                    # Show success message
+                    response = (f"✅ Successfully updated birthday:\n"
+                              f"👤 New name: {birthday.name}\n"
+                              f"📅 Date: {birthday.birth_date}\n"
+                              f"🗓️ Persian date: {birthday.get_persian_date()}\n\n"
+                              f"Returning to birthday list...")
+                    
+                    # Send success message as a new message
+                    self.send_message(user_id, response)
+                    
+                    # After a brief pause, send the birthday list as a new message
+                    import time
+                    time.sleep(2)
+                    response, keyboard = self.get_user_birthdays(user_id)
+                    self.send_message(user_id, response, keyboard)
+                    
+                    # Clear the state after sending messages
+                    user_state.delete()
+                    
+                    return None
+                    
+                except ValueError:
+                    buttons = [[{"text": "🔙 Cancel", "callback_data": "back_to_list"}]]
+                    keyboard = self.create_inline_keyboard(buttons)
+                    return "❌ Invalid name format. Please try again.", keyboard
+
+            elif user_state.state == "waiting_for_edit_reminder":
+                birthday_id = user_state.context.get('birthday_id')
+                try:
+                    birthday = GlobalBirthday.objects.get(id=birthday_id)
+                    days = int(message_text.strip())
+                    
+                    if days < -1 or days > 365:
+                        buttons = [[{"text": "🔙 Cancel", "callback_data": "back_to_list"}]]
+                        keyboard = self.create_inline_keyboard(buttons)
+                        return "❌ Please enter a number between -1 and 365", keyboard
+                    
+                    if days == -1:
+                        birthday.reminder_days = None
+                    else:
+                        birthday.reminder_days = days
+                    birthday.save()
+                    
+                    settings = UserBirthdaySettings.objects.get(user_id=user_id)
+                    current_reminder = birthday.reminder_days if birthday.reminder_days is not None else settings.reminder_days
+                    
+                    # Show success message
+                    response = (f"✅ Successfully updated reminder:\n"
+                              f"👤 Name: {birthday.name}\n"
+                              f"📅 Date: {birthday.birth_date}\n"
+                              f"⏰ Reminder: {current_reminder} days before\n\n"
+                              f"Returning to birthday list...")
+                    
+                    # Send success message as a new message
+                    self.send_message(user_id, response)
+                    
+                    # After a brief pause, send the birthday list as a new message
+                    import time
+                    time.sleep(2)
+                    response, keyboard = self.get_user_birthdays(user_id)
+                    self.send_message(user_id, response, keyboard)
+                    
+                    # Clear the state after sending messages
+                    user_state.delete()
+                    
+                    return None
+                    
+                except ValueError:
+                    buttons = [[{"text": "🔙 Cancel", "callback_data": "back_to_list"}]]
+                    keyboard = self.create_inline_keyboard(buttons)
+                    return "❌ Please enter a valid number", keyboard
+
         except Exception as e:
             logger.error(f"Error in handle_state_response: {e}")
             user_state.delete()  # Clear state on error
@@ -337,23 +421,56 @@ class BirthdayBot(TelegramBot):
             callback_query_id = callback_query['id']
             message_id = callback_query['message']['message_id']
 
-            # Handle edit_id callbacks
-            if callback_data.startswith("edit_id_"):
+            # Handle edit_name callbacks
+            if callback_data.startswith("edit_name_"):
                 birthday_id = int(callback_data.split("_")[-1])
-                # Set state for edit
+                # Set state for name edit
                 UserState.objects.update_or_create(
                     user_id=user_id,
                     defaults={
-                        'state': 'waiting_for_edit_date',
-                        'context': {'birthday_id': birthday_id}
+                        'state': 'waiting_for_edit_name',
+                        'context': {
+                            'birthday_id': birthday_id,
+                            'message_id': message_id
+                        }
                     }
                 )
                 birthday = GlobalBirthday.objects.get(id=birthday_id)
                 response = (f"Current birthday info:\n"
-                          f"Name: {birthday.name}\n"
-                          f"Current date: {birthday.birth_date}\n"
-                          f"Current Persian date: {birthday.get_persian_date()}\n\n"
-                          f"Please enter the new date in YYYY-MM-DD format:")
+                          f"👤 Current name: {birthday.name}\n"
+                          f"📅 Date: {birthday.birth_date}\n"
+                          f"🗓️ Persian date: {birthday.get_persian_date()}\n\n"
+                          f"Please enter the new name:")
+                buttons = [[{"text": "🔙 Back", "callback_data": "back_to_manage"}]]
+                keyboard = self.create_inline_keyboard(buttons)
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, keyboard)
+                return
+
+            # Handle edit_reminder callbacks
+            elif callback_data.startswith("edit_reminder_"):
+                birthday_id = int(callback_data.split("_")[-1])
+                # Set state for reminder edit
+                UserState.objects.update_or_create(
+                    user_id=user_id,
+                    defaults={
+                        'state': 'waiting_for_edit_reminder',
+                        'context': {
+                            'birthday_id': birthday_id,
+                            'message_id': message_id
+                        }
+                    }
+                )
+                birthday = GlobalBirthday.objects.get(id=birthday_id)
+                settings = UserBirthdaySettings.objects.get(user_id=user_id)
+                current_reminder = birthday.reminder_days if birthday.reminder_days is not None else settings.reminder_days
+                
+                response = (f"Current birthday info:\n"
+                          f"👤 Name: {birthday.name}\n"
+                          f"📅 Date: {birthday.birth_date}\n"
+                          f"⏰ Current reminder: {current_reminder} days before\n\n"
+                          f"Please enter the number of days before the birthday you want to be reminded (0-365):\n"
+                          f"Enter -1 to use the default reminder setting ({settings.reminder_days} days)")
                 buttons = [[{"text": "🔙 Back", "callback_data": "back_to_manage"}]]
                 keyboard = self.create_inline_keyboard(buttons)
                 self.answer_callback_query(callback_query_id)
@@ -364,16 +481,23 @@ class BirthdayBot(TelegramBot):
             elif callback_data.startswith("manage_id_"):
                 birthday_id = int(callback_data.split("_")[-1])
                 birthday = GlobalBirthday.objects.get(id=birthday_id)
+                settings = UserBirthdaySettings.objects.get(user_id=user_id)
+                current_reminder = birthday.reminder_days if birthday.reminder_days is not None else settings.reminder_days
                 
                 response = (f"Birthday Details:\n"
                           f"👤 Name: {birthday.name}\n"
                           f"📅 Gregorian: {birthday.birth_date}\n"
-                          f"🗓️ Persian: {birthday.get_persian_date()}\n\n"
+                          f"🗓️ Persian: {birthday.get_persian_date()}\n"
+                          f"⏰ Reminder: {current_reminder} days before\n\n"
                           f"Choose an action:")
                 
                 buttons = [
                     [
-                        {"text": "✏️ Edit Date", "callback_data": f"edit_prompt_{birthday_id}"},
+                        {"text": "✏️ Edit Name", "callback_data": f"edit_name_{birthday_id}"},
+                        {"text": "📅 Edit Date", "callback_data": f"edit_prompt_{birthday_id}"}
+                    ],
+                    [
+                        {"text": "⏰ Edit Reminder", "callback_data": f"edit_reminder_{birthday_id}"},
                         {"text": "❌ Delete", "callback_data": f"delete_prompt_{birthday_id}"}
                     ],
                     [{"text": "🔙 Back to List", "callback_data": "back_to_list"}]
@@ -597,6 +721,7 @@ class BirthdayBot(TelegramBot):
     def cmd_list_birthdays(self, message_text: str, user_id: str, *args) -> str:
         # Get only birthdays added by the current user
         birthdays = GlobalBirthday.objects.filter(added_by=user_id).order_by('name')  # Sort by name
+        settings = UserBirthdaySettings.objects.get(user_id=user_id)
 
         if not birthdays:
             return "You haven't added any birthdays yet!"
@@ -608,12 +733,13 @@ class BirthdayBot(TelegramBot):
             next_birthday = birthday.get_next_birthday()
             days_until = (next_birthday - today).days
             persian_date = birthday.get_persian_date()
+            reminder_days = birthday.reminder_days if birthday.reminder_days is not None else settings.reminder_days
             
-            response += (f"ID: {birthday.id}\n"
-                        f"👤 {birthday.name}\n"
+            response += (f"👤 {birthday.name}\n"
                         f"📅 Gregorian: {birthday.birth_date}\n"
                         f"📅 Persian: {persian_date}\n"
-                        f"⏳ Days until birthday: {days_until}\n")
+                        f"⏳ Days until birthday: {days_until}\n"
+                        f"⏰ Reminder: {reminder_days} days before\n")
             
             # Add contact info if it's their own birthday
             if birthday.telegram_id == user_id:
