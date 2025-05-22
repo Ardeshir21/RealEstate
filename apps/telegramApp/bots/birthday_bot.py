@@ -133,9 +133,10 @@ class BirthdayBot(TelegramBot):
                 user_state.state = 'waiting_for_birthday'
                 user_state.save()
                 
+                buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
+                keyboard = self.create_inline_keyboard(buttons)
                 return ("Please enter the birthday in YYYY-MM-DD format\n"
-                       "For example: 1990-12-31\n\n"
-                       "Click Cancel to go back to main menu.")
+                       "For example: 1990-12-31")
 
             elif user_state.state == "waiting_for_own_birthday":
                 try:
@@ -199,7 +200,7 @@ class BirthdayBot(TelegramBot):
                            f"Others will now be able to contact you through the birthday list.")
 
                 except ValueError:
-                    return "❌ Invalid date format. Please use YYYY-MM-DD (e.g., 1990-12-31)\nOr click Cancel to go back to main menu."
+                    return "❌ Invalid date format. Please use YYYY-MM-DD (e.g., 1990-12-31)"
 
             elif user_state.state == "waiting_for_birthday":
                 try:
@@ -221,11 +222,19 @@ class BirthdayBot(TelegramBot):
                         user_state.state = 'confirm_existing'
                         user_state.save()
 
+                        buttons = [
+                            [
+                                {"text": "✅ Yes, Use Existing", "callback_data": "confirm_existing_yes"},
+                                {"text": "❌ No, Create New", "callback_data": "confirm_existing_no"}
+                            ],
+                            [{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]
+                        ]
+                        keyboard = self.create_inline_keyboard(buttons)
                         return (f"We found an existing entry:\n"
                                f"Name: {existing_birthday.name}\n"
                                f"Date: {existing_birthday.birth_date}\n"
                                f"Added by: <hidden>\n\n"
-                               f"Would you like to use this existing entry? (yes/no)")
+                               f"Would you like to use this existing entry?")
 
                     # Create new birthday entry (without telegram_id since it's not the user's own birthday)
                     birthday = GlobalBirthday.objects.create(
@@ -243,67 +252,13 @@ class BirthdayBot(TelegramBot):
                            f"Persian: {birthday.get_persian_date()}")
 
                 except ValueError:
-                    return "❌ Invalid date format. Please use YYYY-MM-DD (e.g., 1990-12-31)\nOr click Cancel to go back to main menu."
-
-            elif user_state.state == "confirm_existing":
-                answer = message_text.strip().lower()
-                if answer not in ['yes', 'no']:
-                    return "Please answer 'yes' or 'no'"
-
-                name = user_state.context.get('name')
-                existing_id = user_state.context.get('existing_id')
-
-                if answer == 'yes':
-                    # Use existing birthday
-                    birthday = GlobalBirthday.objects.get(id=existing_id)
-                    
-                    # Create or update user settings
-                    UserBirthdaySettings.objects.update_or_create(
-                        user_id=user_id,
-                        defaults={
-                            'user_name': user_name,
-                            'birthday': birthday if name == user_name else None
-                        }
-                    )
-
-                    response = (f"✅ Successfully linked to existing birthday:\n"
-                              f"Name: {birthday.name}\n"
-                              f"Gregorian: {birthday.birth_date}\n"
-                              f"Persian: {birthday.get_persian_date()}")
-
-                else:
-                    # Create new birthday entry
-                    birth_date = datetime.fromisoformat(user_state.context.get('birth_date')).date()
-                    birthday = GlobalBirthday.objects.create(
-                        name=name,
-                        birth_date=birth_date,
-                        added_by=user_id
-                    )
-
-                    # Create or update user settings
-                    UserBirthdaySettings.objects.update_or_create(
-                        user_id=user_id,
-                        defaults={
-                            'user_name': user_name,
-                            'birthday': birthday if name == user_name else None
-                        }
-                    )
-
-                    response = (f"✅ New birthday entry created:\n"
-                              f"Name: {birthday.name}\n"
-                              f"Gregorian: {birthday.birth_date}\n"
-                              f"Persian: {birthday.get_persian_date()}")
-
-                # Clear the state
-                user_state.delete()
-                self.send_message(user_id, response, self.get_main_menu_keyboard(show_cancel=False))
-                return None
+                    return "❌ Invalid date format. Please use YYYY-MM-DD (e.g., 1990-12-31)"
 
             elif user_state.state == "waiting_for_reminder":
                 try:
                     days = int(message_text.strip())
                     if days < 0:
-                        return "❌ Please enter a positive number of days\nOr click Cancel to go back to main menu."
+                        return "❌ Please enter a positive number of days"
 
                     # Update or create user settings
                     settings, _ = UserBirthdaySettings.objects.get_or_create(
@@ -316,45 +271,25 @@ class BirthdayBot(TelegramBot):
                     # Clear the state
                     user_state.delete()
 
-                    response = f"✅ You will be notified {days} days before each birthday"
-                    self.send_message(user_id, response, self.get_main_menu_keyboard(show_cancel=False))
-                    return None
+                    return f"✅ You will be notified {days} days before each birthday"
 
                 except ValueError:
-                    return "❌ Please enter a valid number\nOr click Cancel to go back to main menu."
-
-            elif user_state.state in ["waiting_for_exclude", "waiting_for_include"]:
-                try:
-                    birthday_id = int(message_text.strip())
-                    birthday = GlobalBirthday.objects.get(id=birthday_id)
-                    
-                    if user_state.state == "waiting_for_exclude":
-                        UserBirthdayExclusion.objects.get_or_create(
-                            user_id=user_id,
-                            birthday=birthday
-                        )
-                        response = f"✅ {birthday.name}'s birthday has been excluded from your view"
-                    else:  # waiting_for_include
-                        UserBirthdayExclusion.objects.filter(
-                            user_id=user_id,
-                            birthday=birthday
-                        ).delete()
-                        response = f"✅ {birthday.name}'s birthday has been included in your view"
-
-                    # Clear the state
-                    user_state.delete()
-                    self.send_message(user_id, response, self.get_main_menu_keyboard(show_cancel=False))
-                    return None
-
-                except (ValueError, GlobalBirthday.DoesNotExist):
-                    return "❌ Invalid birthday ID. Please enter a valid number from the list\nOr click Cancel to go back to main menu."
+                    return "❌ Please enter a valid number"
 
             elif user_state.state == "waiting_for_edit_date":
                 birthday_id = user_state.context.get('birthday_id')
                 response = self.handle_birthday_edit(birthday_id, user_id, message_text)
-                user_state.delete()
-                self.send_message(user_id, response, self.get_main_menu_keyboard(show_cancel=False))
-                return None
+                
+                if response.startswith("✅"):  # Success
+                    user_state.delete()
+                    # Show success message and return to manage entries
+                    response_keyboard = self.get_user_birthdays(user_id)
+                    return response, response_keyboard[1]  # Return the keyboard from the tuple
+                else:  # Error
+                    # Keep the same interface with back button for retry
+                    buttons = [[{"text": "🔙 Back", "callback_data": "back_to_manage"}]]
+                    keyboard = self.create_inline_keyboard(buttons)
+                    return response, keyboard
 
         except Exception as e:
             logger.error(f"Error in handle_state_response: {e}")
@@ -368,6 +303,7 @@ class BirthdayBot(TelegramBot):
             user_name = f"{callback_query['from'].get('first_name', '')} {callback_query['from'].get('last_name', '')}".strip()
             callback_data = callback_query['data']
             callback_query_id = callback_query['id']
+            message_id = callback_query['message']['message_id']
 
             if callback_data == "add_birthday":
                 # Set state for name input
@@ -378,9 +314,13 @@ class BirthdayBot(TelegramBot):
                         'context': {}
                     }
                 )
+                buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
+                keyboard = self.create_inline_keyboard(buttons)
                 response = ("Please enter the name of the person\n"
-                          "For example: John Doe\n\n"
-                          "Click Cancel to go back to main menu.")
+                          "For example: John Doe")
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, keyboard)
+                return
 
             elif callback_data == "set_reminder":
                 # Set state for reminder input
@@ -388,36 +328,113 @@ class BirthdayBot(TelegramBot):
                     user_id=user_id,
                     defaults={'state': 'waiting_for_reminder'}
                 )
+                buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
+                keyboard = self.create_inline_keyboard(buttons)
                 response = ("Please enter the number of days before birthdays you want to be reminded\n"
-                          "For example: 7\n\n"
-                          "Click Cancel to go back to main menu.")
+                          "For example: 7")
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, keyboard)
+                return
 
             elif callback_data == "set_my_birthday":
-                response = self.cmd_set_my_birthday("", user_id, user_name)
+                # Set state for birthday input
+                UserState.objects.update_or_create(
+                    user_id=user_id,
+                    defaults={
+                        'state': 'waiting_for_own_birthday',
+                        'context': {'user_name': user_name}
+                    }
+                )
+                buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
+                keyboard = self.create_inline_keyboard(buttons)
+                response = ("Please enter your birthday in YYYY-MM-DD format\n"
+                          "For example: 1990-12-31")
                 self.answer_callback_query(callback_query_id)
-                self.send_message(user_id, response, self.get_main_menu_keyboard(show_cancel=False))
+                self.edit_message(user_id, message_id, response, keyboard)
                 return
 
             elif callback_data == "list_birthdays":
                 response = self.cmd_list_birthdays("", user_id, user_name)
+                buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
+                keyboard = self.create_inline_keyboard(buttons)
                 self.answer_callback_query(callback_query_id)
-                self.send_message(user_id, response, self.get_main_menu_keyboard(show_cancel=False))
+                self.edit_message(user_id, message_id, response, keyboard)
                 return
 
             elif callback_data == "manage_visibility":
                 self.answer_callback_query(callback_query_id)
-                self.send_message(user_id, "Birthday Visibility Management:", self.get_visibility_keyboard())
+                self.edit_message(user_id, message_id, "Birthday Visibility Management:", self.get_visibility_keyboard())
+                return
+
+            elif callback_data == "manage_entries":
+                response, keyboard = self.get_user_birthdays(user_id)
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, keyboard)
+                return
+
+            elif callback_data == "edit_birthday":
+                response, keyboard = self.get_user_birthdays(user_id, for_edit=True)
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, keyboard)
+                return
+
+            elif callback_data == "delete_birthday":
+                response, keyboard = self.get_user_birthdays(user_id, for_delete=True)
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, keyboard)
                 return
 
             elif callback_data == "view_excluded":
                 response = self.get_excluded_birthdays(user_id)
-                if isinstance(response, tuple):
-                    response, keyboard = response
-                    self.answer_callback_query(callback_query_id)
-                    self.send_message(user_id, response, keyboard)
+                buttons = [[{"text": "🔙 Back to Visibility", "callback_data": "manage_visibility"}]]
+                keyboard = self.create_inline_keyboard(buttons)
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, keyboard)
+                return
+
+            elif callback_data == "include_birthday":
+                response = self.get_excluded_birthdays(user_id, for_inclusion=True)
+                if response == "You haven't excluded any birthdays yet!":
+                    buttons = [[{"text": "🔙 Back to Visibility", "callback_data": "manage_visibility"}]]
+                    keyboard = self.create_inline_keyboard(buttons)
                 else:
-                    self.answer_callback_query(callback_query_id)
-                    self.send_message(user_id, response, self.get_visibility_keyboard())
+                    response, keyboard = response  # Unpack the tuple
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, keyboard)
+                return
+
+            elif callback_data == "exclude_birthday":
+                response, keyboard = self.get_birthday_list_for_exclusion(user_id)
+                if response == "No birthdays available to exclude!":
+                    buttons = [[{"text": "🔙 Back to Visibility", "callback_data": "manage_visibility"}]]
+                    keyboard = self.create_inline_keyboard(buttons)
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, keyboard)
+                return
+
+            elif callback_data == "help":
+                response = self.cmd_help()
+                buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
+                keyboard = self.create_inline_keyboard(buttons)
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, keyboard)
+                return
+
+            elif callback_data == "back_to_main":
+                response = "What would you like to do?"
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, self.get_main_menu_keyboard(show_cancel=False))
+                return
+
+            elif callback_data == "back_to_manage":
+                response, keyboard = self.get_user_birthdays(user_id)
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, keyboard)
+                return
+
+            elif callback_data == "back_to_visibility":
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, "Birthday Visibility Management:", self.get_visibility_keyboard())
                 return
 
             elif callback_data.startswith("exclude_id_"):
@@ -432,7 +449,7 @@ class BirthdayBot(TelegramBot):
                 self.answer_callback_query(callback_query_id, f"Excluded {birthday.name}")
                 self.edit_message(
                     user_id,
-                    callback_query['message']['message_id'],
+                    message_id,
                     response,
                     keyboard
                 )
@@ -451,7 +468,7 @@ class BirthdayBot(TelegramBot):
                     self.answer_callback_query(callback_query_id, f"Included {birthday.name}")
                     self.edit_message(
                         user_id,
-                        callback_query['message']['message_id'],
+                        message_id,
                         response,
                         self.get_main_menu_keyboard(show_cancel=False)
                     )
@@ -461,7 +478,7 @@ class BirthdayBot(TelegramBot):
                     self.answer_callback_query(callback_query_id, f"Included {birthday.name}")
                     self.edit_message(
                         user_id,
-                        callback_query['message']['message_id'],
+                        message_id,
                         response,
                         keyboard
                     )
@@ -472,153 +489,14 @@ class BirthdayBot(TelegramBot):
                 self.answer_callback_query(callback_query_id)
                 self.edit_message(
                     user_id,
-                    callback_query['message']['message_id'],
+                    message_id,
                     response,
                     self.get_main_menu_keyboard(show_cancel=False)
                 )
                 return
 
-            elif callback_data == "exclude_birthday":
-                response, keyboard = self.get_birthday_list_for_exclusion(user_id)
-                if response == "No birthdays available to exclude!":
-                    self.answer_callback_query(callback_query_id)
-                    self.send_message(user_id, response, self.get_main_menu_keyboard(show_cancel=False))
-                else:
-                    self.answer_callback_query(callback_query_id)
-                    self.send_message(user_id, response, keyboard)
-                return
-
-            elif callback_data == "include_birthday":
-                response = self.get_excluded_birthdays(user_id, for_inclusion=True)
-                if response == "You haven't excluded any birthdays yet!":
-                    self.answer_callback_query(callback_query_id)
-                    self.send_message(user_id, response, self.get_main_menu_keyboard(show_cancel=False))
-                else:
-                    if isinstance(response, tuple):
-                        response, keyboard = response
-                    self.answer_callback_query(callback_query_id)
-                    self.send_message(user_id, response, keyboard)
-                return
-
-            elif callback_data == "back_to_main":
-                response = "What would you like to do?"
-                self.answer_callback_query(callback_query_id)
-                self.send_message(user_id, response, self.get_main_menu_keyboard(show_cancel=False))
-                return
-
-            elif callback_data == "help":
-                response = self.cmd_help()
-                self.answer_callback_query(callback_query_id)
-                self.send_message(user_id, response, self.get_main_menu_keyboard(show_cancel=False))
-                return
-
-            elif callback_data == "cancel":
-                # Clear any existing state
-                UserState.objects.filter(user_id=user_id).delete()
-                response = "Operation cancelled. What would you like to do?"
-                self.answer_callback_query(callback_query_id)
-                self.send_message(user_id, response, self.get_main_menu_keyboard(show_cancel=False))
-                return
-
-            elif callback_data == "manage_entries":
-                response, keyboard = self.get_user_birthdays(user_id)
-                self.answer_callback_query(callback_query_id)
-                self.send_message(user_id, response, keyboard)
-                return
-
-            elif callback_data == "edit_birthday":
-                response, keyboard = self.get_user_birthdays(user_id, for_edit=True)
-                self.answer_callback_query(callback_query_id)
-                self.send_message(user_id, response, keyboard)
-                return
-
-            elif callback_data == "delete_birthday":
-                response, keyboard = self.get_user_birthdays(user_id, for_delete=True)
-                self.answer_callback_query(callback_query_id)
-                self.send_message(user_id, response, keyboard)
-                return
-
-            elif callback_data.startswith("manage_id_"):
-                birthday_id = int(callback_data.split("_")[-1])
-                birthday = GlobalBirthday.objects.get(id=birthday_id, added_by=user_id)
-                buttons = [
-                    [
-                        {"text": "✏️ Edit Date", "callback_data": f"edit_id_{birthday_id}"},
-                        {"text": "❌ Delete", "callback_data": f"delete_id_{birthday_id}"}
-                    ],
-                    [{"text": "🔙 Back", "callback_data": "back_to_manage"}]
-                ]
-                keyboard = self.create_inline_keyboard(buttons)
-                response = (f"🎂 Managing birthday:\n\n"
-                          f"👤 {birthday.name}\n"
-                          f"📅 Gregorian: {birthday.birth_date}\n"
-                          f"📅 Persian: {birthday.get_persian_date()}\n\n"
-                          f"What would you like to do?")
-                self.answer_callback_query(callback_query_id)
-                self.edit_message(user_id, callback_query['message']['message_id'], response, keyboard)
-                return
-
-            elif callback_data.startswith("edit_id_"):
-                birthday_id = int(callback_data.split("_")[-1])
-                birthday = GlobalBirthday.objects.get(id=birthday_id, added_by=user_id)
-                
-                # Set state for editing
-                UserState.objects.update_or_create(
-                    user_id=user_id,
-                    defaults={
-                        'state': 'waiting_for_edit_date',
-                        'context': {'birthday_id': birthday_id}
-                    }
-                )
-                
-                response = (f"Current birthday info:\n"
-                          f"Name: {birthday.name}\n"
-                          f"Date: {birthday.birth_date}\n\n"
-                          f"Please enter the new date in YYYY-MM-DD format\n"
-                          f"For example: 1990-12-31\n\n"
-                          f"Click Cancel to go back to main menu.")
-                
-                self.answer_callback_query(callback_query_id)
-                self.edit_message(user_id, callback_query['message']['message_id'], response, self.get_main_menu_keyboard())
-                return
-
-            elif callback_data.startswith("delete_id_"):
-                birthday_id = int(callback_data.split("_")[-1])
-                birthday = GlobalBirthday.objects.get(id=birthday_id, added_by=user_id)
-                
-                buttons = [
-                    [
-                        {"text": "✅ Yes, Delete", "callback_data": f"confirm_delete_{birthday_id}"},
-                        {"text": "❌ No, Keep", "callback_data": "back_to_manage"}
-                    ]
-                ]
-                keyboard = self.create_inline_keyboard(buttons)
-                
-                response = (f"⚠️ Are you sure you want to delete this birthday?\n\n"
-                          f"👤 {birthday.name}\n"
-                          f"📅 Gregorian: {birthday.birth_date}\n"
-                          f"📅 Persian: {birthday.get_persian_date()}\n\n"
-                          f"This action cannot be undone!")
-                
-                self.answer_callback_query(callback_query_id)
-                self.edit_message(user_id, callback_query['message']['message_id'], response, keyboard)
-                return
-
-            elif callback_data.startswith("confirm_delete_"):
-                birthday_id = int(callback_data.split("_")[-1])
-                response = self.handle_birthday_delete(birthday_id, user_id)
-                self.answer_callback_query(callback_query_id)
-                self.edit_message(user_id, callback_query['message']['message_id'], response, self.get_main_menu_keyboard(show_cancel=False))
-                return
-
-            elif callback_data == "back_to_manage":
-                response, keyboard = self.get_user_birthdays(user_id)
-                self.answer_callback_query(callback_query_id)
-                self.edit_message(user_id, callback_query['message']['message_id'], response, keyboard)
-                return
-
             self.answer_callback_query(callback_query_id)
-            self.send_message(user_id, response, self.get_main_menu_keyboard())
+            self.edit_message(user_id, message_id, response, self.get_main_menu_keyboard())
 
         except Exception as e:
             logger.error(f"Error handling callback query: {e}")
