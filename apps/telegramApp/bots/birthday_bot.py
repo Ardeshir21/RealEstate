@@ -98,6 +98,7 @@ class BirthdayBot(TelegramBot):
             user = message.get('from', {})
             user_id = str(user.get('id'))
             user_name = f"{user.get('first_name', '')} {user.get('last_name', '')}".strip()
+            message_id = message.get('message_id')
 
             if message_text == '/start':
                 welcome_text = ("Welcome to Birthday Reminder Bot! 🎉\n\n"
@@ -108,7 +109,14 @@ class BirthdayBot(TelegramBot):
             # Check if user is in a conversation state
             user_state = UserState.objects.filter(user_id=user_id).first()
             if user_state:
-                return self.handle_state_response(message_text, user_id, user_name, user_state)
+                response = self.handle_state_response(message_text, user_id, user_name, user_state)
+                if isinstance(response, tuple):
+                    # If we have message_id, edit the message. Otherwise, send a new one
+                    if message_id:
+                        self.edit_message(user_id, message_id, response[0], response[1])
+                    else:
+                        self.send_message(user_id, response[0], response[1])
+                return None
 
             command = message_text.split()[0].lower()
             handler = self.commands.get(command)
@@ -298,7 +306,7 @@ class BirthdayBot(TelegramBot):
                 
                 if response.startswith("✅"):  # Success
                     user_state.delete()
-                    buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
+                    buttons = [[{"text": "🔙 Back", "callback_data": "back_to_manage"}]]
                     keyboard = self.create_inline_keyboard(buttons)
                     return response, keyboard
                 else:  # Error
