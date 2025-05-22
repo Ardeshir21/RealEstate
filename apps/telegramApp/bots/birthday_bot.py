@@ -35,10 +35,9 @@ class BirthdayBot(TelegramBot):
             ],
             [
                 {"text": "🎈 Set My Birthday", "callback_data": "set_my_birthday"},
-                {"text": "📋 List All Birthdays", "callback_data": "list_birthdays"}
+                {"text": "📋 List My Birthdays", "callback_data": "list_birthdays"}
             ],
             [
-                {"text": "👁️ Manage Visibility", "callback_data": "manage_visibility"},
                 {"text": "✏️ Manage My Entries", "callback_data": "manage_entries"}
             ],
             [
@@ -49,20 +48,6 @@ class BirthdayBot(TelegramBot):
         if show_cancel:
             buttons.append([{"text": "❌ Cancel", "callback_data": "cancel"}])
             
-        return self.create_inline_keyboard(buttons)
-
-    def get_visibility_keyboard(self) -> Dict:
-        """Create the visibility management keyboard."""
-        buttons = [
-            [
-                {"text": "🔍 View Excluded", "callback_data": "view_excluded"},
-                {"text": "➕ Include Birthday", "callback_data": "include_birthday"}
-            ],
-            [
-                {"text": "➖ Exclude Birthday", "callback_data": "exclude_birthday"},
-                {"text": "🔙 Back to Main", "callback_data": "back_to_main"}
-            ]
-        ]
         return self.create_inline_keyboard(buttons)
 
     def get_manage_entries_keyboard(self) -> Dict:
@@ -535,11 +520,6 @@ class BirthdayBot(TelegramBot):
                 self.edit_message(user_id, message_id, response, keyboard)
                 return
 
-            elif callback_data == "manage_visibility":
-                self.answer_callback_query(callback_query_id)
-                self.edit_message(user_id, message_id, "Birthday Visibility Management:", self.get_visibility_keyboard())
-                return
-
             elif callback_data == "manage_entries":
                 response, keyboard = self.get_user_birthdays(user_id)
                 self.answer_callback_query(callback_query_id)
@@ -554,34 +534,6 @@ class BirthdayBot(TelegramBot):
 
             elif callback_data == "delete_birthday":
                 response, keyboard = self.get_user_birthdays(user_id, for_delete=True)
-                self.answer_callback_query(callback_query_id)
-                self.edit_message(user_id, message_id, response, keyboard)
-                return
-
-            elif callback_data == "view_excluded":
-                response = self.get_excluded_birthdays(user_id)
-                buttons = [[{"text": "🔙 Back to Visibility", "callback_data": "manage_visibility"}]]
-                keyboard = self.create_inline_keyboard(buttons)
-                self.answer_callback_query(callback_query_id)
-                self.edit_message(user_id, message_id, response, keyboard)
-                return
-
-            elif callback_data == "include_birthday":
-                response = self.get_excluded_birthdays(user_id, for_inclusion=True)
-                if response == "You haven't excluded any birthdays yet!":
-                    buttons = [[{"text": "🔙 Back to Visibility", "callback_data": "manage_visibility"}]]
-                    keyboard = self.create_inline_keyboard(buttons)
-                else:
-                    response, keyboard = response  # Unpack the tuple
-                self.answer_callback_query(callback_query_id)
-                self.edit_message(user_id, message_id, response, keyboard)
-                return
-
-            elif callback_data == "exclude_birthday":
-                response, keyboard = self.get_birthday_list_for_exclusion(user_id)
-                if response == "No birthdays available to exclude!":
-                    buttons = [[{"text": "🔙 Back to Visibility", "callback_data": "manage_visibility"}]]
-                    keyboard = self.create_inline_keyboard(buttons)
                 self.answer_callback_query(callback_query_id)
                 self.edit_message(user_id, message_id, response, keyboard)
                 return
@@ -604,58 +556,6 @@ class BirthdayBot(TelegramBot):
                 response, keyboard = self.get_user_birthdays(user_id)
                 self.answer_callback_query(callback_query_id)
                 self.edit_message(user_id, message_id, response, keyboard)
-                return
-
-            elif callback_data == "back_to_visibility":
-                self.answer_callback_query(callback_query_id)
-                self.edit_message(user_id, message_id, "Birthday Visibility Management:", self.get_visibility_keyboard())
-                return
-
-            elif callback_data.startswith("exclude_id_"):
-                birthday_id = int(callback_data.split("_")[-1])
-                birthday = GlobalBirthday.objects.get(id=birthday_id)
-                UserBirthdayExclusion.objects.get_or_create(
-                    user_id=user_id,
-                    birthday=birthday
-                )
-                # Get updated list
-                response, keyboard = self.get_birthday_list_for_exclusion(user_id)
-                self.answer_callback_query(callback_query_id, f"Excluded {birthday.name}")
-                self.edit_message(
-                    user_id,
-                    message_id,
-                    response,
-                    keyboard
-                )
-                return
-
-            elif callback_data.startswith("include_id_"):
-                birthday_id = int(callback_data.split("_")[-1])
-                birthday = GlobalBirthday.objects.get(id=birthday_id)
-                UserBirthdayExclusion.objects.filter(
-                    user_id=user_id,
-                    birthday=birthday
-                ).delete()
-                # Get updated list
-                response = self.get_excluded_birthdays(user_id, for_inclusion=True)
-                if response == "You haven't excluded any birthdays yet!":
-                    self.answer_callback_query(callback_query_id, f"Included {birthday.name}")
-                    self.edit_message(
-                        user_id,
-                        message_id,
-                        response,
-                        self.get_main_menu_keyboard(show_cancel=False)
-                    )
-                else:
-                    if isinstance(response, tuple):
-                        response, keyboard = response
-                    self.answer_callback_query(callback_query_id, f"Included {birthday.name}")
-                    self.edit_message(
-                        user_id,
-                        message_id,
-                        response,
-                        keyboard
-                    )
                 return
 
             elif callback_data in ["exclude_done", "include_done"]:
@@ -708,15 +608,14 @@ class BirthdayBot(TelegramBot):
                "Click Cancel to go back to main menu.")
 
     def cmd_list_birthdays(self, message_text: str, user_id: str, *args) -> str:
-        # Get all birthdays except excluded ones
-        excluded_ids = UserBirthdayExclusion.objects.filter(user_id=user_id).values_list('birthday_id', flat=True)
-        birthdays = GlobalBirthday.objects.exclude(id__in=excluded_ids).order_by('birth_date')
+        # Get only birthdays added by the current user
+        birthdays = GlobalBirthday.objects.filter(added_by=user_id).order_by('name')  # Sort by name
 
         if not birthdays:
-            return "No birthdays in your view! Add some birthdays or check your exclusion settings."
+            return "You haven't added any birthdays yet!"
 
         today = timezone.now().date()
-        response = "🎂 All Birthdays:\n\n"
+        response = "🎂 Your Birthdays:\n\n"
         
         for birthday in birthdays:
             next_birthday = birthday.get_next_birthday()
@@ -729,9 +628,9 @@ class BirthdayBot(TelegramBot):
                         f"📅 Persian: {persian_date}\n"
                         f"⏳ Days until birthday: {days_until}\n")
             
-            # Add contact info if available
-            if birthday.telegram_id:
-                response += f"📱 Contact: [Click here](tg://user?id={birthday.telegram_id})\n"
+            # Add contact info if it's their own birthday
+            if birthday.telegram_id == user_id:
+                response += "📱 This is your birthday entry\n"
             
             response += "\n"
         
@@ -741,7 +640,7 @@ class BirthdayBot(TelegramBot):
         """Get all birthdays except already excluded ones with interactive buttons."""
         # Get all birthdays except already excluded ones
         excluded_ids = UserBirthdayExclusion.objects.filter(user_id=user_id).values_list('birthday_id', flat=True)
-        birthdays = GlobalBirthday.objects.exclude(id__in=excluded_ids).order_by('birth_date')
+        birthdays = GlobalBirthday.objects.exclude(id__in=excluded_ids).order_by('name')  # Sort by name
 
         if not birthdays:
             return "No birthdays available to exclude!", self.get_main_menu_keyboard(show_cancel=False)
@@ -769,7 +668,7 @@ class BirthdayBot(TelegramBot):
         """Get list of excluded birthdays with interactive buttons."""
         excluded_birthdays = GlobalBirthday.objects.filter(
             id__in=UserBirthdayExclusion.objects.filter(user_id=user_id).values_list('birthday_id', flat=True)
-        ).order_by('birth_date')
+        ).order_by('name')  # Sort by name
 
         if not excluded_birthdays:
             return "You haven't excluded any birthdays yet!"
@@ -808,111 +707,20 @@ class BirthdayBot(TelegramBot):
     def cmd_help(self, *args) -> str:
         return ("Welcome to Birthday Reminder Bot! 🎉\n\n"
                "Use the buttons below to:\n"
-               "• Add birthdays to the global list\n"
-               "• Set your own birthday (to allow others to contact you)\n"
+               "• Add birthdays to your private list\n"
                "• Set reminder preferences\n"
-               "• List all birthdays\n"
-               "• Manage birthday visibility\n"
-               "• Edit or delete birthdays you've added\n"
+               "• Set your own birthday\n"
+               "• List your birthdays\n"
+               "• Edit or delete your birthdays\n"
                "• Get help\n\n"
                "Available commands:\n"
-               "/mybirthday - Set your own birthday (allows others to contact you)\n"
-               "/cancel - Cancel current operation\n"
-               "/exclude - Exclude a birthday from your view\n"
-               "/include - Include a previously excluded birthday\n\n"
+               "/mybirthday - Set your own birthday\n"
+               "/cancel - Cancel current operation\n\n"
                "Features:\n"
-               "• Global birthday sharing\n"
-               "• Contact info for users who set their own birthday\n"
+               "• Private birthday list for each user\n"
                "• Persian calendar support\n"
                "• Customizable reminders\n"
-               "• Birthday visibility management\n"
-               "• Edit/delete control over birthdays you add")
-
-    def _notify_chat_members(self, chat_id: str, user_id: str, display_name: str, 
-                           birth_date: datetime.date, persian_date: str) -> None:
-        """
-        Notify chat members about a new birthday.
-        
-        Args:
-            chat_id: The ID of the chat where the birthday was added
-            user_id: The ID of the user who added the birthday
-            display_name: The name of the person whose birthday was added
-            birth_date: The Gregorian birth date
-            persian_date: The Persian birth date
-        """
-        try:
-            from ..models import UserBirthdaySettings
-            
-            # Get all users who have settings (active users)
-            all_users = UserBirthdaySettings.objects.exclude(user_id=user_id).values_list('user_id', flat=True)
-            
-            if not all_users:
-                return
-                
-            notification = (
-                f"🎉 New Birthday Added! 🎉\n\n"
-                f"👤 {display_name}\n"
-                f"🌐 Gregorian: {birth_date}\n"
-                f"🗓️ Persian: {persian_date}\n\n"
-                f"You can exclude this birthday from your view using the Manage Visibility option."
-            )
-            
-            for recipient_id in all_users:
-                try:
-                    self.send_message(recipient_id, notification)
-                except Exception as e:
-                    logger.error(f"Failed to send notification to user {recipient_id}: {e}")
-                    continue
-                    
-        except Exception as e:
-            logger.error(f"Error in _notify_chat_members: {e}")
-            # Don't raise the exception - notification failure shouldn't break the main flow
-
-    def cmd_exclude(self, message_text: str, user_id: str, user_name: str, *args) -> str:
-        """Handle the /exclude command to exclude birthdays from view."""
-        response, keyboard = self.get_birthday_list_for_exclusion(user_id)
-        if response != "No birthdays available to exclude!":
-            # Set state for exclusion
-            UserState.objects.update_or_create(
-                user_id=user_id,
-                defaults={'state': 'waiting_for_exclude'}
-            )
-        return response
-
-    def cmd_include(self, message_text: str, user_id: str, user_name: str, *args) -> str:
-        """Handle the /include command to include previously excluded birthdays."""
-        response, keyboard = self.get_excluded_birthdays(user_id, for_inclusion=True)
-        if response != "You haven't excluded any birthdays yet!":
-            # Set state for inclusion
-            UserState.objects.update_or_create(
-                user_id=user_id,
-                defaults={'state': 'waiting_for_include'}
-            )
-        return response
-
-    def get_user_birthdays(self, user_id: str, for_edit: bool = False, for_delete: bool = False) -> tuple:
-        """Get list of birthdays added by the user with interactive buttons."""
-        birthdays = GlobalBirthday.objects.filter(added_by=user_id).order_by('birth_date')
-        
-        if not birthdays:
-            return "You haven't added any birthdays yet!", self.get_main_menu_keyboard(show_cancel=False)
-        
-        response = "🎂 Your Birthdays:\n\n"
-        
-        buttons = []
-        for birthday in birthdays:
-            button_text = (f"🎂 {birthday.name} ({birthday.birth_date})")
-            # Each birthday gets its own row with a manage option
-            buttons.append([{
-                "text": button_text,
-                "callback_data": f"manage_id_{birthday.id}"
-            }])
-        
-        # Add Back button at the bottom
-        buttons.append([{"text": "🔙 Back to Main", "callback_data": "back_to_main"}])
-        
-        keyboard = self.create_inline_keyboard(buttons)
-        return response, keyboard
+               "• Edit/delete control over your birthdays")
 
     def handle_birthday_edit(self, birthday_id: int, user_id: str, new_date: str) -> str:
         """Handle editing a birthday date."""

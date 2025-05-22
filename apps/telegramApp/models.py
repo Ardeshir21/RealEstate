@@ -5,18 +5,18 @@ import jdatetime
 # Create your models here.
 
 class GlobalBirthday(models.Model):
-    """Global birthday entries that can be shared across users"""
+    """Birthday entries that are private to each user"""
     name = models.CharField(max_length=255)  # Person's name
     birth_date = models.DateField()  # Gregorian date
     persian_birth_date = models.CharField(max_length=20, blank=True)  # Persian date stored as string
-    added_by = models.CharField(max_length=255)  # Telegram user ID of first person who added this
-    telegram_id = models.CharField(max_length=255, null=True, blank=True)  # Telegram ID of the person if it's their own birthday
+    added_by = models.CharField(max_length=255)  # Telegram user ID of the person who added this
+    telegram_id = models.CharField(max_length=255, null=True, blank=True)  # Telegram ID if it's their own birthday
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        # Ensure uniqueness based on name and date combination
-        unique_together = ['name', 'birth_date']
+        # Ensure uniqueness based on name, date and added_by combination
+        unique_together = ['name', 'birth_date', 'added_by']
 
     def save(self, *args, **kwargs):
         # Automatically convert and store Persian date whenever Gregorian date is saved
@@ -61,18 +61,6 @@ class UserBirthdaySettings(models.Model):
 
     def __str__(self):
         return f"Settings for {self.user_name}"
-
-class UserBirthdayExclusion(models.Model):
-    """Track which birthdays a user has excluded from their view/notifications"""
-    user_id = models.CharField(max_length=100)  # Telegram user ID
-    birthday = models.ForeignKey(GlobalBirthday, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ['user_id', 'birthday']
-
-    def __str__(self):
-        return f"{self.user_id} excluded {self.birthday.name}'s birthday"
 
 class UserState(models.Model):
     """Track user conversation state for multi-step interactions"""
