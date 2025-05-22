@@ -114,12 +114,8 @@ class BirthdayBot(TelegramBot):
                 response = self.handle_state_response(message_text, user_id, user_name, user_state)
                 if isinstance(response, tuple):
                     message_text, keyboard = response
-                    # Always edit the original message when in a state
-                    if keyboard is None:
-                        # Just update the text, keeping existing keyboard
-                        self.edit_message_text(user_id, message_id, message_text)
-                    else:
-                        self.edit_message(user_id, message_id, message_text, keyboard)
+                    # Send a new message instead of editing
+                    self.send_message(user_id, message_text, keyboard)
                 return None
 
             command = message_text.split()[0].lower()
