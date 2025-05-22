@@ -701,7 +701,7 @@ class BirthdayBot(TelegramBot):
 
     def cmd_list_birthdays(self, message_text: str, user_id: str, *args) -> str:
         # Get only birthdays added by the current user
-        birthdays = GlobalBirthday.objects.filter(added_by=user_id).order_by('name')  # Sort by name
+        birthdays = GlobalBirthday.objects.filter(added_by=user_id)
         settings, _ = UserBirthdaySettings.objects.get_or_create(
             user_id=user_id,
             defaults={'user_name': args[0] if args else "", 'reminder_days': 1}
@@ -711,33 +711,44 @@ class BirthdayBot(TelegramBot):
             return "You haven't added any birthdays yet!"
 
         today = timezone.now().date()
-        response = "🎂 Your Birthdays:\n\n"
         
+        # Create a list of birthdays with their next occurrence and days until
+        birthday_list = []
         for birthday in birthdays:
             next_birthday = birthday.get_next_birthday()
             days_until = (next_birthday - today).days
+            birthday_list.append((birthday, days_until))
+        
+        # Sort by days until next birthday
+        birthday_list.sort(key=lambda x: x[1])
+        
+        response = "🎂 Upcoming Birthdays:\n\n"
+        
+        for birthday, days_until in birthday_list:
             persian_date = birthday.get_persian_date()
             reminder_days = birthday.reminder_days if birthday.reminder_days is not None else settings.reminder_days
             zodiac_sign = self.get_zodiac_sign(birthday.birth_date)
             
+            # Add emoji indicators for very close birthdays
+            days_indicator = "🔔 TODAY!" if days_until == 0 else (
+                           "🎉 Tomorrow!" if days_until == 1 else (
+                           "⚡️ In 2 days!" if days_until == 2 else (
+                           "📅 In 3 days!" if days_until == 3 else
+                           f"⏳ In {days_until} days")))
+            
             response += (f"👤 {birthday.name}\n"
-                        f"📅 Gregorian: {birthday.birth_date}\n"
-                        f"📅 Persian: {persian_date}\n"
-                        f"{zodiac_sign}\n"
-                        f"⏳ Days until birthday: {days_until}\n"
-                        f"⏰ Reminder: {reminder_days} days before\n")
-            
-            # Add contact info if it's their own birthday
-            if birthday.telegram_id == user_id:
-                response += "📱 This is your birthday entry\n"
-            
-            response += "\n"
+                        f"  {days_indicator}\n"
+                        f"  📅 Gregorian: {birthday.birth_date}\n"
+                        f"  📅 Persian: {persian_date}\n"
+                        f"  🌟 {zodiac_sign}\n"
+                        f"  ⏰ Reminder: {reminder_days} days before\n\n")
         
         return response
 
     def get_user_birthdays(self, user_id: str, for_edit: bool = False, for_delete: bool = False) -> tuple:
         """Get list of birthdays added by the user with interactive buttons."""
-        birthdays = GlobalBirthday.objects.filter(added_by=user_id).order_by('name')  # Sort by name
+        # Keep alphabetical sorting for editing interface
+        birthdays = GlobalBirthday.objects.filter(added_by=user_id).order_by('name')
         
         if not birthdays:
             return "You haven't added any birthdays yet!", self.get_main_menu_keyboard(show_cancel=False)
@@ -788,22 +799,10 @@ class BirthdayBot(TelegramBot):
             return "❌ You can only delete birthdays that you have added."
 
     def cmd_help(self, *args) -> str:
-        return ("Welcome to Birthday Reminder Bot! 🎉\n\n"
-               "Use the buttons below to:\n"
-               "• Add birthdays to your private list\n"
-               "• Set reminder preferences\n"
-               "• Set your own birthday\n"
-               "• List your birthdays\n"
-               "• Edit or delete your birthdays\n"
-               "• Get help\n\n"
-               "Available commands:\n"
-               "/mybirthday - Set your own birthday\n"
-               "/cancel - Cancel current operation\n\n"
-               "Features:\n"
-               "• Private birthday list for each user\n"
-               "• Persian calendar support\n"
-               "• Customizable reminders\n"
-               "• Edit/delete control over your birthdays")
+        return ("🎉 Welcome to the Birthday Celebration Central! 🎂\n\n"
+               "Never miss a chance to celebrate!"
+               "Remember: You can always say /cancel if you need a fresh start. 🔄\n\n"
+               "Now, let's make sure no birthday goes uncelebrated! 🎁")
 
     def get_zodiac_sign(self, date: datetime.date) -> str:
         """Get zodiac sign based on birth date."""
