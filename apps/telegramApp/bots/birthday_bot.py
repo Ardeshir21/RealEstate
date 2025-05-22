@@ -144,6 +144,7 @@ class BirthdayBot(TelegramBot):
             
             if user_state.state == "waiting_for_edit_date":
                 birthday_id = user_state.context.get('birthday_id')
+                message_id = user_state.context.get('message_id')
                 try:
                     birthday = GlobalBirthday.objects.get(id=birthday_id)
                     new_date_obj = datetime.strptime(message_text.strip(), '%Y-%m-%d').date()
@@ -158,28 +159,22 @@ class BirthdayBot(TelegramBot):
                               f"🗓️ New Persian date: {birthday.get_persian_date()}\n\n"
                               f"Returning to birthday list...")
                     
-                    # First show success message without keyboard
+                    # Send success message as a new message
+                    self.send_message(user_id, response)
+                    
+                    # After a brief pause, update the original message with the birthday list
+                    import time
+                    time.sleep(2)
+                    response, keyboard = self.get_user_birthdays(user_id)
+                    
                     if message_id:
-                        self.edit_message_text(user_id, message_id, response)
-                        
-                        # After a brief pause, show the updated list
-                        import time
-                        time.sleep(2)
-                        response, keyboard = self.get_user_birthdays(user_id)
                         self.edit_message(user_id, message_id, response, keyboard)
                     else:
-                        # If no message_id, just send a new message
-                        self.send_message(user_id, response)
-                        time.sleep(2)
-                        response, keyboard = self.get_user_birthdays(user_id)
                         self.send_message(user_id, response, keyboard)
                     
                     # Clear the state after sending messages
-                    if user_state.id:
-                        user_state.delete()
-                    else:
-                        UserState.objects.filter(user_id=user_id).delete()
-                        
+                    user_state.delete()
+                    
                     return None, None
                     
                 except ValueError:
