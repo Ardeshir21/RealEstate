@@ -345,6 +345,29 @@ class BirthdayBot(TelegramBot):
                 self.edit_message(user_id, message_id, response, keyboard)
                 return
 
+            # Handle manage_id callbacks
+            elif callback_data.startswith("manage_id_"):
+                birthday_id = int(callback_data.split("_")[-1])
+                birthday = GlobalBirthday.objects.get(id=birthday_id)
+                
+                buttons = [
+                    [
+                        {"text": "✏️ Edit Date", "callback_data": f"edit_id_{birthday_id}"},
+                        {"text": "🗑️ Delete", "callback_data": f"delete_id_{birthday_id}"}
+                    ],
+                    [{"text": "🔙 Back", "callback_data": "back_to_manage"}]
+                ]
+                keyboard = self.create_inline_keyboard(buttons)
+                response = (f"Birthday Details:\n"
+                          f"Name: {birthday.name}\n"
+                          f"Gregorian: {birthday.birth_date}\n"
+                          f"Persian: {birthday.get_persian_date()}\n\n"
+                          f"What would you like to do?")
+                
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, keyboard)
+                return
+
             elif callback_data == "add_birthday":
                 # Set state for name input
                 UserState.objects.update_or_create(
