@@ -39,6 +39,9 @@ class BirthdayBot(TelegramBot):
             ],
             [
                 {"text": "👁️ Manage Visibility", "callback_data": "manage_visibility"},
+                {"text": "✏️ Manage My Entries", "callback_data": "manage_entries"}
+            ],
+            [
                 {"text": "❓ Help", "callback_data": "help"}
             ]
         ]
@@ -57,6 +60,19 @@ class BirthdayBot(TelegramBot):
             ],
             [
                 {"text": "➖ Exclude Birthday", "callback_data": "exclude_birthday"},
+                {"text": "🔙 Back to Main", "callback_data": "back_to_main"}
+            ]
+        ]
+        return self.create_inline_keyboard(buttons)
+
+    def get_manage_entries_keyboard(self) -> Dict:
+        """Create the manage entries keyboard."""
+        buttons = [
+            [
+                {"text": "📝 Edit Birthday", "callback_data": "edit_birthday"},
+                {"text": "🗑️ Delete Birthday", "callback_data": "delete_birthday"}
+            ],
+            [
                 {"text": "🔙 Back to Main", "callback_data": "back_to_main"}
             ]
         ]
@@ -333,6 +349,43 @@ class BirthdayBot(TelegramBot):
                 except (ValueError, GlobalBirthday.DoesNotExist):
                     return "❌ Invalid birthday ID. Please enter a valid number from the list\nOr click Cancel to go back to main menu."
 
+            elif user_state.state == "waiting_for_edit_id":
+                try:
+                    birthday_id = int(message_text.strip())
+                    birthday = GlobalBirthday.objects.get(id=birthday_id, added_by=user_id)
+                    
+                    # Store birthday ID and move to date input
+                    user_state.context['birthday_id'] = birthday_id
+                    user_state.state = 'waiting_for_edit_date'
+                    user_state.save()
+                    
+                    return (f"Current birthday info:\n"
+                           f"Name: {birthday.name}\n"
+                           f"Date: {birthday.birth_date}\n\n"
+                           f"Please enter the new date in YYYY-MM-DD format\n"
+                           f"For example: 1990-12-31\n\n"
+                           f"Click Cancel to go back to main menu.")
+                    
+                except (ValueError, GlobalBirthday.DoesNotExist):
+                    return "❌ Invalid birthday ID or you don't have permission to edit this birthday.\nPlease enter a valid ID from your list or click Cancel."
+
+            elif user_state.state == "waiting_for_edit_date":
+                birthday_id = user_state.context.get('birthday_id')
+                response = self.handle_birthday_edit(birthday_id, user_id, message_text)
+                user_state.delete()
+                self.send_message(user_id, response, self.get_main_menu_keyboard(show_cancel=False))
+                return None
+
+            elif user_state.state == "waiting_for_delete_id":
+                try:
+                    birthday_id = int(message_text.strip())
+                    response = self.handle_birthday_delete(birthday_id, user_id)
+                    user_state.delete()
+                    self.send_message(user_id, response, self.get_main_menu_keyboard(show_cancel=False))
+                    return None
+                except ValueError:
+                    return "❌ Invalid birthday ID. Please enter a valid number from your list or click Cancel."
+
         except Exception as e:
             logger.error(f"Error in handle_state_response: {e}")
             user_state.delete()  # Clear state on error
@@ -497,6 +550,54 @@ class BirthdayBot(TelegramBot):
                 self.send_message(user_id, response, self.get_main_menu_keyboard(show_cancel=False))
                 return
 
+            elif callback_data == "manage_entries":
+                response = self.get_user_birthdays(user_id)
+                if response == "You haven't added any birthdays yet!":
+                    self.answer_callback_query(callback_query_id)
+                    self.send_message(user_id, response, self.get_main_menu_keyboard(show_cancel=False))
+                else:
+                    self.answer_callback_query(callback_query_id)
+                    self.send_message(user_id, response, self.get_manage_entries_keyboard())
+                return
+
+            elif callback_data == "edit_birthday":
+                response = self.get_user_birthdays(user_id)
+                if response == "You haven't added any birthdays yet!":
+                    self.answer_callback_query(callback_query_id)
+                    self.send_message(user_id, response, self.get_main_menu_keyboard(show_cancel=False))
+                else:
+                    # Set state for editing
+                    UserState.objects.update_or_create(
+                        user_id=user_id,
+                        defaults={
+                            'state': 'waiting_for_edit_id',
+                            'context': {}
+                        }
+                    )
+                    response += "\nPlease enter the ID of the birthday you want to edit:"
+                    self.answer_callback_query(callback_query_id)
+                    self.send_message(user_id, response, self.get_main_menu_keyboard())
+                return
+
+            elif callback_data == "delete_birthday":
+                response = self.get_user_birthdays(user_id)
+                if response == "You haven't added any birthdays yet!":
+                    self.answer_callback_query(callback_query_id)
+                    self.send_message(user_id, response, self.get_main_menu_keyboard(show_cancel=False))
+                else:
+                    # Set state for deletion
+                    UserState.objects.update_or_create(
+                        user_id=user_id,
+                        defaults={
+                            'state': 'waiting_for_delete_id',
+                            'context': {}
+                        }
+                    )
+                    response += "\nPlease enter the ID of the birthday you want to delete:"
+                    self.answer_callback_query(callback_query_id)
+                    self.send_message(user_id, response, self.get_main_menu_keyboard())
+                return
+
             self.answer_callback_query(callback_query_id)
             self.send_message(user_id, response, self.get_main_menu_keyboard())
 
@@ -641,6 +742,7 @@ class BirthdayBot(TelegramBot):
                "• Set reminder preferences\n"
                "• List all birthdays\n"
                "• Manage birthday visibility\n"
+               "• Edit or delete birthdays you've added\n"
                "• Get help\n\n"
                "Available commands:\n"
                "/mybirthday - Set your own birthday (allows others to contact you)\n"
@@ -652,7 +754,8 @@ class BirthdayBot(TelegramBot):
                "• Contact info for users who set their own birthday\n"
                "• Persian calendar support\n"
                "• Customizable reminders\n"
-               "• Birthday visibility management")
+               "• Birthday visibility management\n"
+               "• Edit/delete control over birthdays you add")
 
     def _notify_chat_members(self, chat_id: str, user_id: str, display_name: str, 
                            birth_date: datetime.date, persian_date: str) -> None:
@@ -715,3 +818,47 @@ class BirthdayBot(TelegramBot):
                 defaults={'state': 'waiting_for_include'}
             )
         return response
+
+    def get_user_birthdays(self, user_id: str) -> str:
+        """Get list of birthdays added by the user."""
+        birthdays = GlobalBirthday.objects.filter(added_by=user_id).order_by('birth_date')
+        
+        if not birthdays:
+            return "You haven't added any birthdays yet!"
+        
+        response = "🎂 Birthdays you've added:\n\n"
+        for birthday in birthdays:
+            response += (f"ID: {birthday.id}\n"
+                       f"👤 {birthday.name}\n"
+                       f"📅 Gregorian: {birthday.birth_date}\n"
+                       f"📅 Persian: {birthday.get_persian_date()}\n\n")
+        
+        return response
+
+    def handle_birthday_edit(self, birthday_id: int, user_id: str, new_date: str) -> str:
+        """Handle editing a birthday date."""
+        try:
+            birthday = GlobalBirthday.objects.get(id=birthday_id, added_by=user_id)
+            new_date_obj = datetime.strptime(new_date.strip(), '%Y-%m-%d').date()
+            
+            birthday.birth_date = new_date_obj
+            birthday.save()
+            
+            return (f"✅ Successfully updated birthday:\n"
+                   f"Name: {birthday.name}\n"
+                   f"New Gregorian date: {birthday.birth_date}\n"
+                   f"New Persian date: {birthday.get_persian_date()}")
+        except GlobalBirthday.DoesNotExist:
+            return "❌ You can only edit birthdays that you have added."
+        except ValueError:
+            return "❌ Invalid date format. Please use YYYY-MM-DD (e.g., 1990-12-31)"
+
+    def handle_birthday_delete(self, birthday_id: int, user_id: str) -> str:
+        """Handle deleting a birthday."""
+        try:
+            birthday = GlobalBirthday.objects.get(id=birthday_id, added_by=user_id)
+            name = birthday.name
+            birthday.delete()
+            return f"✅ Successfully deleted {name}'s birthday."
+        except GlobalBirthday.DoesNotExist:
+            return "❌ You can only delete birthdays that you have added."
