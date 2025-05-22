@@ -722,7 +722,7 @@ class BirthdayBot(TelegramBot):
         # Sort by days until next birthday
         birthday_list.sort(key=lambda x: x[1])
         
-        response = "🎂 Upcoming Birthdays:\n\n"
+        response = "�� Upcoming Birthdays 🎂\n" + "─" * 30 + "\n\n"
         
         for birthday, days_until in birthday_list:
             persian_date = birthday.get_persian_date()
@@ -735,13 +735,19 @@ class BirthdayBot(TelegramBot):
                            "⚡️ In 2 days!" if days_until == 2 else (
                            "📅 In 3 days!" if days_until == 3 else
                            f"⏳ In {days_until} days")))
+
+            # Add sparkles for birthdays happening today or tomorrow
+            name_decoration = "✨ " if days_until <= 1 else ""
             
-            response += (f"👤 {birthday.name}\n"
-                        f"  {days_indicator}\n"
-                        f"  📅 Gregorian: {birthday.birth_date}\n"
-                        f"  📅 Persian: {persian_date}\n"
-                        f"  🌟 {zodiac_sign}\n"
-                        f"  ⏰ Reminder: {reminder_days} days before\n\n")
+            response += f"┌{'─' * 28}┐\n"
+            response += f"│ {name_decoration}{birthday.name} {name_decoration}\n"
+            response += f"├{'─' * 28}┤\n"
+            response += f"│ {days_indicator}\n"
+            response += f"│ 📅 {birthday.birth_date} (Gregorian)\n"
+            response += f"│ 🗓️ {persian_date} (Persian)\n"
+            response += f"│ {zodiac_sign}\n"
+            response += f"│ 🔔 Reminder: {reminder_days} days before\n"
+            response += f"└{'─' * 28}┘\n\n"
         
         return response
 
@@ -753,7 +759,7 @@ class BirthdayBot(TelegramBot):
         if not birthdays:
             return "You haven't added any birthdays yet!", self.get_main_menu_keyboard(show_cancel=False)
         
-        response = "🎂 Your Birthdays:\n\n"
+        response = "🎂 Your Birthdays 🎂\n" + "─" * 30 + "\n\n"
         
         buttons = []
         for birthday in birthdays:
