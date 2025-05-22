@@ -26,7 +26,7 @@ class BirthdayBot(TelegramBot):
             '/include': self.cmd_include
         }
 
-    def get_main_menu_keyboard(self, show_cancel: bool = True) -> Dict:
+    def get_main_menu_keyboard(self, show_cancel: bool = False) -> Dict:
         """Create the main menu keyboard."""
         buttons = [
             [
@@ -136,7 +136,7 @@ class BirthdayBot(TelegramBot):
                 buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
                 keyboard = self.create_inline_keyboard(buttons)
                 return ("Please enter the birthday in YYYY-MM-DD format\n"
-                       "For example: 1990-12-31")
+                       "For example: 1990-12-31"), keyboard
 
             elif user_state.state == "waiting_for_own_birthday":
                 try:
@@ -167,11 +167,13 @@ class BirthdayBot(TelegramBot):
                         # Clear the state
                         user_state.delete()
                         
+                        buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
+                        keyboard = self.create_inline_keyboard(buttons)
                         return (f"✅ Successfully set your birthday!\n"
                                f"Name: {existing_birthday.name}\n"
                                f"Gregorian: {existing_birthday.birth_date}\n"
                                f"Persian: {existing_birthday.get_persian_date()}\n\n"
-                               f"Others will now be able to contact you through the birthday list.")
+                               f"Others will now be able to contact you through the birthday list."), keyboard
 
                     # Create new birthday entry
                     birthday = GlobalBirthday.objects.create(
@@ -193,14 +195,18 @@ class BirthdayBot(TelegramBot):
                     # Clear the state
                     user_state.delete()
 
+                    buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
+                    keyboard = self.create_inline_keyboard(buttons)
                     return (f"✅ Successfully set your birthday!\n"
                            f"Name: {birthday.name}\n"
                            f"Gregorian: {birthday.birth_date}\n"
                            f"Persian: {birthday.get_persian_date()}\n\n"
-                           f"Others will now be able to contact you through the birthday list.")
+                           f"Others will now be able to contact you through the birthday list."), keyboard
 
                 except ValueError:
-                    return "❌ Invalid date format. Please use YYYY-MM-DD (e.g., 1990-12-31)"
+                    buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
+                    keyboard = self.create_inline_keyboard(buttons)
+                    return "❌ Invalid date format. Please use YYYY-MM-DD (e.g., 1990-12-31)", keyboard
 
             elif user_state.state == "waiting_for_birthday":
                 try:
@@ -234,9 +240,9 @@ class BirthdayBot(TelegramBot):
                                f"Name: {existing_birthday.name}\n"
                                f"Date: {existing_birthday.birth_date}\n"
                                f"Added by: <hidden>\n\n"
-                               f"Would you like to use this existing entry?")
+                               f"Would you like to use this existing entry?"), keyboard
 
-                    # Create new birthday entry (without telegram_id since it's not the user's own birthday)
+                    # Create new birthday entry
                     birthday = GlobalBirthday.objects.create(
                         name=name,
                         birth_date=birth_date,
@@ -246,19 +252,25 @@ class BirthdayBot(TelegramBot):
                     # Clear the state
                     user_state.delete()
 
+                    buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
+                    keyboard = self.create_inline_keyboard(buttons)
                     return (f"✅ Birthday successfully added:\n"
                            f"Name: {birthday.name}\n"
                            f"Gregorian: {birthday.birth_date}\n"
-                           f"Persian: {birthday.get_persian_date()}")
+                           f"Persian: {birthday.get_persian_date()}"), keyboard
 
                 except ValueError:
-                    return "❌ Invalid date format. Please use YYYY-MM-DD (e.g., 1990-12-31)"
+                    buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
+                    keyboard = self.create_inline_keyboard(buttons)
+                    return "❌ Invalid date format. Please use YYYY-MM-DD (e.g., 1990-12-31)", keyboard
 
             elif user_state.state == "waiting_for_reminder":
                 try:
                     days = int(message_text.strip())
                     if days < 0:
-                        return "❌ Please enter a positive number of days"
+                        buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
+                        keyboard = self.create_inline_keyboard(buttons)
+                        return "❌ Please enter a positive number of days", keyboard
 
                     # Update or create user settings
                     settings, _ = UserBirthdaySettings.objects.get_or_create(
@@ -271,10 +283,14 @@ class BirthdayBot(TelegramBot):
                     # Clear the state
                     user_state.delete()
 
-                    return f"✅ You will be notified {days} days before each birthday"
+                    buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
+                    keyboard = self.create_inline_keyboard(buttons)
+                    return f"✅ You will be notified {days} days before each birthday", keyboard
 
                 except ValueError:
-                    return "❌ Please enter a valid number"
+                    buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
+                    keyboard = self.create_inline_keyboard(buttons)
+                    return "❌ Please enter a valid number", keyboard
 
             elif user_state.state == "waiting_for_edit_date":
                 birthday_id = user_state.context.get('birthday_id')
@@ -282,11 +298,10 @@ class BirthdayBot(TelegramBot):
                 
                 if response.startswith("✅"):  # Success
                     user_state.delete()
-                    # Show success message and return to manage entries
-                    response_keyboard = self.get_user_birthdays(user_id)
-                    return response, response_keyboard[1]  # Return the keyboard from the tuple
+                    buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
+                    keyboard = self.create_inline_keyboard(buttons)
+                    return response, keyboard
                 else:  # Error
-                    # Keep the same interface with back button for retry
                     buttons = [[{"text": "🔙 Back", "callback_data": "back_to_manage"}]]
                     keyboard = self.create_inline_keyboard(buttons)
                     return response, keyboard
@@ -294,7 +309,9 @@ class BirthdayBot(TelegramBot):
         except Exception as e:
             logger.error(f"Error in handle_state_response: {e}")
             user_state.delete()  # Clear state on error
-            return "An error occurred. Please try again."
+            buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
+            keyboard = self.create_inline_keyboard(buttons)
+            return f"An error occurred. Please try again.", keyboard
 
     def handle_callback_query(self, callback_query: Dict[str, Any]) -> None:
         """Handle callback queries from inline keyboard buttons."""
@@ -305,7 +322,30 @@ class BirthdayBot(TelegramBot):
             callback_query_id = callback_query['id']
             message_id = callback_query['message']['message_id']
 
-            if callback_data == "add_birthday":
+            # Handle edit_id callbacks
+            if callback_data.startswith("edit_id_"):
+                birthday_id = int(callback_data.split("_")[-1])
+                # Set state for edit
+                UserState.objects.update_or_create(
+                    user_id=user_id,
+                    defaults={
+                        'state': 'waiting_for_edit_date',
+                        'context': {'birthday_id': birthday_id}
+                    }
+                )
+                birthday = GlobalBirthday.objects.get(id=birthday_id)
+                response = (f"Current birthday info:\n"
+                          f"Name: {birthday.name}\n"
+                          f"Current date: {birthday.birth_date}\n"
+                          f"Current Persian date: {birthday.get_persian_date()}\n\n"
+                          f"Please enter the new date in YYYY-MM-DD format:")
+                buttons = [[{"text": "🔙 Back", "callback_data": "back_to_manage"}]]
+                keyboard = self.create_inline_keyboard(buttons)
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, keyboard)
+                return
+
+            elif callback_data == "add_birthday":
                 # Set state for name input
                 UserState.objects.update_or_create(
                     user_id=user_id,
