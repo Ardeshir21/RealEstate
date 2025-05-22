@@ -144,7 +144,6 @@ class BirthdayBot(TelegramBot):
             
             if user_state.state == "waiting_for_edit_date":
                 birthday_id = user_state.context.get('birthday_id')
-                message_id = user_state.context.get('message_id')
                 try:
                     birthday = GlobalBirthday.objects.get(id=birthday_id)
                     new_date_obj = datetime.strptime(message_text.strip(), '%Y-%m-%d').date()
@@ -162,15 +161,11 @@ class BirthdayBot(TelegramBot):
                     # Send success message as a new message
                     self.send_message(user_id, response)
                     
-                    # After a brief pause, update the original message with the birthday list
+                    # After a brief pause, send the birthday list as a new message
                     import time
                     time.sleep(2)
                     response, keyboard = self.get_user_birthdays(user_id)
-                    
-                    if message_id:
-                        self.edit_message(user_id, message_id, response, keyboard)
-                    else:
-                        self.send_message(user_id, response, keyboard)
+                    self.send_message(user_id, response, keyboard)
                     
                     # Clear the state after sending messages
                     user_state.delete()
