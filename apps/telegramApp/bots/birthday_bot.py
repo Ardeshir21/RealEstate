@@ -7,7 +7,7 @@ import jdatetime
 import re
 from django.db import IntegrityError
 
-from ..models import GlobalBirthday, UserBirthdaySettings, UserBirthdayExclusion, UserState
+from ..models import GlobalBirthday, UserBirthdaySettings, UserState
 from .base import TelegramBot
 
 logger = logging.getLogger(__name__)
@@ -21,9 +21,7 @@ class BirthdayBot(TelegramBot):
             '/cancel': self.cmd_cancel,
             '/mybirthday': self.cmd_set_my_birthday,
             '/listbirthdays': self.cmd_list_birthdays,
-            '/help': self.cmd_help,
-            '/exclude': self.cmd_exclude,
-            '/include': self.cmd_include
+            '/help': self.cmd_help
         }
 
     def get_main_menu_keyboard(self, show_cancel: bool = False) -> Dict:
@@ -558,17 +556,6 @@ class BirthdayBot(TelegramBot):
                 self.edit_message(user_id, message_id, response, keyboard)
                 return
 
-            elif callback_data in ["exclude_done", "include_done"]:
-                response = "✅ Changes saved successfully!"
-                self.answer_callback_query(callback_query_id)
-                self.edit_message(
-                    user_id,
-                    message_id,
-                    response,
-                    self.get_main_menu_keyboard(show_cancel=False)
-                )
-                return
-
             self.answer_callback_query(callback_query_id)
             self.edit_message(user_id, message_id, response, self.get_main_menu_keyboard())
 
@@ -636,91 +623,29 @@ class BirthdayBot(TelegramBot):
         
         return response
 
-    def get_birthday_list_for_exclusion(self, user_id: str) -> tuple:
-        """Get all birthdays except already excluded ones with interactive buttons."""
-        # Get all birthdays except already excluded ones
-        excluded_ids = UserBirthdayExclusion.objects.filter(user_id=user_id).values_list('birthday_id', flat=True)
-        birthdays = GlobalBirthday.objects.exclude(id__in=excluded_ids).order_by('name')  # Sort by name
-
-        if not birthdays:
-            return "No birthdays available to exclude!", self.get_main_menu_keyboard(show_cancel=False)
-
-        response = "🎂 Select birthdays to exclude:\n\n"
-        buttons = []
+    def get_user_birthdays(self, user_id: str, for_edit: bool = False, for_delete: bool = False) -> tuple:
+        """Get list of birthdays added by the user with interactive buttons."""
+        birthdays = GlobalBirthday.objects.filter(added_by=user_id).order_by('name')  # Sort by name
         
+        if not birthdays:
+            return "You haven't added any birthdays yet!", self.get_main_menu_keyboard(show_cancel=False)
+        
+        response = "🎂 Your Birthdays:\n\n"
+        
+        buttons = []
         for birthday in birthdays:
-            button_text = (f"❌ {birthday.name}\n"
-                         f"🌐 {birthday.birth_date}\n"
-                         f"🗓️ {birthday.get_persian_date()}")
-            # Each birthday gets its own row
+            button_text = (f"🎂 {birthday.name} ({birthday.birth_date})")
+            # Each birthday gets its own row with a manage option
             buttons.append([{
                 "text": button_text,
-                "callback_data": f"exclude_id_{birthday.id}"
+                "callback_data": f"manage_id_{birthday.id}"
             }])
-            
-        # Add Done button at the bottom
-        buttons.append([{"text": "✅ Done", "callback_data": "exclude_done"}])
+        
+        # Add Back button at the bottom
+        buttons.append([{"text": "🔙 Back to Main", "callback_data": "back_to_main"}])
         
         keyboard = self.create_inline_keyboard(buttons)
         return response, keyboard
-
-    def get_excluded_birthdays(self, user_id: str, for_inclusion: bool = False) -> str:
-        """Get list of excluded birthdays with interactive buttons."""
-        excluded_birthdays = GlobalBirthday.objects.filter(
-            id__in=UserBirthdayExclusion.objects.filter(user_id=user_id).values_list('birthday_id', flat=True)
-        ).order_by('name')  # Sort by name
-
-        if not excluded_birthdays:
-            return "You haven't excluded any birthdays yet!"
-
-        if for_inclusion:
-            response = "🎂 Select birthdays to include:\n\n"
-        else:
-            response = "🎂 Currently excluded birthdays:\n\n"
-
-        buttons = []
-        
-        if for_inclusion:
-            for birthday in excluded_birthdays:
-                button_text = (f"✅ {birthday.name}\n"
-                             f"🌐 {birthday.birth_date}\n"
-                             f"🗓️ {birthday.get_persian_date()}")
-                # Each birthday gets its own row
-                buttons.append([{
-                    "text": button_text,
-                    "callback_data": f"include_id_{birthday.id}"
-                }])
-                
-            # Add Done button at the bottom
-            buttons.append([{"text": "✅ Done", "callback_data": "include_done"}])
-            
-            keyboard = self.create_inline_keyboard(buttons)
-            return response, keyboard
-        else:
-            for birthday in excluded_birthdays:
-                response += (f"👤 {birthday.name}\n"
-                           f"📅 Gregorian: {birthday.birth_date}\n"
-                           f"📅 Persian: {birthday.get_persian_date()}\n\n")
-            
-            return response
-
-    def cmd_help(self, *args) -> str:
-        return ("Welcome to Birthday Reminder Bot! 🎉\n\n"
-               "Use the buttons below to:\n"
-               "• Add birthdays to your private list\n"
-               "• Set reminder preferences\n"
-               "• Set your own birthday\n"
-               "• List your birthdays\n"
-               "• Edit or delete your birthdays\n"
-               "• Get help\n\n"
-               "Available commands:\n"
-               "/mybirthday - Set your own birthday\n"
-               "/cancel - Cancel current operation\n\n"
-               "Features:\n"
-               "• Private birthday list for each user\n"
-               "• Persian calendar support\n"
-               "• Customizable reminders\n"
-               "• Edit/delete control over your birthdays")
 
     def handle_birthday_edit(self, birthday_id: int, user_id: str, new_date: str) -> str:
         """Handle editing a birthday date."""
@@ -749,3 +674,21 @@ class BirthdayBot(TelegramBot):
             return f"✅ Successfully deleted {name}'s birthday."
         except GlobalBirthday.DoesNotExist:
             return "❌ You can only delete birthdays that you have added."
+
+    def cmd_help(self, *args) -> str:
+        return ("Welcome to Birthday Reminder Bot! 🎉\n\n"
+               "Use the buttons below to:\n"
+               "• Add birthdays to your private list\n"
+               "• Set reminder preferences\n"
+               "• Set your own birthday\n"
+               "• List your birthdays\n"
+               "• Edit or delete your birthdays\n"
+               "• Get help\n\n"
+               "Available commands:\n"
+               "/mybirthday - Set your own birthday\n"
+               "/cancel - Cancel current operation\n\n"
+               "Features:\n"
+               "• Private birthday list for each user\n"
+               "• Persian calendar support\n"
+               "• Customizable reminders\n"
+               "• Edit/delete control over your birthdays")
