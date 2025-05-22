@@ -139,8 +139,8 @@ class BirthdayBot(TelegramBot):
     def handle_state_response(self, message_text: str, user_id: str, user_name: str, user_state: UserState) -> Optional[str]:
         """Handle responses based on user's current state."""
         try:
-            # Get message_id from the original message if it exists
-            message_id = getattr(user_state, 'message_id', None)
+            # Get message_id from the context
+            message_id = user_state.context.get('message_id')
             
             if user_state.state == "waiting_for_edit_date":
                 birthday_id = user_state.context.get('birthday_id')
@@ -424,8 +424,10 @@ class BirthdayBot(TelegramBot):
                     user_id=user_id,
                     defaults={
                         'state': 'waiting_for_edit_date',
-                        'context': {'birthday_id': birthday_id},
-                        'message_id': message_id
+                        'context': {
+                            'birthday_id': birthday_id,
+                            'message_id': message_id
+                        }
                     }
                 )
                 
