@@ -139,6 +139,9 @@ class BirthdayBot(TelegramBot):
     def handle_state_response(self, message_text: str, user_id: str, user_name: str, user_state: UserState) -> Optional[str]:
         """Handle responses based on user's current state."""
         try:
+            # Get message_id from the original message if it exists
+            message_id = getattr(user_state, 'message_id', None)
+            
             if user_state.state == "waiting_for_edit_date":
                 birthday_id = user_state.context.get('birthday_id')
                 try:
@@ -148,9 +151,6 @@ class BirthdayBot(TelegramBot):
                     birthday.birth_date = new_date_obj
                     birthday.save()
                     
-                    # Clear the state
-                    user_state.delete()
-                    
                     # Show success message
                     response = (f"✅ Successfully updated birthday:\n"
                               f"👤 Name: {birthday.name}\n"
@@ -159,13 +159,27 @@ class BirthdayBot(TelegramBot):
                               f"Returning to birthday list...")
                     
                     # First show success message without keyboard
-                    self.edit_message_text(user_id, message_id, response)
+                    if message_id:
+                        self.edit_message_text(user_id, message_id, response)
+                        
+                        # After a brief pause, show the updated list
+                        import time
+                        time.sleep(2)
+                        response, keyboard = self.get_user_birthdays(user_id)
+                        self.edit_message(user_id, message_id, response, keyboard)
+                    else:
+                        # If no message_id, just send a new message
+                        self.send_message(user_id, response)
+                        time.sleep(2)
+                        response, keyboard = self.get_user_birthdays(user_id)
+                        self.send_message(user_id, response, keyboard)
                     
-                    # After a brief pause, show the updated list
-                    import time
-                    time.sleep(2)
-                    response, keyboard = self.get_user_birthdays(user_id)
-                    self.edit_message(user_id, message_id, response, keyboard)
+                    # Clear the state after sending messages
+                    if user_state.id:
+                        user_state.delete()
+                    else:
+                        UserState.objects.filter(user_id=user_id).delete()
+                        
                     return None, None
                     
                 except ValueError:
@@ -410,7 +424,8 @@ class BirthdayBot(TelegramBot):
                     user_id=user_id,
                     defaults={
                         'state': 'waiting_for_edit_date',
-                        'context': {'birthday_id': birthday_id}
+                        'context': {'birthday_id': birthday_id},
+                        'message_id': message_id
                     }
                 )
                 
