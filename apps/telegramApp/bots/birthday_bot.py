@@ -98,7 +98,9 @@ class BirthdayBot(TelegramBot):
             user = message.get('from', {})
             user_id = str(user.get('id'))
             user_name = f"{user.get('first_name', '')} {user.get('last_name', '')}".strip()
-            message_id = message.get('message_id')
+            # Get message_id from reply_to_message if it exists, otherwise from the message itself
+            message_id = (message.get('reply_to_message', {}).get('message_id') or 
+                        message.get('message_id'))
 
             if message_text == '/start':
                 welcome_text = ("Welcome to Birthday Reminder Bot! 🎉\n\n"
@@ -112,15 +114,12 @@ class BirthdayBot(TelegramBot):
                 response = self.handle_state_response(message_text, user_id, user_name, user_state)
                 if isinstance(response, tuple):
                     message_text, keyboard = response
-                    # If we have message_id, edit the message
-                    if message_id:
-                        if keyboard is None:
-                            # Just update the text, keeping existing keyboard
-                            self.edit_message_text(user_id, message_id, message_text)
-                        else:
-                            self.edit_message(user_id, message_id, message_text, keyboard)
+                    # Always edit the original message when in a state
+                    if keyboard is None:
+                        # Just update the text, keeping existing keyboard
+                        self.edit_message_text(user_id, message_id, message_text)
                     else:
-                        self.send_message(user_id, message_text, keyboard if keyboard else None)
+                        self.edit_message(user_id, message_id, message_text, keyboard)
                 return None
 
             command = message_text.split()[0].lower()
