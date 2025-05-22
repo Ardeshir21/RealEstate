@@ -112,7 +112,7 @@ class BirthdayBot(TelegramBot):
             user_state = UserState.objects.filter(user_id=user_id).first()
             if user_state:
                 response = self.handle_state_response(message_text, user_id, user_name, user_state)
-                if isinstance(response, tuple):
+                if response and isinstance(response, tuple):
                     message_text, keyboard = response
                     # Send a new message instead of editing
                     self.send_message(user_id, message_text, keyboard)
@@ -132,7 +132,7 @@ class BirthdayBot(TelegramBot):
             logger.error(f"Error handling birthday command: {e}")
             return f"An error occurred while processing your request: {str(e)}"
 
-    def handle_state_response(self, message_text: str, user_id: str, user_name: str, user_state: UserState) -> Optional[str]:
+    def handle_state_response(self, message_text: str, user_id: str, user_name: str, user_state: UserState) -> Optional[tuple]:
         """Handle responses based on user's current state."""
         try:
             # Get message_id from the context
@@ -166,7 +166,7 @@ class BirthdayBot(TelegramBot):
                     # Clear the state after sending messages
                     user_state.delete()
                     
-                    return None, None
+                    return None
                     
                 except ValueError:
                     buttons = [[{"text": "🔙 Cancel", "callback_data": "back_to_list"}]]
