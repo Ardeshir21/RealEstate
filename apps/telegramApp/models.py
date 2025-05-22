@@ -6,10 +6,11 @@ import jdatetime
 
 class GlobalBirthday(models.Model):
     """Global birthday entries that can be shared across users"""
-    name = models.CharField(max_length=100)  # Person's name
+    name = models.CharField(max_length=255)  # Person's name
     birth_date = models.DateField()  # Gregorian date
     persian_birth_date = models.CharField(max_length=20, blank=True)  # Persian date stored as string
-    added_by = models.CharField(max_length=100)  # Telegram user ID of first person who added this
+    added_by = models.CharField(max_length=255)  # Telegram user ID of first person who added this
+    telegram_id = models.CharField(max_length=255, null=True, blank=True)  # Telegram ID of the person if it's their own birthday
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
