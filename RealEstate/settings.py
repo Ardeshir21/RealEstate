@@ -102,7 +102,7 @@ INSTALLED_APPS = [
     'compressor',
     # for debug analysis
     # 'debug_toolbar',
-
+    'django_crontab',
 ]
 
 MIDDLEWARE = [
@@ -421,3 +421,17 @@ LOGGING = {
 
 # This helps to get the errors even if the DEBUG is False
 DEBUG_PROPAGATE_EXCEPTIONS = True
+
+# Crontab Settings
+CRONJOBS = [
+    # Run birthday reminders every day at 9:00 AM
+    ('0 9 * * *', 'telegramApp.management.commands.send_birthday_reminders.Command.handle', '>> /tmp/birthday_reminder.log 2>&1'),
+    
+    # You can add more scheduled jobs here as needed
+    # Format: ('cron schedule', 'path.to.function', 'optional logging')
+]
+
+# Crontab settings (optional)
+CRONTAB_LOCK_JOBS = True
+CRONTAB_DJANGO_PROJECT_NAME = 'RealEstate'
+CRONTAB_DJANGO_MANAGE_PATH = os.path.join(BASE_DIR, 'manage.py')
