@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 import jdatetime
 import re
+from datetime import datetime, date, timedelta
 
 # Create your models here.
 
@@ -23,6 +24,8 @@ class GlobalBirthday(models.Model):
     added_by = models.CharField(max_length=255)  # Telegram user ID of the person who added this
     telegram_id = models.CharField(max_length=255, null=True, blank=True)  # Telegram ID if it's their own birthday
     reminder_days = models.IntegerField(null=True, blank=True)  # Days before birthday to send reminder (null means use default)
+    snoozed_until = models.DateField(null=True, blank=True)  # Date until which the reminder is snoozed
+    last_reminder_sent = models.DateField(null=True, blank=True)  # Track when the last reminder was sent
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -83,14 +86,15 @@ class GlobalBirthday(models.Model):
         """Get Persian date string"""
         return self.persian_birth_date
 
-    def get_next_birthday(self):
+    def get_next_birthday(self) -> date:
+        """Calculate the next occurrence of this birthday."""
         today = timezone.now().date()
-        birthday_this_year = self.birth_date.replace(year=today.year)
+        birthday_this_year = date(today.year, self.birth_date.month, self.birth_date.day)
         
-        if birthday_this_year < today:
-            birthday_this_year = birthday_this_year.replace(year=today.year + 1)
-        
-        return birthday_this_year
+        if birthday_this_year >= today:
+            return birthday_this_year
+        else:
+            return date(today.year + 1, self.birth_date.month, self.birth_date.day)
 
     def get_age(self):
         today = timezone.now().date()

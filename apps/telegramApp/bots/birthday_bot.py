@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.conf import settings
 from django.utils import timezone
 from typing import Optional, Dict, Any, Union
@@ -7,7 +7,6 @@ import jdatetime
 import re
 from django.db import IntegrityError
 from django.db.models import Count, Q, F
-from django.utils.timezone import timedelta
 import hashlib
 
 from ..models import GlobalBirthday, UserBirthdaySettings, UserState, TelegramAdmin
@@ -533,6 +532,52 @@ class BirthdayBot(TelegramBot):
             callback_data = callback_query['data']
             callback_query_id = callback_query['id']
             message_id = callback_query['message']['message_id']
+
+            # Handle snooze callbacks
+            if callback_data.startswith("snooze_"):
+                try:
+                    _, birthday_id, days = callback_data.split("_")
+                    birthday = GlobalBirthday.objects.get(id=int(birthday_id), added_by=user_id)
+                    
+                    # Calculate snooze date based on next birthday
+                    next_birthday = birthday.get_next_birthday()
+                    snooze_until = next_birthday - timedelta(days=int(days))
+                    
+                    # Update snooze date
+                    birthday.snoozed_until = snooze_until
+                    birthday.save()
+                    
+                    response = (f"✅ Reminder snoozed!\n"
+                              f"You'll be reminded {days} days before {birthday.name}'s birthday.")
+                    
+                    self.answer_callback_query(callback_query_id)
+                    self.edit_message(user_id, message_id, response, None)
+                    return
+                except Exception as e:
+                    logger.error(f"Error handling snooze: {e}")
+                    self.answer_callback_query(callback_query_id, "❌ Failed to snooze reminder")
+                    return
+
+            # Handle dismiss callbacks
+            elif callback_data.startswith("dismiss_reminder_"):
+                try:
+                    birthday_id = int(callback_data.replace("dismiss_reminder_", ""))
+                    birthday = GlobalBirthday.objects.get(id=birthday_id, added_by=user_id)
+                    
+                    # Set snooze until next reminder window
+                    next_birthday = birthday.get_next_birthday()
+                    reminder_days = birthday.reminder_days or UserBirthdaySettings.objects.get(user_id=user_id).reminder_days
+                    birthday.snoozed_until = next_birthday - timedelta(days=reminder_days)
+                    birthday.save()
+                    
+                    response = "✅ Reminder dismissed"
+                    self.answer_callback_query(callback_query_id)
+                    self.edit_message(user_id, message_id, response, None)
+                    return
+                except Exception as e:
+                    logger.error(f"Error dismissing reminder: {e}")
+                    self.answer_callback_query(callback_query_id, "❌ Failed to dismiss reminder")
+                    return
 
             # Handle admin panel callbacks
             if callback_data == "admin_panel":
