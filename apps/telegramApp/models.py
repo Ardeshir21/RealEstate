@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 import jdatetime
+import re
 
 # Create your models here.
 
@@ -19,11 +20,53 @@ class GlobalBirthday(models.Model):
         # Ensure uniqueness based on name, date and added_by combination
         unique_together = ['name', 'birth_date', 'added_by']
 
+    @staticmethod
+    def is_persian_date(date_str: str) -> bool:
+        """Check if the given date string is in Persian format (YYYY/MM/DD)"""
+        if not re.match(r'^\d{4}[/-]\d{1,2}[/-]\d{1,2}$', date_str):
+            return False
+        try:
+            year, month, day = map(int, re.split('[/-]', date_str))
+            # Basic validation for Persian date
+            return 1 <= month <= 12 and 1 <= day <= 31 and year >= 1200 and year <= 1500
+        except ValueError:
+            return False
+
+    @staticmethod
+    def parse_date(date_str: str):
+        """Parse date string in either Gregorian (YYYY-MM-DD) or Persian (YYYY/MM/DD) format"""
+        date_str = date_str.strip()
+        
+        # Replace Persian numbers with English numbers if present
+        persian_to_english = str.maketrans('۰۱۲۳۴۵۶۷۸۹', '0123456789')
+        date_str = date_str.translate(persian_to_english)
+        
+        # Standardize separators
+        date_str = date_str.replace('/', '-')
+        
+        if GlobalBirthday.is_persian_date(date_str):
+            # Convert Persian to Gregorian
+            year, month, day = map(int, date_str.split('-'))
+            persian_date = jdatetime.date(year, month, day)
+            return persian_date.togregorian(), date_str.replace('-', '/')
+        else:
+            # Assume Gregorian
+            try:
+                year, month, day = map(int, date_str.split('-'))
+                gregorian_date = timezone.datetime(year, month, day).date()
+                persian_date = jdatetime.date.fromgregorian(date=gregorian_date)
+                return gregorian_date, persian_date.strftime('%Y/%m/%d')
+            except ValueError as e:
+                raise ValueError("Invalid date format. Use YYYY-MM-DD for Gregorian or YYYY/MM/DD for Persian")
+
     def save(self, *args, **kwargs):
-        # Automatically convert and store Persian date whenever Gregorian date is saved
-        if self.birth_date:
+        # If birth_date is a string, parse it first
+        if isinstance(self.birth_date, str):
+            self.birth_date, self.persian_birth_date = self.parse_date(self.birth_date)
+        # If birth_date is already a date object, just update persian_birth_date
+        elif self.birth_date and not self.persian_birth_date:
             persian_date = jdatetime.date.fromgregorian(date=self.birth_date)
-            self.persian_birth_date = persian_date.strftime('%Y-%m-%d')
+            self.persian_birth_date = persian_date.strftime('%Y/%m/%d')
         super().save(*args, **kwargs)
 
     def get_persian_date(self):
