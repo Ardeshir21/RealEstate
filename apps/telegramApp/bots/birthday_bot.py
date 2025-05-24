@@ -75,12 +75,11 @@ class BirthdayBot(TelegramBot):
         response = "🎂 What would you like to manage?\n\n"
         buttons = [
             [
-                {"text": "📅 VIEW BY DATE", "callback_data": "view_by_date"},
+                {"text": "📅 VIEW BIRTHDAYS", "callback_data": "filter_all"},
                 {"text": "📊 VIEW NEXT 5", "callback_data": "filter_next_5"}
             ],
             [
-                {"text": "✏️ EDIT ENTRIES", "callback_data": "edit_entries"},
-                {"text": "❌ DELETE ENTRIES", "callback_data": "delete_entries"}
+                {"text": "🗓️ VIEW BY MONTH", "callback_data": "choose_persian_month"}
             ],
             [{"text": "🔙 BACK TO MAIN", "callback_data": "back_to_main"}]
         ]
@@ -642,67 +641,6 @@ class BirthdayBot(TelegramBot):
                 self.edit_message(user_id, message_id, response, keyboard)
                 return
 
-            elif callback_data == "view_by_date":
-                buttons = [
-                    [
-                        {"text": "🗓️ PERSIAN MONTH", "callback_data": "choose_persian_month"},
-                        {"text": "📆 ENGLISH MONTH", "callback_data": "choose_english_month"}
-                    ],
-                    [{"text": "🌟 ALL BIRTHDAYS", "callback_data": "filter_all"}],
-                    [{"text": "🔙 BACK TO MANAGE", "callback_data": "back_to_manage_menu"}]
-                ]
-                response = "📅 Choose how you'd like to view the birthdays:"
-                keyboard = self.create_inline_keyboard(buttons)
-                self.answer_callback_query(callback_query_id)
-                self.edit_message(user_id, message_id, response, keyboard)
-                return
-
-            elif callback_data == "edit_entries":
-                birthdays = GlobalBirthday.objects.filter(added_by=user_id)
-                if not birthdays:
-                    response = "You haven't added any birthdays yet!"
-                    buttons = [[{"text": "🔙 BACK TO MANAGE", "callback_data": "back_to_manage_menu"}]]
-                    keyboard = self.create_inline_keyboard(buttons)
-                else:
-                    response = "Select a birthday to edit:"
-                    buttons = []
-                    for birthday in birthdays:
-                        buttons.append([{
-                            "text": f"✏️ {birthday.name}",
-                            "callback_data": f"manage_id_{birthday.id}"
-                        }])
-                    buttons.append([{"text": "🔙 BACK TO MANAGE", "callback_data": "back_to_manage_menu"}])
-                    keyboard = self.create_inline_keyboard(buttons)
-                self.answer_callback_query(callback_query_id)
-                self.edit_message(user_id, message_id, response, keyboard)
-                return
-
-            elif callback_data == "delete_entries":
-                birthdays = GlobalBirthday.objects.filter(added_by=user_id)
-                if not birthdays:
-                    response = "You haven't added any birthdays yet!"
-                    buttons = [[{"text": "🔙 BACK TO MANAGE", "callback_data": "back_to_manage_menu"}]]
-                    keyboard = self.create_inline_keyboard(buttons)
-                else:
-                    response = "Select a birthday to delete:"
-                    buttons = []
-                    for birthday in birthdays:
-                        buttons.append([{
-                            "text": f"❌ {birthday.name}",
-                            "callback_data": f"delete_prompt_{birthday.id}"
-                        }])
-                    buttons.append([{"text": "🔙 BACK TO MANAGE", "callback_data": "back_to_manage_menu"}])
-                    keyboard = self.create_inline_keyboard(buttons)
-                self.answer_callback_query(callback_query_id)
-                self.edit_message(user_id, message_id, response, keyboard)
-                return
-
-            elif callback_data == "back_to_manage_menu":
-                response, keyboard = self.get_manage_entries_menu()
-                self.answer_callback_query(callback_query_id)
-                self.edit_message(user_id, message_id, response, keyboard)
-                return
-
             elif callback_data == "help":
                 response = self.cmd_help()
                 buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
@@ -715,12 +653,6 @@ class BirthdayBot(TelegramBot):
                 response = "What would you like to do?"
                 self.answer_callback_query(callback_query_id)
                 self.edit_message(user_id, message_id, response, self.get_main_menu_keyboard(show_cancel=False))
-                return
-
-            elif callback_data == "back_to_manage":
-                response, keyboard = self.get_user_birthdays(user_id)
-                self.answer_callback_query(callback_query_id)
-                self.edit_message(user_id, message_id, response, keyboard)
                 return
 
             self.answer_callback_query(callback_query_id)
