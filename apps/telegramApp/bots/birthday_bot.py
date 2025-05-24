@@ -28,28 +28,29 @@ class BirthdayBot(TelegramBot):
             "July", "August", "September", "October", "November", "December"
         ]
         
+        # Persian months with RTL mark
         self.persian_months = [
-            "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
-            "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"
+            "‫فروردین‬", "‫اردیبهشت‬", "‫خرداد‬", "‫تیر‬", "‫مرداد‬", "‫شهریور‬",
+            "‫مهر‬", "‫آبان‬", "‫آذر‬", "‫دی‬", "‫بهمن‬", "‫اسفند‬"
         ]
 
     def get_main_menu_keyboard(self, show_cancel: bool = False) -> Dict:
         """Create the main menu keyboard."""
         buttons = [
             [
-                {"text": "🎂 Add Birthday", "callback_data": "add_birthday"},
-                {"text": "⏰ Set Reminder", "callback_data": "set_reminder"}
+                {"text": "🎂 <b>Add Birthday</b>", "callback_data": "add_birthday"},
+                {"text": "⏰ <b>Set Reminder</b>", "callback_data": "set_reminder"}
             ],
             [
-                {"text": "✏️ Manage My Entries", "callback_data": "manage_entries"}
+                {"text": "✏️ <b>Manage My Entries</b>", "callback_data": "manage_entries"}
             ],
             [
-                {"text": "❓ Help", "callback_data": "help"}
+                {"text": "❓ <b>Help</b>", "callback_data": "help"}
             ]
         ]
         
         if show_cancel:
-            buttons.append([{"text": "❌ Cancel", "callback_data": "cancel"}])
+            buttons.append([{"text": "❌ <b>Cancel</b>", "callback_data": "cancel"}])
             
         return self.create_inline_keyboard(buttons)
 
@@ -57,14 +58,14 @@ class BirthdayBot(TelegramBot):
         """Create the manage entries keyboard."""
         buttons = [
             [
-                {"text": "✏️ Edit Name", "callback_data": "edit_name"},
-                {"text": "📅 Edit Date", "callback_data": "edit_date"}
+                {"text": "✏️ <b>Edit Name</b>", "callback_data": "edit_name"},
+                {"text": "📅 <b>Edit Date</b>", "callback_data": "edit_date"}
             ],
             [
-                {"text": "🗑️ Delete Birthday", "callback_data": "delete_birthday"}
+                {"text": "🗑️ <b>Delete Birthday</b>", "callback_data": "delete_birthday"}
             ],
             [
-                {"text": "🔙 Back to Main", "callback_data": "back_to_main"}
+                {"text": "🔙 <b>Back to Main</b>", "callback_data": "back_to_main"}
             ]
         ]
         return self.create_inline_keyboard(buttons)
@@ -470,26 +471,25 @@ class BirthdayBot(TelegramBot):
                 # Get both Persian and Gregorian dates with month names
                 persian_date = jdatetime.date.fromgregorian(date=birthday.birth_date)
                 english_month = self.english_months[birthday.birth_date.month - 1]
-                persian_month = self.persian_months[persian_date.month - 1]
                 
                 response = (f"Birthday Details:\n"
                           f"👤 Name: {birthday.name}\n"
                           f"📅 Gregorian: {birthday.birth_date.day} {english_month} {birthday.birth_date.year}\n"
-                          f"🗓️ Persian: {self.to_persian_numbers(persian_date.day)} {persian_month} {self.to_persian_numbers(persian_date.year)}\n"
+                          f"🗓️ Persian: {self.format_persian_date(persian_date.year, persian_date.month, persian_date.day)}\n"
                           f"{zodiac_sign}\n"
                           f"⏰ Reminder: {current_reminder} days before\n\n"
                           f"Choose an action:")
                 
                 buttons = [
                     [
-                        {"text": "✏️ Edit Name", "callback_data": f"edit_name_{birthday_id}"},
-                        {"text": "📅 Edit Date", "callback_data": f"edit_prompt_{birthday_id}"}
+                        {"text": "✏️ <b>Edit Name</b>", "callback_data": f"edit_name_{birthday_id}"},
+                        {"text": "📅 <b>Edit Date</b>", "callback_data": f"edit_prompt_{birthday_id}"}
                     ],
                     [
-                        {"text": "⏰ Edit Reminder", "callback_data": f"edit_reminder_{birthday_id}"},
-                        {"text": "❌ Delete", "callback_data": f"delete_prompt_{birthday_id}"}
+                        {"text": "⏰ <b>Edit Reminder</b>", "callback_data": f"edit_reminder_{birthday_id}"},
+                        {"text": "❌ <b>Delete</b>", "callback_data": f"delete_prompt_{birthday_id}"}
                     ],
-                    [{"text": "🔙 Back to List", "callback_data": "back_to_list"}]
+                    [{"text": "🔙 <b>Back to List</b>", "callback_data": "back_to_list"}]
                 ]
                 keyboard = self.create_inline_keyboard(buttons)
                 
@@ -513,9 +513,12 @@ class BirthdayBot(TelegramBot):
                     }
                 )
                 
-                # Convert Persian date to Persian numerals
+                # Format Persian date with RTL support
                 persian_date = jdatetime.date.fromgregorian(date=birthday.birth_date)
-                persian_date_str = f"{self.to_persian_numbers(persian_date.year)}/{self.to_persian_numbers(persian_date.month)}/{self.to_persian_numbers(persian_date.day)}"
+                persian_date_str = self.format_persian_date(persian_date.year, persian_date.month, persian_date.day)
+                
+                # Example date in Persian format
+                example_persian_date = self.format_persian_date('1369', '10', '10')
                 
                 response = (f"Current birthday info:\n"
                           f"👤 Name: {birthday.name}\n"
@@ -523,9 +526,9 @@ class BirthdayBot(TelegramBot):
                           f"🗓️ Current Persian date: {persian_date_str}\n\n"
                           f"Please enter the new date in one of these formats:\n"
                           f"📅 Gregorian: YYYY-MM-DD (e.g., 1990-12-31)\n"
-                          f"🗓️ Persian: YYYY/MM/DD (e.g., {self.to_persian_numbers('1369')}/{self.to_persian_numbers('10')}/{self.to_persian_numbers('10')})")
+                          f"🗓️ Persian: YYYY/MM/DD (e.g., {example_persian_date})")
                 
-                buttons = [[{"text": "🔙 Cancel", "callback_data": "back_to_list"}]]
+                buttons = [[{"text": "🔙 <b>Cancel</b>", "callback_data": "back_to_list"}]]
                 keyboard = self.create_inline_keyboard(buttons)
                 
                 self.answer_callback_query(callback_query_id)
@@ -536,9 +539,9 @@ class BirthdayBot(TelegramBot):
                 birthday_id = int(callback_data.split("_")[-1])
                 birthday = GlobalBirthday.objects.get(id=birthday_id)
                 
-                # Convert Persian date to Persian numerals
+                # Format Persian date with RTL support
                 persian_date = jdatetime.date.fromgregorian(date=birthday.birth_date)
-                persian_date_str = f"{self.to_persian_numbers(persian_date.year)}/{self.to_persian_numbers(persian_date.month)}/{self.to_persian_numbers(persian_date.day)}"
+                persian_date_str = self.format_persian_date(persian_date.year, persian_date.month, persian_date.day)
                 
                 response = (f"Are you sure you want to delete this birthday?\n\n"
                           f"👤 Name: {birthday.name}\n"
@@ -547,8 +550,8 @@ class BirthdayBot(TelegramBot):
                 
                 buttons = [
                     [
-                        {"text": "✅ Yes, Delete", "callback_data": f"confirm_delete_{birthday_id}"},
-                        {"text": "❌ No, Cancel", "callback_data": "back_to_list"}
+                        {"text": "✅ <b>Yes, Delete</b>", "callback_data": f"confirm_delete_{birthday_id}"},
+                        {"text": "❌ <b>No, Cancel</b>", "callback_data": "back_to_list"}
                     ]
                 ]
                 keyboard = self.create_inline_keyboard(buttons)
@@ -608,7 +611,7 @@ class BirthdayBot(TelegramBot):
                     user_id=user_id,
                     defaults={'state': 'waiting_for_reminder'}
                 )
-                buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
+                buttons = [[{"text": "🔙 <b>Back to Main</b>", "callback_data": "back_to_main"}]]
                 keyboard = self.create_inline_keyboard(buttons)
                 response = ("Please enter the number of days before birthdays you want to be reminded\n"
                           "For example: 7")
@@ -636,7 +639,7 @@ class BirthdayBot(TelegramBot):
 
             elif callback_data == "help":
                 response = self.cmd_help()
-                buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
+                buttons = [[{"text": "🔙 <b>Back to Main</b>", "callback_data": "back_to_main"}]]
                 keyboard = self.create_inline_keyboard(buttons)
                 self.answer_callback_query(callback_query_id)
                 self.edit_message(user_id, message_id, response, keyboard)
@@ -692,15 +695,15 @@ class BirthdayBot(TelegramBot):
         if not birthdays:
             return "You haven't added any birthdays yet!", self.get_main_menu_keyboard(show_cancel=False)
 
-        # Add filter buttons at the top
+        # Add filter buttons at the top with HTML formatting
         filter_buttons = [
             [
-                {"text": "📅 Next 5 Birthdays", "callback_data": "filter_next_5"},
-                {"text": "🌟 All Birthdays", "callback_data": "filter_all"}
+                {"text": "📅 <b>Next 5 Birthdays</b>", "callback_data": "filter_next_5"},
+                {"text": "🌟 <b>All Birthdays</b>", "callback_data": "filter_all"}
             ],
             [
-                {"text": "🗓️ Persian Month", "callback_data": "choose_persian_month"},
-                {"text": "📆 English Month", "callback_data": "choose_english_month"}
+                {"text": "🗓️ <b>Persian Month</b>", "callback_data": "choose_persian_month"},
+                {"text": "📆 <b>English Month</b>", "callback_data": "choose_english_month"}
             ]
         ]
 
@@ -750,7 +753,6 @@ class BirthdayBot(TelegramBot):
             # Get both Persian and Gregorian dates
             persian_date = jdatetime.date.fromgregorian(date=birthday.birth_date)
             english_month = self.english_months[birthday.birth_date.month - 1]
-            persian_month = self.persian_months[persian_date.month - 1]
             
             # Calculate days until next birthday
             next_birthday = birthday.get_next_birthday()
@@ -793,7 +795,7 @@ class BirthdayBot(TelegramBot):
         
         for i, month in enumerate(months):
             current_row.append({
-                "text": month,
+                "text": f"<b>{month}</b>",
                 "callback_data": f"select_{month_type}_month_{month}"
             })
             
@@ -807,7 +809,7 @@ class BirthdayBot(TelegramBot):
             buttons.append(current_row)
         
         # Add back button
-        buttons.append([{"text": "🔙 Back", "callback_data": "back_to_list"}])
+        buttons.append([{"text": "🔙 <b>Back</b>", "callback_data": "back_to_list"}])
         
         response = f"Please select a {'Persian' if month_type == 'persian' else 'Gregorian'} month:"
         return response, self.create_inline_keyboard(buttons)
@@ -821,9 +823,9 @@ class BirthdayBot(TelegramBot):
             birthday.birth_date = new_date_obj
             birthday.save()
             
-            # Convert Persian date to Persian numerals
+            # Format Persian date with RTL support
             persian_date = jdatetime.date.fromgregorian(date=birthday.birth_date)
-            persian_date_str = f"{self.to_persian_numbers(persian_date.year)}/{self.to_persian_numbers(persian_date.month)}/{self.to_persian_numbers(persian_date.day)}"
+            persian_date_str = self.format_persian_date(persian_date.year, persian_date.month, persian_date.day)
             
             return (f"✅ Successfully updated birthday:\n"
                    f"Name: {birthday.name}\n"
@@ -892,3 +894,7 @@ class BirthdayBot(TelegramBot):
             '5': '۵', '6': '۶', '7': '۷', '8': '۸', '9': '۹'
         }
         return ''.join(persian_numerals.get(str(d), d) for d in str(number))
+
+    def format_persian_date(self, year: Union[int, str], month: Union[int, str], day: Union[int, str]) -> str:
+        """Format Persian date with RTL support."""
+        return f"‫{self.to_persian_numbers(day)} {self.persian_months[int(str(month))-1]} {self.to_persian_numbers(year)}‬"
