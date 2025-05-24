@@ -62,7 +62,6 @@ class BirthdayBot(TelegramBot):
                 {"text": "📅 EDIT DATE", "callback_data": "edit_date"}
             ],
             [
-                {"text": "⏰ EDIT REMINDER", "callback_data": "edit_reminder"},
                 {"text": "🗑️ DELETE BIRTHDAY", "callback_data": "delete_birthday"}
             ],
             [
@@ -70,6 +69,23 @@ class BirthdayBot(TelegramBot):
             ]
         ]
         return self.create_inline_keyboard(buttons)
+
+    def get_manage_entries_menu(self) -> tuple:
+        """Create the manage entries menu."""
+        response = "🎂 What would you like to manage?\n\n"
+        buttons = [
+            [
+                {"text": "📅 VIEW BY DATE", "callback_data": "view_by_date"},
+                {"text": "📊 VIEW NEXT 5", "callback_data": "filter_next_5"}
+            ],
+            [
+                {"text": "✏️ EDIT ENTRIES", "callback_data": "edit_entries"},
+                {"text": "❌ DELETE ENTRIES", "callback_data": "delete_entries"}
+            ],
+            [{"text": "🔙 BACK TO MAIN", "callback_data": "back_to_main"}]
+        ]
+        keyboard = self.create_inline_keyboard(buttons)
+        return response, keyboard
 
     def parse_persian_date(self, date_str: str) -> Optional[datetime.date]:
         """Parse Persian date string and convert to Gregorian date."""
@@ -621,30 +637,68 @@ class BirthdayBot(TelegramBot):
                 return
 
             elif callback_data == "manage_entries":
-                response = ("Choose what you want to manage:\n\n"
-                          "✏️ Edit Name - Change the name of a birthday entry\n"
-                          "📅 Edit Date - Modify the date of a birthday\n"
-                          "⏰ Edit Reminder - Change reminder settings\n"
-                          "🗑️ Delete - Remove a birthday entry")
-                keyboard = self.get_manage_entries_keyboard()
+                response, keyboard = self.get_manage_entries_menu()
                 self.answer_callback_query(callback_query_id)
                 self.edit_message(user_id, message_id, response, keyboard)
                 return
 
-            elif callback_data == "edit_name":
-                response, keyboard = self.get_user_birthdays(user_id, action="edit_name")
+            elif callback_data == "view_by_date":
+                buttons = [
+                    [
+                        {"text": "🗓️ PERSIAN MONTH", "callback_data": "choose_persian_month"},
+                        {"text": "📆 ENGLISH MONTH", "callback_data": "choose_english_month"}
+                    ],
+                    [{"text": "🌟 ALL BIRTHDAYS", "callback_data": "filter_all"}],
+                    [{"text": "🔙 BACK TO MANAGE", "callback_data": "back_to_manage_menu"}]
+                ]
+                response = "📅 Choose how you'd like to view the birthdays:"
+                keyboard = self.create_inline_keyboard(buttons)
                 self.answer_callback_query(callback_query_id)
                 self.edit_message(user_id, message_id, response, keyboard)
                 return
 
-            elif callback_data == "edit_date":
-                response, keyboard = self.get_user_birthdays(user_id, action="edit_date")
+            elif callback_data == "edit_entries":
+                birthdays = GlobalBirthday.objects.filter(added_by=user_id)
+                if not birthdays:
+                    response = "You haven't added any birthdays yet!"
+                    buttons = [[{"text": "🔙 BACK TO MANAGE", "callback_data": "back_to_manage_menu"}]]
+                    keyboard = self.create_inline_keyboard(buttons)
+                else:
+                    response = "Select a birthday to edit:"
+                    buttons = []
+                    for birthday in birthdays:
+                        buttons.append([{
+                            "text": f"✏️ {birthday.name}",
+                            "callback_data": f"manage_id_{birthday.id}"
+                        }])
+                    buttons.append([{"text": "🔙 BACK TO MANAGE", "callback_data": "back_to_manage_menu"}])
+                    keyboard = self.create_inline_keyboard(buttons)
                 self.answer_callback_query(callback_query_id)
                 self.edit_message(user_id, message_id, response, keyboard)
                 return
 
-            elif callback_data == "delete_birthday":
-                response, keyboard = self.get_user_birthdays(user_id, action="delete")
+            elif callback_data == "delete_entries":
+                birthdays = GlobalBirthday.objects.filter(added_by=user_id)
+                if not birthdays:
+                    response = "You haven't added any birthdays yet!"
+                    buttons = [[{"text": "🔙 BACK TO MANAGE", "callback_data": "back_to_manage_menu"}]]
+                    keyboard = self.create_inline_keyboard(buttons)
+                else:
+                    response = "Select a birthday to delete:"
+                    buttons = []
+                    for birthday in birthdays:
+                        buttons.append([{
+                            "text": f"❌ {birthday.name}",
+                            "callback_data": f"delete_prompt_{birthday.id}"
+                        }])
+                    buttons.append([{"text": "🔙 BACK TO MANAGE", "callback_data": "back_to_manage_menu"}])
+                    keyboard = self.create_inline_keyboard(buttons)
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, keyboard)
+                return
+
+            elif callback_data == "back_to_manage_menu":
+                response, keyboard = self.get_manage_entries_menu()
                 self.answer_callback_query(callback_query_id)
                 self.edit_message(user_id, message_id, response, keyboard)
                 return
@@ -696,7 +750,7 @@ class BirthdayBot(TelegramBot):
                "Remember: You can always say /cancel if you need a fresh start. 🔄\n\n"
                "Now, let's make sure no birthday goes uncelebrated! 🎁")
 
-    def get_user_birthdays(self, user_id: str, action: str = None, filter_type: str = None, filter_value: str = None) -> tuple:
+    def get_user_birthdays(self, user_id: str, for_edit: bool = False, for_delete: bool = False, filter_type: str = None, filter_value: str = None) -> tuple:
         """Get list of birthdays added by the user with interactive buttons."""
         birthdays = GlobalBirthday.objects.filter(added_by=user_id)
         settings, _ = UserBirthdaySettings.objects.get_or_create(
@@ -707,29 +761,55 @@ class BirthdayBot(TelegramBot):
         if not birthdays:
             return "You haven't added any birthdays yet!", self.get_main_menu_keyboard(show_cancel=False)
 
-        # Set response header based on action
-        if action == "edit_name":
-            response = "🖊️ Select a birthday to edit its name:\n" + "─" * 30 + "\n\n"
-        elif action == "edit_date":
-            response = "📅 Select a birthday to edit its date:\n" + "─" * 30 + "\n\n"
-        elif action == "edit_reminder":
-            response = "⏰ Select a birthday to edit its reminder:\n" + "─" * 30 + "\n\n"
-        elif action == "delete":
-            response = "🗑️ Select a birthday to delete:\n" + "─" * 30 + "\n\n"
-        elif filter_type == "next_5":
+        # Add filter buttons at the top with HTML formatting
+        filter_buttons = [
+            [
+                {"text": "📅 NEXT 5 BIRTHDAYS", "callback_data": "filter_next_5"},
+                {"text": "🌟 ALL BIRTHDAYS", "callback_data": "filter_all"}
+            ],
+            [
+                {"text": "🗓️ PERSIAN MONTH", "callback_data": "choose_persian_month"},
+                {"text": "📆 ENGLISH MONTH", "callback_data": "choose_english_month"}
+            ]
+        ]
+
+        today = timezone.now().date()
+
+        if filter_type == "next_5":
+            birthday_list = []
+            for birthday in birthdays:
+                next_birthday = birthday.get_next_birthday()
+                days_until = (next_birthday - today).days
+                birthday_list.append((birthday, days_until))
+            
+            # Sort by days until next birthday and take first 5
+            birthday_list.sort(key=lambda x: x[1])
+            birthdays = [b[0] for b in birthday_list[:5]]
             response = "🎯 Next 5 Upcoming Birthdays 🎯\n" + "─" * 30 + "\n\n"
+        
         elif filter_type == "persian_month":
             month_idx = self.persian_months.index(filter_value) + 1
-            sample_persian_date = jdatetime.date(1400, month_idx, 1)
+            filtered_birthdays = []
+            for birthday in birthdays:
+                persian_date = jdatetime.date.fromgregorian(date=birthday.birth_date)
+                if persian_date.month == month_idx:
+                    filtered_birthdays.append(birthday)
+            birthdays = filtered_birthdays
+            # Get corresponding English month for the Persian month
+            sample_persian_date = jdatetime.date(1400, month_idx, 1)  # Using a sample year
             gregorian_date = sample_persian_date.togregorian()
             english_month = self.english_months[gregorian_date.month - 1]
             response = f"🗓️ Birthdays in {filter_value} ({english_month})\n" + "─" * 30 + "\n\n"
+        
         elif filter_type == "english_month":
             month_idx = self.english_months.index(filter_value) + 1
-            sample_date = datetime(2000, month_idx, 1)
+            birthdays = birthdays.filter(birth_date__month=month_idx)
+            # Get corresponding Persian month for the English month
+            sample_date = datetime(2000, month_idx, 1)  # Using a sample year
             persian_date = jdatetime.date.fromgregorian(date=sample_date)
             persian_month = self.persian_months[persian_date.month - 1]
             response = f"📆 Birthdays in {self.format_rtl_text(filter_value)} ({self.format_rtl_text(persian_month)})\n" + "─" * 30 + "\n\n"
+        
         else:
             response = "🎂 Your Birthdays 🎂\n" + "─" * 30 + "\n\n"
 
@@ -755,51 +835,20 @@ class BirthdayBot(TelegramBot):
             name_decoration = "✨ " if days_until <= 1 else ""
             
             button_text = f"{name_decoration}{birthday.name}{name_decoration} ({days_indicator})"
-            
-            # Set callback data based on action
-            if action == "edit_name":
-                callback_data = f"edit_name_{birthday.id}"
-            elif action == "edit_date":
-                callback_data = f"edit_prompt_{birthday.id}"
-            elif action == "edit_reminder":
-                callback_data = f"edit_reminder_{birthday.id}"
-            elif action == "delete":
-                callback_data = f"delete_prompt_{birthday.id}"
-            else:
-                callback_data = f"manage_id_{birthday.id}"
-            
             birthday_buttons.append([{
                 "text": button_text,
-                "callback_data": callback_data
+                "callback_data": f"manage_id_{birthday.id}"
             }])
 
         if not birthday_buttons and filter_type:
             response += "No birthdays found for this filter!"
             birthday_buttons = []
         
-        buttons = []
+        # Combine filter buttons with birthday buttons
+        buttons = filter_buttons + birthday_buttons
         
-        # Only add filter buttons if not in an action mode
-        if not action:
-            buttons.extend([
-                [
-                    {"text": "📅 NEXT 5 BIRTHDAYS", "callback_data": "filter_next_5"},
-                    {"text": "🌟 ALL BIRTHDAYS", "callback_data": "filter_all"}
-                ],
-                [
-                    {"text": "🗓️ PERSIAN MONTH", "callback_data": "choose_persian_month"},
-                    {"text": "📆 ENGLISH MONTH", "callback_data": "choose_english_month"}
-                ]
-            ])
-        
-        # Add birthday buttons
-        buttons.extend(birthday_buttons)
-        
-        # Add back button - different destination based on context
-        if action:
-            buttons.append([{"text": "🔙 BACK TO MANAGE", "callback_data": "back_to_manage"}])
-        else:
-            buttons.append([{"text": "🔙 BACK TO MAIN", "callback_data": "back_to_main"}])
+        # Add Back button at the bottom
+        buttons.append([{"text": "🔙 BACK TO MAIN", "callback_data": "back_to_main"}])
         
         keyboard = self.create_inline_keyboard(buttons)
         return response, keyboard
