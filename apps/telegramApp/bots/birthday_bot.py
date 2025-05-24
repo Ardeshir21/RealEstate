@@ -6,7 +6,7 @@ import logging
 import jdatetime
 import re
 from django.db import IntegrityError
-from django.db.models import Count, Q
+from django.db.models import Count, Q, F
 from django.utils.timezone import timedelta
 import hashlib
 
@@ -1165,7 +1165,7 @@ class BirthdayBot(TelegramBot):
         
         # Get users with most birthdays
         top_users = UserBirthdaySettings.objects.annotate(
-            birthday_count=Count('user_id', filter=Q(user_id=GlobalBirthday.objects.filter(added_by=models.F('user_id'))))
+            birthday_count=Count('user_id', filter=Q(user_id=GlobalBirthday.objects.filter(added_by=F('user_id'))))
         ).order_by('-birthday_count')[:5]
 
         response = "📊 Bot Statistics:\n\n"
