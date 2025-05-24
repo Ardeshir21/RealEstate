@@ -97,6 +97,9 @@ class BirthdayBot(TelegramBot):
                 {"text": "🗑️ DELETE BIRTHDAY", "callback_data": "delete_birthday"}
             ],
             [
+                {"text": "⚠️ CLEAR ALL DATA", "callback_data": "clear_data_prompt"}
+            ],
+            [
                 {"text": "🔙 BACK TO MAIN", "callback_data": "back_to_main"}
             ]
         ]
@@ -195,7 +198,44 @@ class BirthdayBot(TelegramBot):
         try:
             message_id = user_state.context.get('message_id')
 
-            if user_state.state == "waiting_for_new_admin_id":
+            # Add new handler for clear data written confirmation
+            if user_state.state == "waiting_for_clear_confirmation":
+                if message_text.strip() == "YES, DELETE ALL MY BIRTHDAYS":
+                    try:
+                        # Delete all birthdays for this user
+                        deleted_count = GlobalBirthday.objects.filter(added_by=user_id).delete()[0]
+                        
+                        # Delete user settings
+                        UserBirthdaySettings.objects.filter(user_id=user_id).delete()
+                        
+                        # Clear the state
+                        user_state.delete()
+                        
+                        # Show success message
+                        response = (f"✅ Successfully deleted all your data:\n"
+                                  f"- {deleted_count} birthdays removed\n"
+                                  f"- All settings cleared\n\n"
+                                  f"You can start fresh by adding new birthdays!")
+                        
+                        self.send_message(user_id, response)
+                        
+                        # After a brief pause, show main menu
+                        import time
+                        time.sleep(1)
+                        response = "What would you like to do?"
+                        return response, self.get_main_menu_keyboard(user_id=user_id)
+                        
+                    except Exception as e:
+                        logger.error(f"Error clearing user data: {e}")
+                        buttons = [[{"text": "🔙 Back to Manage", "callback_data": "manage_entries"}]]
+                        keyboard = self.create_inline_keyboard(buttons)
+                        return "❌ An error occurred while clearing your data. Please try again.", keyboard
+                else:
+                    buttons = [[{"text": "🔙 Back to Manage", "callback_data": "manage_entries"}]]
+                    keyboard = self.create_inline_keyboard(buttons)
+                    return "❌ Confirmation text doesn't match. Operation cancelled.", keyboard
+
+            elif user_state.state == "waiting_for_new_admin_id":
                 if not self.is_admin(user_id):
                     user_state.delete()
                     return "❌ You don't have permission to access admin features.", None
@@ -532,6 +572,41 @@ class BirthdayBot(TelegramBot):
             callback_data = callback_query['data']
             callback_query_id = callback_query['id']
             message_id = callback_query['message']['message_id']
+
+            # Add new handlers for clear data confirmation
+            if callback_data == "clear_data_prompt":
+                response = ("⚠️ WARNING: This will delete ALL your stored birthdays!\n\n"
+                          "This action cannot be undone.\n"
+                          "Are you absolutely sure you want to proceed?")
+                buttons = [
+                    [
+                        {"text": "✅ YES, I'M SURE", "callback_data": "clear_data_confirm"},
+                        {"text": "❌ NO, KEEP MY DATA", "callback_data": "manage_entries"}
+                    ]
+                ]
+                keyboard = self.create_inline_keyboard(buttons)
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, keyboard)
+                return
+
+            elif callback_data == "clear_data_confirm":
+                # Set state for written confirmation
+                UserState.objects.update_or_create(
+                    user_id=user_id,
+                    defaults={
+                        'state': 'waiting_for_clear_confirmation',
+                        'context': {'message_id': message_id}
+                    }
+                )
+                response = ("⚠️ FINAL WARNING ⚠️\n\n"
+                          "For final confirmation, please type exactly:\n\n"
+                          "YES, DELETE ALL MY BIRTHDAYS\n\n"
+                          "This will permanently delete all your stored birthdays and cannot be undone.")
+                buttons = [[{"text": "❌ CANCEL", "callback_data": "manage_entries"}]]
+                keyboard = self.create_inline_keyboard(buttons)
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, keyboard)
+                return
 
             # Handle snooze callbacks
             if callback_data.startswith("snooze_"):
