@@ -523,10 +523,10 @@ class BirthdayBot(TelegramBot):
                 response = (f"Current birthday info:\n"
                           f"👤 Name: {birthday.name}\n"
                           f"📅 Current date: {birthday.birth_date}\n"
-                          f"🗓️ Current Persian date: {persian_date_str}\n\n"
+                          f"🗓️ Current Persian date: {self.format_persian_date(persian_date.year, persian_date.month, persian_date.day)}\n\n"
                           f"Please enter the new date in one of these formats:\n"
                           f"📅 Gregorian: YYYY-MM-DD (e.g., 1990-12-31)\n"
-                          f"🗓️ Persian: YYYY/MM/DD (e.g., {example_persian_date})")
+                          f"🗓️ Persian: YYYY/MM/DD (e.g., {self.format_persian_date('1369', '10', '10')})")
                 
                 buttons = [[{"text": "🔙 <b>Cancel</b>", "callback_data": "back_to_list"}]]
                 keyboard = self.create_inline_keyboard(buttons)
@@ -546,7 +546,7 @@ class BirthdayBot(TelegramBot):
                 response = (f"Are you sure you want to delete this birthday?\n\n"
                           f"👤 Name: {birthday.name}\n"
                           f"📅 Date: {birthday.birth_date}\n"
-                          f"🗓️ Persian: {persian_date_str}")
+                          f"🗓️ Persian: {self.format_persian_date(persian_date.year, persian_date.month, persian_date.day)}")
                 
                 buttons = [
                     [
@@ -742,7 +742,7 @@ class BirthdayBot(TelegramBot):
             sample_date = datetime(2000, month_idx, 1)  # Using a sample year
             persian_date = jdatetime.date.fromgregorian(date=sample_date)
             persian_month = self.persian_months[persian_date.month - 1]
-            response = f"📆 Birthdays in {filter_value} ({persian_month})\n" + "─" * 30 + "\n\n"
+            response = f"📆 Birthdays in {self.format_rtl_text(filter_value)} ({self.format_rtl_text(persian_month)})\n" + "─" * 30 + "\n\n"
         
         else:
             response = "🎂 Your Birthdays 🎂\n" + "─" * 30 + "\n\n"
@@ -795,7 +795,7 @@ class BirthdayBot(TelegramBot):
         
         for i, month in enumerate(months):
             current_row.append({
-                "text": f"<b>{month}</b>",
+                "text": f"<b>{month if month_type == 'english' else self.format_rtl_text(month)}</b>",
                 "callback_data": f"select_{month_type}_month_{month}"
             })
             
@@ -812,6 +812,8 @@ class BirthdayBot(TelegramBot):
         buttons.append([{"text": "🔙 <b>Back</b>", "callback_data": "back_to_list"}])
         
         response = f"Please select a {'Persian' if month_type == 'persian' else 'Gregorian'} month:"
+        if month_type == 'persian':
+            response = f"{response}\n{self.format_rtl_text('ماه مورد نظر را انتخاب کنید:')}"
         return response, self.create_inline_keyboard(buttons)
 
     def handle_birthday_edit(self, birthday_id: int, user_id: str, new_date: str) -> str:
@@ -895,6 +897,11 @@ class BirthdayBot(TelegramBot):
         }
         return ''.join(persian_numerals.get(str(d), d) for d in str(number))
 
+    def format_rtl_text(self, text: str) -> str:
+        """Format text with RTL support by adding RTL marks."""
+        return f"‫{text}‬"
+
     def format_persian_date(self, year: Union[int, str], month: Union[int, str], day: Union[int, str]) -> str:
         """Format Persian date with RTL support."""
-        return f"‫{self.to_persian_numbers(day)} {self.persian_months[int(str(month))-1]} {self.to_persian_numbers(year)}‬"
+        persian_date = f"{self.to_persian_numbers(day)} {self.persian_months[int(str(month))-1]} {self.to_persian_numbers(year)}"
+        return self.format_rtl_text(persian_date)
