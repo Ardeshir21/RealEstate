@@ -1,7 +1,7 @@
 from datetime import datetime
 from django.conf import settings
 from django.utils import timezone
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Union
 import logging
 import jdatetime
 import re
@@ -475,7 +475,7 @@ class BirthdayBot(TelegramBot):
                 response = (f"Birthday Details:\n"
                           f"👤 Name: {birthday.name}\n"
                           f"📅 Gregorian: {birthday.birth_date.day} {english_month} {birthday.birth_date.year}\n"
-                          f"🗓️ Persian: {persian_date.day} {persian_month} {persian_date.year}\n"
+                          f"🗓️ Persian: {self.to_persian_numbers(persian_date.day)} {persian_month} {self.to_persian_numbers(persian_date.year)}\n"
                           f"{zodiac_sign}\n"
                           f"⏰ Reminder: {current_reminder} days before\n\n"
                           f"Choose an action:")
@@ -513,13 +513,17 @@ class BirthdayBot(TelegramBot):
                     }
                 )
                 
+                # Convert Persian date to Persian numerals
+                persian_date = jdatetime.date.fromgregorian(date=birthday.birth_date)
+                persian_date_str = f"{self.to_persian_numbers(persian_date.year)}/{self.to_persian_numbers(persian_date.month)}/{self.to_persian_numbers(persian_date.day)}"
+                
                 response = (f"Current birthday info:\n"
                           f"👤 Name: {birthday.name}\n"
                           f"📅 Current date: {birthday.birth_date}\n"
-                          f"🗓️ Current Persian date: {birthday.persian_birth_date}\n\n"
+                          f"🗓️ Current Persian date: {persian_date_str}\n\n"
                           f"Please enter the new date in one of these formats:\n"
                           f"📅 Gregorian: YYYY-MM-DD (e.g., 1990-12-31)\n"
-                          f"🗓️ Persian: YYYY/MM/DD (e.g., 1369/10/10):")
+                          f"🗓️ Persian: YYYY/MM/DD (e.g., {self.to_persian_numbers('1369')}/{self.to_persian_numbers('10')}/{self.to_persian_numbers('10')})")
                 
                 buttons = [[{"text": "🔙 Cancel", "callback_data": "back_to_list"}]]
                 keyboard = self.create_inline_keyboard(buttons)
@@ -532,10 +536,14 @@ class BirthdayBot(TelegramBot):
                 birthday_id = int(callback_data.split("_")[-1])
                 birthday = GlobalBirthday.objects.get(id=birthday_id)
                 
+                # Convert Persian date to Persian numerals
+                persian_date = jdatetime.date.fromgregorian(date=birthday.birth_date)
+                persian_date_str = f"{self.to_persian_numbers(persian_date.year)}/{self.to_persian_numbers(persian_date.month)}/{self.to_persian_numbers(persian_date.day)}"
+                
                 response = (f"Are you sure you want to delete this birthday?\n\n"
                           f"👤 Name: {birthday.name}\n"
                           f"📅 Date: {birthday.birth_date}\n"
-                          f"🗓️ Persian: {birthday.persian_birth_date}")
+                          f"🗓️ Persian: {persian_date_str}")
                 
                 buttons = [
                     [
@@ -813,10 +821,14 @@ class BirthdayBot(TelegramBot):
             birthday.birth_date = new_date_obj
             birthday.save()
             
+            # Convert Persian date to Persian numerals
+            persian_date = jdatetime.date.fromgregorian(date=birthday.birth_date)
+            persian_date_str = f"{self.to_persian_numbers(persian_date.year)}/{self.to_persian_numbers(persian_date.month)}/{self.to_persian_numbers(persian_date.day)}"
+            
             return (f"✅ Successfully updated birthday:\n"
                    f"Name: {birthday.name}\n"
                    f"New Gregorian date: {birthday.birth_date}\n"
-                   f"New Persian date: {birthday.persian_birth_date}")
+                   f"New Persian date: {persian_date_str}")
         except GlobalBirthday.DoesNotExist:
             return "❌ You can only edit birthdays that you have added."
         except ValueError:
@@ -872,3 +884,11 @@ class BirthdayBot(TelegramBot):
         persian_month = self.persian_months[persian_date.month - 1]
         
         return english_month, persian_month
+
+    def to_persian_numbers(self, number: Union[int, str]) -> str:
+        """Convert English numbers to Persian numerals."""
+        persian_numerals = {
+            '0': '۰', '1': '۱', '2': '۲', '3': '۳', '4': '۴',
+            '5': '۵', '6': '۶', '7': '۷', '8': '۸', '9': '۹'
+        }
+        return ''.join(persian_numerals.get(str(d), d) for d in str(number))
