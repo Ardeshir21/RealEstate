@@ -343,6 +343,58 @@ class BirthdayBot(TelegramBot):
                     keyboard = self.create_inline_keyboard(buttons)
                     return "❌ Please enter a valid number", keyboard
 
+            elif user_state.state == "waiting_for_search_name":
+                search_term = message_text.strip().lower()
+                if not search_term:
+                    buttons = [[{"text": "🔙 Back", "callback_data": "back_to_list"}]]
+                    keyboard = self.create_inline_keyboard(buttons)
+                    return "❌ Please enter a valid search term", keyboard
+
+                # Get all birthdays for this user
+                birthdays = GlobalBirthday.objects.filter(added_by=user_id)
+                
+                # Filter birthdays where name contains the search term (case-insensitive)
+                filtered_birthdays = [b for b in birthdays if search_term in b.name.lower()]
+                
+                if not filtered_birthdays:
+                    response = f"🔍 No birthdays found containing '{search_term}'"
+                else:
+                    response = f"🔍 Found {len(filtered_birthdays)} birthday(s) containing '{search_term}':\n" + "─" * 30 + "\n\n"
+                
+                # Create birthday buttons for matches
+                birthday_buttons = []
+                today = timezone.now().date()
+                
+                for birthday in filtered_birthdays:
+                    # Calculate days until next birthday
+                    next_birthday = birthday.get_next_birthday()
+                    days_until = (next_birthday - today).days
+                    
+                    # Add emoji indicators for very close birthdays
+                    days_indicator = "🔔 TODAY!" if days_until == 0 else (
+                                   "🎉 Tomorrow!" if days_until == 1 else (
+                                   "⚡️ In 2 days!" if days_until == 2 else (
+                                   "📅 In 3 days!" if days_until == 3 else
+                                   f"⏳ In {days_until} days")))
+                    
+                    # Add sparkles for birthdays happening today or tomorrow
+                    name_decoration = "✨ " if days_until <= 1 else ""
+                    
+                    button_text = f"{name_decoration}{birthday.name}{name_decoration} ({days_indicator})"
+                    birthday_buttons.append([{
+                        "text": button_text,
+                        "callback_data": f"manage_id_{birthday.id}"
+                    }])
+                
+                # Add back button
+                birthday_buttons.append([{"text": "🔙 BACK TO LIST", "callback_data": "back_to_list"}])
+                keyboard = self.create_inline_keyboard(birthday_buttons)
+                
+                # Clear the state
+                user_state.delete()
+                
+                return response, keyboard
+
         except Exception as e:
             logger.error(f"Error in handle_state_response: {e}")
             user_state.delete()  # Clear state on error
@@ -657,6 +709,24 @@ class BirthdayBot(TelegramBot):
                 self.edit_message(user_id, message_id, response, keyboard)
                 return
 
+            elif callback_data == "search_by_name":
+                # Set state for name search
+                UserState.objects.update_or_create(
+                    user_id=user_id,
+                    defaults={
+                        'state': 'waiting_for_search_name',
+                        'context': {
+                            'message_id': message_id
+                        }
+                    }
+                )
+                response = "🔍 Please enter the name or part of the name you want to search for:"
+                buttons = [[{"text": "🔙 Back", "callback_data": "back_to_list"}]]
+                keyboard = self.create_inline_keyboard(buttons)
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, keyboard)
+                return
+
             self.answer_callback_query(callback_query_id)
             self.edit_message(user_id, message_id, response, self.get_main_menu_keyboard())
 
@@ -705,6 +775,9 @@ class BirthdayBot(TelegramBot):
             [
                 {"text": "🗓️ PERSIAN MONTH", "callback_data": "choose_persian_month"},
                 {"text": "📆 ENGLISH MONTH", "callback_data": "choose_english_month"}
+            ],
+            [
+                {"text": "🔍 SEARCH BY NAME", "callback_data": "search_by_name"}
             ]
         ]
 
