@@ -829,6 +829,19 @@ class BirthdayBot(TelegramBot):
                "Remember: You can always say /cancel if you need a fresh start. 🔄\n\n"
                "Now, let's make sure no birthday goes uncelebrated! 🎁")
 
+    def sort_birthdays_by_next_date(self, birthdays):
+        """Sort birthdays by next occurrence, closest first."""
+        today = timezone.now().date()
+        birthday_list = []
+        for birthday in birthdays:
+            next_birthday = birthday.get_next_birthday()
+            days_until = (next_birthday - today).days
+            birthday_list.append((birthday, days_until))
+        
+        # Sort by days until next birthday
+        birthday_list.sort(key=lambda x: x[1])
+        return [b[0] for b in birthday_list]
+
     def get_user_birthdays(self, user_id: str, for_edit: bool = False, for_delete: bool = False, 
                          filter_type: str = None, filter_value: str = None, show_birthdays: bool = True) -> tuple:
         """Get list of birthdays added by the user with interactive buttons."""
@@ -865,22 +878,17 @@ class BirthdayBot(TelegramBot):
             keyboard = self.create_inline_keyboard(buttons)
             return response, keyboard
 
+        # Sort all birthdays by next occurrence
+        birthdays = self.sort_birthdays_by_next_date(birthdays)
+
         if filter_type == "next_5":
-            birthday_list = []
-            for birthday in birthdays:
-                next_birthday = birthday.get_next_birthday()
-                days_until = (next_birthday - today).days
-                birthday_list.append((birthday, days_until))
-            
-            # Sort by days until next birthday and take first 5
-            birthday_list.sort(key=lambda x: x[1])
-            birthdays = [b[0] for b in birthday_list[:5]]
+            birthdays = birthdays[:5]  # Take first 5 since they're already sorted
             response = "🎯 Next 5 Upcoming Birthdays 🎯\n" + "─" * 30 + "\n\n"
         
         elif filter_type == "persian_month":
             month_idx = self.persian_months.index(filter_value) + 1
             filtered_birthdays = []
-            for birthday in birthdays:
+            for birthday in birthdays:  # Using already sorted birthdays
                 persian_date = jdatetime.date.fromgregorian(date=birthday.birth_date)
                 if persian_date.month == month_idx:
                     filtered_birthdays.append(birthday)
@@ -893,7 +901,11 @@ class BirthdayBot(TelegramBot):
         
         elif filter_type == "english_month":
             month_idx = self.english_months.index(filter_value) + 1
-            birthdays = birthdays.filter(birth_date__month=month_idx)
+            filtered_birthdays = []
+            for birthday in birthdays:  # Using already sorted birthdays
+                if birthday.birth_date.month == month_idx:
+                    filtered_birthdays.append(birthday)
+            birthdays = filtered_birthdays
             # Get corresponding Persian month for the English month
             sample_date = datetime(2000, month_idx, 1)  # Using a sample year
             persian_date = jdatetime.date.fromgregorian(date=sample_date)
