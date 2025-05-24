@@ -48,7 +48,7 @@ class BirthdayBot(TelegramBot):
             getattr(settings, 'TELEGRAM_ADMIN_CODE', 'make_me_admin_please').encode()
         ).hexdigest()
 
-    def get_main_menu_keyboard(self, show_cancel: bool = False) -> Dict:
+    def get_main_menu_keyboard(self, show_cancel: bool = False, user_id: str = None) -> Dict:
         """Create the main menu keyboard."""
         buttons = [
             [
@@ -63,9 +63,28 @@ class BirthdayBot(TelegramBot):
             ]
         ]
         
+        # Add admin button if user is admin
+        if user_id and self.is_admin(user_id):
+            buttons.insert(-1, [{"text": "🔐 ADMIN PANEL", "callback_data": "admin_panel"}])
+        
         if show_cancel:
             buttons.append([{"text": "❌ CANCEL", "callback_data": "cancel"}])
             
+        return self.create_inline_keyboard(buttons)
+
+    def get_admin_menu_keyboard(self) -> Dict:
+        """Create the admin menu keyboard."""
+        buttons = [
+            [
+                {"text": "📊 VIEW STATISTICS", "callback_data": "view_stats"},
+                {"text": "👥 VIEW USERS", "callback_data": "view_users"}
+            ],
+            [
+                {"text": "➕ ADD ADMIN", "callback_data": "add_admin_prompt"},
+                {"text": "➖ REMOVE ADMIN", "callback_data": "remove_admin_prompt"}
+            ],
+            [{"text": "🔙 BACK TO MAIN", "callback_data": "back_to_main"}]
+        ]
         return self.create_inline_keyboard(buttons)
 
     def get_manage_entries_keyboard(self) -> Dict:
@@ -175,10 +194,29 @@ class BirthdayBot(TelegramBot):
     def handle_state_response(self, message_text: str, user_id: str, user_name: str, user_state: UserState) -> Optional[tuple]:
         """Handle responses based on user's current state."""
         try:
-            # Get message_id from the context
             message_id = user_state.context.get('message_id')
-            
-            if user_state.state == "waiting_for_edit_date":
+
+            if user_state.state == "waiting_for_new_admin_id":
+                if not self.is_admin(user_id):
+                    user_state.delete()
+                    return "❌ You don't have permission to access admin features.", None
+                
+                target_id = message_text.strip()
+                response = self.cmd_make_admin(f"/make_admin {target_id}", user_id, user_name)
+                
+                # Clear state
+                user_state.delete()
+                
+                # Show success message and return to admin panel
+                self.send_message(user_id, response)
+                
+                import time
+                time.sleep(1)  # Brief pause
+                response = ("🔐 Admin Panel\n\n"
+                          "Select an option:")
+                return response, self.get_admin_menu_keyboard()
+
+            elif user_state.state == "waiting_for_edit_date":
                 birthday_id = user_state.context.get('birthday_id')
                 try:
                     birthday = GlobalBirthday.objects.get(id=birthday_id)
@@ -495,6 +533,111 @@ class BirthdayBot(TelegramBot):
             callback_data = callback_query['data']
             callback_query_id = callback_query['id']
             message_id = callback_query['message']['message_id']
+
+            # Handle admin panel callbacks
+            if callback_data == "admin_panel":
+                if not self.is_admin(user_id):
+                    self.answer_callback_query(callback_query_id, "❌ You don't have permission to access admin features.")
+                    return
+                
+                response = ("🔐 Admin Panel\n\n"
+                          "Select an option:")
+                keyboard = self.get_admin_menu_keyboard()
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, keyboard)
+                return
+
+            elif callback_data == "view_stats":
+                if not self.is_admin(user_id):
+                    self.answer_callback_query(callback_query_id, "❌ You don't have permission to access admin features.")
+                    return
+                
+                response = self.cmd_stats(None, user_id, user_name)
+                buttons = [[{"text": "🔙 BACK TO ADMIN", "callback_data": "admin_panel"}]]
+                keyboard = self.create_inline_keyboard(buttons)
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, keyboard)
+                return
+
+            elif callback_data == "view_users":
+                if not self.is_admin(user_id):
+                    self.answer_callback_query(callback_query_id, "❌ You don't have permission to access admin features.")
+                    return
+                
+                response = self.cmd_users(None, user_id, user_name)
+                buttons = [[{"text": "🔙 BACK TO ADMIN", "callback_data": "admin_panel"}]]
+                keyboard = self.create_inline_keyboard(buttons)
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, keyboard)
+                return
+
+            elif callback_data == "add_admin_prompt":
+                if not self.is_admin(user_id):
+                    self.answer_callback_query(callback_query_id, "❌ You don't have permission to access admin features.")
+                    return
+                
+                # Set state for admin creation
+                UserState.objects.update_or_create(
+                    user_id=user_id,
+                    defaults={
+                        'state': 'waiting_for_new_admin_id',
+                        'context': {'message_id': message_id}
+                    }
+                )
+                
+                response = ("Please enter the Telegram ID of the user you want to make an admin.\n\n"
+                          "You can get a user's ID when they interact with the bot.")
+                buttons = [[{"text": "🔙 BACK TO ADMIN", "callback_data": "admin_panel"}]]
+                keyboard = self.create_inline_keyboard(buttons)
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, keyboard)
+                return
+
+            elif callback_data == "remove_admin_prompt":
+                if not self.is_admin(user_id):
+                    self.answer_callback_query(callback_query_id, "❌ You don't have permission to access admin features.")
+                    return
+                
+                # Get list of admins
+                admins = TelegramAdmin.objects.exclude(user_id=user_id)  # Exclude current user
+                
+                if not admins:
+                    response = "There are no other admins to remove."
+                    buttons = [[{"text": "🔙 BACK TO ADMIN", "callback_data": "admin_panel"}]]
+                    keyboard = self.create_inline_keyboard(buttons)
+                else:
+                    response = "Select an admin to remove:"
+                    buttons = []
+                    for admin in admins:
+                        buttons.append([{
+                            "text": f"❌ {admin.user_name}",
+                            "callback_data": f"confirm_remove_admin_{admin.user_id}"
+                        }])
+                    buttons.append([{"text": "🔙 BACK TO ADMIN", "callback_data": "admin_panel"}])
+                    keyboard = self.create_inline_keyboard(buttons)
+                
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, keyboard)
+                return
+
+            elif callback_data.startswith("confirm_remove_admin_"):
+                if not self.is_admin(user_id):
+                    self.answer_callback_query(callback_query_id, "❌ You don't have permission to access admin features.")
+                    return
+                
+                target_id = callback_data.replace("confirm_remove_admin_", "")
+                response = self.cmd_remove_admin(f"/remove_admin {target_id}", user_id, user_name)
+                
+                # After removal, show success message and return to admin panel
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, None)
+                
+                import time
+                time.sleep(1)  # Brief pause
+                response = ("🔐 Admin Panel\n\n"
+                          "Select an option:")
+                self.edit_message(user_id, message_id, response, self.get_admin_menu_keyboard())
+                return
 
             # Handle month selection callbacks
             if callback_data == "choose_persian_month":
