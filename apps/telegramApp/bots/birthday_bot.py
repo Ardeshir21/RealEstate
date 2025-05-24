@@ -1165,7 +1165,10 @@ class BirthdayBot(TelegramBot):
         
         # Get users with most birthdays
         top_users = UserBirthdaySettings.objects.annotate(
-            birthday_count=Count('user_id', filter=Q(user_id=GlobalBirthday.objects.filter(added_by=F('user_id'))))
+            birthday_count=Count(
+                'user_id',
+                filter=Q(user_id__in=GlobalBirthday.objects.values_list('added_by', flat=True))
+            )
         ).order_by('-birthday_count')[:5]
 
         response = "📊 Bot Statistics:\n\n"
@@ -1175,7 +1178,8 @@ class BirthdayBot(TelegramBot):
         
         response += "🏆 Top Users:\n"
         for user in top_users:
-            response += f"- {user.user_name}: {user.birthday_count} birthdays\n"
+            birthday_count = GlobalBirthday.objects.filter(added_by=user.user_id).count()
+            response += f"- {user.user_name}: {birthday_count} birthdays\n"
 
         return response
 
