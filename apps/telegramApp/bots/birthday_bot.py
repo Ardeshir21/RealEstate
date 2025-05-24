@@ -22,6 +22,17 @@ class BirthdayBot(TelegramBot):
             '/listbirthdays': self.cmd_list_birthdays,
             '/help': self.cmd_help
         }
+        
+        # Add month names
+        self.english_months = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ]
+        
+        self.persian_months = [
+            "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
+            "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"
+        ]
 
     def get_main_menu_keyboard(self, show_cancel: bool = False) -> Dict:
         """Create the main menu keyboard."""
@@ -349,8 +360,47 @@ class BirthdayBot(TelegramBot):
             callback_query_id = callback_query['id']
             message_id = callback_query['message']['message_id']
 
+            # Handle month selection callbacks
+            if callback_data == "choose_persian_month":
+                response, keyboard = self.get_month_selection_keyboard("persian")
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, keyboard)
+                return
+            
+            elif callback_data == "choose_english_month":
+                response, keyboard = self.get_month_selection_keyboard("english")
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, keyboard)
+                return
+            
+            elif callback_data.startswith("select_persian_month_"):
+                selected_month = callback_data.replace("select_persian_month_", "")
+                response, keyboard = self.get_user_birthdays(user_id, filter_type="persian_month", filter_value=selected_month)
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, keyboard)
+                return
+            
+            elif callback_data.startswith("select_english_month_"):
+                selected_month = callback_data.replace("select_english_month_", "")
+                response, keyboard = self.get_user_birthdays(user_id, filter_type="english_month", filter_value=selected_month)
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, keyboard)
+                return
+            
+            elif callback_data == "filter_next_5":
+                response, keyboard = self.get_user_birthdays(user_id, filter_type="next_5")
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, keyboard)
+                return
+            
+            elif callback_data == "filter_all":
+                response, keyboard = self.get_user_birthdays(user_id)
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, keyboard)
+                return
+
             # Handle edit_name callbacks
-            if callback_data.startswith("edit_name_"):
+            elif callback_data.startswith("edit_name_"):
                 birthday_id = int(callback_data.split("_")[-1])
                 # Set state for name edit
                 UserState.objects.update_or_create(
@@ -653,6 +703,9 @@ class BirthdayBot(TelegramBot):
             reminder_days = birthday.reminder_days if birthday.reminder_days is not None else settings.reminder_days
             zodiac_sign = self.get_zodiac_sign(birthday.birth_date)
             
+            # Get month names
+            english_month, persian_month = self.get_month_names(birthday.birth_date)
+            
             # Add emoji indicators for very close birthdays
             days_indicator = "🔔 TODAY!" if days_until == 0 else (
                            "🎉 Tomorrow!" if days_until == 1 else (
@@ -667,38 +720,112 @@ class BirthdayBot(TelegramBot):
             response += f"│ {name_decoration}{birthday.name} {name_decoration}\n"
             response += f"├{'─' * 28}\n"
             response += f" {days_indicator}\n"
-            response += f" 📅 {birthday.birth_date} (Gregorian)\n"
-            response += f" 🗓️ {persian_date} (Persian)\n"
+            response += f" 📅 {birthday.birth_date.day} {english_month} (Gregorian)\n"
+            response += f" 🗓️ {persian_date} ({persian_month})\n"
             response += f" {zodiac_sign}\n"
             response += f" 🔔 Reminder: {reminder_days} days before\n"
             response += f"└{'─' * 28}\n\n"
         
         return response
 
-    def get_user_birthdays(self, user_id: str, for_edit: bool = False, for_delete: bool = False) -> tuple:
+    def get_user_birthdays(self, user_id: str, for_edit: bool = False, for_delete: bool = False, filter_type: str = None, filter_value: str = None) -> tuple:
         """Get list of birthdays added by the user with interactive buttons."""
-        # Keep alphabetical sorting for editing interface
-        birthdays = GlobalBirthday.objects.filter(added_by=user_id).order_by('name')
+        birthdays = GlobalBirthday.objects.filter(added_by=user_id)
         
         if not birthdays:
             return "You haven't added any birthdays yet!", self.get_main_menu_keyboard(show_cancel=False)
+
+        # Add filter buttons at the top
+        filter_buttons = [
+            [
+                {"text": "📅 Next 5 Birthdays", "callback_data": "filter_next_5"},
+                {"text": "🌟 All Birthdays", "callback_data": "filter_all"}
+            ],
+            [
+                {"text": "🗓️ Persian Month", "callback_data": "choose_persian_month"},
+                {"text": "📆 English Month", "callback_data": "choose_english_month"}
+            ]
+        ]
+
+        if filter_type == "next_5":
+            today = timezone.now().date()
+            birthday_list = []
+            for birthday in birthdays:
+                next_birthday = birthday.get_next_birthday()
+                days_until = (next_birthday - today).days
+                birthday_list.append((birthday, days_until))
+            
+            # Sort by days until next birthday and take first 5
+            birthday_list.sort(key=lambda x: x[1])
+            birthdays = [b[0] for b in birthday_list[:5]]
+            response = "🎯 Next 5 Upcoming Birthdays 🎯\n" + "─" * 30 + "\n\n"
         
-        response = "🎂 Your Birthdays 🎂\n" + "─" * 30 + "\n\n"
+        elif filter_type == "persian_month":
+            month_idx = self.persian_months.index(filter_value) + 1
+            filtered_birthdays = []
+            for birthday in birthdays:
+                persian_date = jdatetime.date.fromgregorian(date=birthday.birth_date)
+                if persian_date.month == month_idx:
+                    filtered_birthdays.append(birthday)
+            birthdays = filtered_birthdays
+            response = f"🗓️ Birthdays in {filter_value} (Persian)\n" + "─" * 30 + "\n\n"
         
-        buttons = []
+        elif filter_type == "english_month":
+            month_idx = self.english_months.index(filter_value) + 1
+            birthdays = birthdays.filter(birth_date__month=month_idx)
+            response = f"📆 Birthdays in {filter_value}\n" + "─" * 30 + "\n\n"
+        
+        else:
+            response = "🎂 Your Birthdays 🎂\n" + "─" * 30 + "\n\n"
+
+        # Create birthday buttons
+        birthday_buttons = []
         for birthday in birthdays:
-            button_text = (f"🎂 {birthday.name} ({birthday.birth_date})")
-            # Each birthday gets its own row with a manage option
-            buttons.append([{
+            button_text = f"🎂 {birthday.name} ({birthday.birth_date})"
+            birthday_buttons.append([{
                 "text": button_text,
                 "callback_data": f"manage_id_{birthday.id}"
             }])
+
+        if not birthday_buttons and filter_type:
+            response += "No birthdays found for this filter!"
+            birthday_buttons = []
+        
+        # Combine filter buttons with birthday buttons
+        buttons = filter_buttons + birthday_buttons
         
         # Add Back button at the bottom
         buttons.append([{"text": "🔙 Back to Main", "callback_data": "back_to_main"}])
         
         keyboard = self.create_inline_keyboard(buttons)
         return response, keyboard
+
+    def get_month_selection_keyboard(self, month_type: str) -> tuple:
+        """Create keyboard for month selection."""
+        months = self.persian_months if month_type == "persian" else self.english_months
+        buttons = []
+        current_row = []
+        
+        for i, month in enumerate(months):
+            current_row.append({
+                "text": month,
+                "callback_data": f"select_{month_type}_month_{month}"
+            })
+            
+            # Create rows of 3 buttons each
+            if len(current_row) == 3:
+                buttons.append(current_row)
+                current_row = []
+        
+        # Add any remaining buttons
+        if current_row:
+            buttons.append(current_row)
+        
+        # Add back button
+        buttons.append([{"text": "🔙 Back", "callback_data": "back_to_list"}])
+        
+        response = f"Please select a {'Persian' if month_type == 'persian' else 'Gregorian'} month:"
+        return response, self.create_inline_keyboard(buttons)
 
     def handle_birthday_edit(self, birthday_id: int, user_id: str, new_date: str) -> str:
         """Handle editing a birthday date."""
@@ -763,3 +890,14 @@ class BirthdayBot(TelegramBot):
             return "♒️ Aquarius"
         else:
             return "♓️ Pisces"
+
+    def get_month_names(self, date: datetime.date) -> tuple:
+        """Get both English and Persian month names for a given date."""
+        # Get English month name (1-based index)
+        english_month = self.english_months[date.month - 1]
+        
+        # Convert to Persian date and get Persian month name
+        persian_date = jdatetime.date.fromgregorian(date=date)
+        persian_month = self.persian_months[persian_date.month - 1]
+        
+        return english_month, persian_month
