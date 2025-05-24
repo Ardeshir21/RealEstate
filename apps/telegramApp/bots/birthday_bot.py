@@ -628,12 +628,13 @@ class BirthdayBot(TelegramBot):
                 target_id = callback_data.replace("confirm_remove_admin_", "")
                 response = self.cmd_remove_admin(f"/remove_admin {target_id}", user_id, user_name)
                 
-                # After removal, show success message and return to admin panel
+                # Show success message
                 self.answer_callback_query(callback_query_id)
-                self.edit_message(user_id, message_id, response, None)
+                self.send_message(user_id, response)
                 
+                # After a brief pause, show admin menu in the original message
                 import time
-                time.sleep(1)  # Brief pause
+                time.sleep(1)  # Longer pause to ensure message is read
                 response = ("🔐 Admin Panel\n\n"
                           "Select an option:")
                 self.edit_message(user_id, message_id, response, self.get_admin_menu_keyboard())
