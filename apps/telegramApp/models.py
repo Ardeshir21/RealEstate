@@ -5,6 +5,16 @@ import re
 
 # Create your models here.
 
+class TelegramAdmin(models.Model):
+    """Admin users with full privileges"""
+    user_id = models.CharField(max_length=100, unique=True)  # Telegram user ID
+    user_name = models.CharField(max_length=100)  # Display name
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Admin: {self.user_name}"
+
 class GlobalBirthday(models.Model):
     """Birthday entries that are private to each user"""
     name = models.CharField(max_length=255)  # Person's name

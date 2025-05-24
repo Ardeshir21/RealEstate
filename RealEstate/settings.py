@@ -18,7 +18,8 @@ import os
 secret_file = 'RealEstateKEYS.txt'
 secrets = ['SECRET_KEY', 'DEBUG' , 'DATABASE_NAME', 'DATABASE_USERNAME', 'DATABASE_PASSWORD',
  'EMAIL_HOST', 'EMAIL_HOST_USER', 'EMAIL_HOST_PASSWORD', 'CHATGPT_API', 
- 'TELEGRAM_DICTIONARY_BOT_TOKEN', 'TELEGRAM_TOPIC_BOT_TOKEN', 'TELEGRAM_BIRTHDAY_BOT_TOKEN']
+ 'TELEGRAM_DICTIONARY_BOT_TOKEN', 'TELEGRAM_TOPIC_BOT_TOKEN', 'TELEGRAM_BIRTHDAY_BOT_TOKEN',
+ 'TELEGRAM_ADMIN_CODE']
 SECRETS_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 filepath = os.path.join(SECRETS_DIR, secret_file)
 secrets_dict = {}
@@ -46,6 +47,9 @@ CHATGPT_API = secrets_dict['CHATGPT_API']
 TELEGRAM_DICTIONARY_BOT_TOKEN = secrets_dict['TELEGRAM_DICTIONARY_BOT_TOKEN']
 TELEGRAM_TOPIC_BOT_TOKEN = secrets_dict['TELEGRAM_TOPIC_BOT_TOKEN']
 TELEGRAM_BIRTHDAY_BOT_TOKEN = secrets_dict['TELEGRAM_BIRTHDAY_BOT_TOKEN']
+
+# Telegram Bot Settings
+TELEGRAM_ADMIN_CODE = secrets_dict['TELEGRAM_ADMIN_CODE']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # The DEBUG value in 'RealEstateKEYS.txt' is an empty string ''

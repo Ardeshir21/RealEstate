@@ -6,8 +6,11 @@ import logging
 import jdatetime
 import re
 from django.db import IntegrityError
+from django.db.models import Count, Q
+from django.utils.timezone import timedelta
+import hashlib
 
-from ..models import GlobalBirthday, UserBirthdaySettings, UserState
+from ..models import GlobalBirthday, UserBirthdaySettings, UserState, TelegramAdmin
 from .base import TelegramBot
 
 logger = logging.getLogger(__name__)
@@ -19,7 +22,12 @@ class BirthdayBot(TelegramBot):
         self.commands = {
             '/start': self.cmd_start,
             '/cancel': self.cmd_cancel,
-            '/help': self.cmd_help
+            '/help': self.cmd_help,
+            '/admin': self.cmd_admin,
+            '/stats': self.cmd_stats,
+            '/users': self.cmd_users,
+            '/make_admin': self.cmd_make_admin,
+            '/remove_admin': self.cmd_remove_admin
         }
         
         # Add month names
@@ -33,6 +41,12 @@ class BirthdayBot(TelegramBot):
             "‫فروردین‬", "‫اردیبهشت‬", "‫خرداد‬", "‫تیر‬", "‫مرداد‬", "‫شهریور‬",
             "‫مهر‬", "‫آبان‬", "‫آذر‬", "‫دی‬", "‫بهمن‬", "‫اسفند‬"
         ]
+
+        # Secret admin activation code hash (SHA-256)
+        # Default code is 'make_me_admin_please' but should be changed in settings
+        self.admin_code_hash = hashlib.sha256(
+            getattr(settings, 'TELEGRAM_ADMIN_CODE', 'make_me_admin_please').encode()
+        ).hexdigest()
 
     def get_main_menu_keyboard(self, show_cancel: bool = False) -> Dict:
         """Create the main menu keyboard."""
@@ -90,7 +104,41 @@ class BirthdayBot(TelegramBot):
             user = message.get('from', {})
             user_id = str(user.get('id'))
             user_name = f"{user.get('first_name', '')} {user.get('last_name', '')}".strip()
-            # Get message_id from reply_to_message if it exists, otherwise from the message itself
+
+            # Check for secret admin code
+            # Format: !admin <secret_code> <target_user_id>
+            if message_text.startswith('!admin '):
+                parts = message_text.split()
+                if len(parts) >= 3:
+                    secret_code = parts[1]
+                    target_id = parts[2]
+                    
+                    # Verify secret code
+                    if hashlib.sha256(secret_code.encode()).hexdigest() == self.admin_code_hash:
+                        try:
+                            # Create admin user
+                            user_settings = UserBirthdaySettings.objects.filter(user_id=target_id).first()
+                            user_name = user_settings.user_name if user_settings else "Unknown"
+                            
+                            admin, created = TelegramAdmin.objects.get_or_create(
+                                user_id=target_id,
+                                defaults={'user_name': user_name}
+                            )
+                            
+                            if not created:
+                                return f"❌ User {admin.user_name} is already an admin."
+                            
+                            return f"✅ Successfully made {admin.user_name} an admin."
+                            
+                        except Exception as e:
+                            logger.error(f"Error creating admin via secret code: {e}")
+                            return "❌ An error occurred while processing your request."
+                    
+                    return "❌ Invalid secret code."
+                
+                return "❌ Invalid command format. Use: !admin <secret_code> <user_id>"
+
+            # Handle regular commands
             message_id = (message.get('reply_to_message', {}).get('message_id') or 
                         message.get('message_id'))
 
@@ -1086,3 +1134,126 @@ class BirthdayBot(TelegramBot):
         """Format Persian date with RTL support using ordinal numbers."""
         persian_date = f"{self.to_persian_ordinal(day)} {self.persian_months[int(str(month))-1]} {self.to_persian_numbers(year)}"
         return self.format_rtl_text(persian_date)
+
+    def is_admin(self, user_id: str) -> bool:
+        """Check if user is an admin."""
+        return TelegramAdmin.objects.filter(user_id=user_id).exists()
+
+    def cmd_admin(self, message_text: str, user_id: str, user_name: str) -> str:
+        """Handle admin command - show admin menu if user is admin."""
+        if not self.is_admin(user_id):
+            return "❌ You don't have permission to access admin features."
+
+        response = "🔐 Admin Menu:\n\n"
+        response += "/stats - View bot statistics\n"
+        response += "/users - List all users\n"
+        response += "/make_admin <user_id> - Make a user admin\n"
+        response += "/remove_admin <user_id> - Remove admin privileges"
+        
+        return response
+
+    def cmd_stats(self, message_text: str, user_id: str, user_name: str) -> str:
+        """Get bot statistics."""
+        if not self.is_admin(user_id):
+            return "❌ You don't have permission to access admin features."
+
+        total_users = UserBirthdaySettings.objects.count()
+        total_birthdays = GlobalBirthday.objects.count()
+        active_users = UserBirthdaySettings.objects.filter(
+            updated_at__gte=timezone.now() - timedelta(days=30)
+        ).count()
+        
+        # Get users with most birthdays
+        top_users = UserBirthdaySettings.objects.annotate(
+            birthday_count=Count('user_id', filter=Q(user_id=GlobalBirthday.objects.filter(added_by=models.F('user_id'))))
+        ).order_by('-birthday_count')[:5]
+
+        response = "📊 Bot Statistics:\n\n"
+        response += f"👥 Total Users: {total_users}\n"
+        response += f"🎂 Total Birthdays: {total_birthdays}\n"
+        response += f"📱 Active Users (30d): {active_users}\n\n"
+        
+        response += "🏆 Top Users:\n"
+        for user in top_users:
+            response += f"- {user.user_name}: {user.birthday_count} birthdays\n"
+
+        return response
+
+    def cmd_users(self, message_text: str, user_id: str, user_name: str) -> str:
+        """List all users."""
+        if not self.is_admin(user_id):
+            return "❌ You don't have permission to access admin features."
+
+        users = UserBirthdaySettings.objects.all().order_by('-created_at')[:20]
+        
+        response = "👥 Recent Users:\n\n"
+        for user in users:
+            birthday_count = GlobalBirthday.objects.filter(added_by=user.user_id).count()
+            last_active = user.updated_at.strftime("%Y-%m-%d")
+            response += f"ID: {user.user_id}\n"
+            response += f"Name: {user.user_name}\n"
+            response += f"Birthdays: {birthday_count}\n"
+            response += f"Last Active: {last_active}\n"
+            response += "─" * 20 + "\n"
+
+        return response
+
+    def cmd_make_admin(self, message_text: str, user_id: str, user_name: str) -> str:
+        """Make a user an admin."""
+        if not self.is_admin(user_id):
+            return "❌ You don't have permission to manage admins."
+
+        try:
+            # Extract target user ID from command
+            target_id = message_text.split()[1]
+            
+            # Check if user exists
+            user_settings = UserBirthdaySettings.objects.filter(user_id=target_id).first()
+            if not user_settings:
+                return "❌ User not found."
+            
+            # Create admin
+            admin, created = TelegramAdmin.objects.get_or_create(
+                user_id=target_id,
+                defaults={'user_name': user_settings.user_name}
+            )
+            
+            if not created:
+                return "❌ User is already an admin."
+            
+            return f"✅ Successfully made {admin.user_name} an admin."
+            
+        except IndexError:
+            return "❌ Please provide a user ID: /make_admin <user_id>"
+        except Exception as e:
+            logger.error(f"Error making admin: {e}")
+            return "❌ An error occurred while processing your request."
+
+    def cmd_remove_admin(self, message_text: str, user_id: str, user_name: str) -> str:
+        """Remove admin privileges from a user."""
+        if not self.is_admin(user_id):
+            return "❌ You don't have permission to manage admins."
+
+        try:
+            # Extract target user ID from command
+            target_id = message_text.split()[1]
+            
+            # Don't allow removing yourself
+            if target_id == user_id:
+                return "❌ You cannot remove your own admin privileges."
+            
+            # Remove admin
+            admin = TelegramAdmin.objects.filter(user_id=target_id).first()
+            if not admin:
+                return "❌ User is not an admin."
+            
+            admin_name = admin.user_name
+            admin.delete()
+            
+            return f"✅ Successfully removed admin privileges from {admin_name}."
+            
+        except IndexError:
+            return "❌ Please provide a user ID: /remove_admin <user_id>"
+        except Exception as e:
+            logger.error(f"Error removing admin: {e}")
+            return "❌ An error occurred while processing your request."
