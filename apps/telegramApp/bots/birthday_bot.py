@@ -472,50 +472,83 @@ class BirthdayBot(TelegramBot):
                     keyboard = self.create_inline_keyboard(buttons)
                     return "❌ Please enter a valid search term", keyboard
 
-                # Get all birthdays for this user
-                birthdays = GlobalBirthday.objects.filter(added_by=user_id)
+            elif user_state.state == "waiting_for_remove_all_confirmation":
+                confirmation_text = "YES, REMOVE ALL MY BIRTHDAYS"
+                if message_text.strip() != confirmation_text:
+                    buttons = [[{"text": "❌ Cancel", "callback_data": "back_to_list"}]]
+                    keyboard = self.create_inline_keyboard(buttons)
+                    return (f"❌ Text doesn't match. Please type exactly:\n\n"
+                           f"{confirmation_text}\n\n"
+                           f"Or click Cancel to abort."), keyboard
                 
-                # Filter birthdays where name contains the search term (case-insensitive)
-                filtered_birthdays = [b for b in birthdays if search_term in b.name.lower()]
-                
-                if not filtered_birthdays:
-                    response = f"🔍 No birthdays found containing '{search_term}'"
-                else:
-                    response = f"🔍 Found {len(filtered_birthdays)} birthday(s) containing '{search_term}':\n" + "─" * 30 + "\n\n"
-                
-                # Create birthday buttons for matches
-                birthday_buttons = []
-                today = timezone.now().date()
-                
-                for birthday in filtered_birthdays:
-                    # Calculate days until next birthday
-                    next_birthday = birthday.get_next_birthday()
-                    days_until = (next_birthday - today).days
+                try:
+                    # Delete all birthdays for this user
+                    deleted_count = GlobalBirthday.objects.filter(added_by=user_id).delete()[0]
                     
-                    # Add emoji indicators for very close birthdays
-                    days_indicator = "🔔 TODAY!" if days_until == 0 else (
-                                   "🎉 Tomorrow!" if days_until == 1 else (
-                                   "⚡️ In 2 days!" if days_until == 2 else (
-                                   "📅 In 3 days!" if days_until == 3 else
-                                   f"⏳ In {days_until} days")))
+                    # Clear the state
+                    user_state.delete()
                     
-                    # Add sparkles for birthdays happening today or tomorrow
-                    name_decoration = "✨ " if days_until <= 1 else ""
+                    # Show success message
+                    response = f"✅ Successfully removed all your birthdays ({deleted_count} total)."
+                    self.send_message(user_id, response)
                     
-                    button_text = f"{name_decoration}{birthday.name}{name_decoration} ({days_indicator})"
-                    birthday_buttons.append([{
-                        "text": button_text,
-                        "callback_data": f"manage_id_{birthday.id}"
-                    }])
+                    # After a brief pause, return to main menu
+                    import time
+                    time.sleep(1)
+                    response = "What would you like to do?"
+                    self.send_message(user_id, response, self.get_main_menu_keyboard(user_id=user_id))
+                    return None
+                    
+                except Exception as e:
+                    logger.error(f"Error removing all birthdays: {e}")
+                    buttons = [[{"text": "❌ Cancel", "callback_data": "back_to_list"}]]
+                    keyboard = self.create_inline_keyboard(buttons)
+                    return "❌ An error occurred while removing birthdays. Please try again.", keyboard
+
+            # Get all birthdays for this user
+            birthdays = GlobalBirthday.objects.filter(added_by=user_id)
+            
+            # Filter birthdays where name contains the search term (case-insensitive)
+            filtered_birthdays = [b for b in birthdays if search_term in b.name.lower()]
+            
+            if not filtered_birthdays:
+                response = f"🔍 No birthdays found containing '{search_term}'"
+            else:
+                response = f"🔍 Found {len(filtered_birthdays)} birthday(s) containing '{search_term}':\n" + "─" * 30 + "\n\n"
+            
+            # Create birthday buttons for matches
+            birthday_buttons = []
+            today = timezone.now().date()
+            
+            for birthday in filtered_birthdays:
+                # Calculate days until next birthday
+                next_birthday = birthday.get_next_birthday()
+                days_until = (next_birthday - today).days
                 
-                # Add back button
-                birthday_buttons.append([{"text": "🔙 BACK TO LIST", "callback_data": "back_to_list"}])
-                keyboard = self.create_inline_keyboard(birthday_buttons)
+                # Add emoji indicators for very close birthdays
+                days_indicator = "🔔 TODAY!" if days_until == 0 else (
+                               "🎉 Tomorrow!" if days_until == 1 else (
+                               "⚡️ In 2 days!" if days_until == 2 else (
+                               "📅 In 3 days!" if days_until == 3 else
+                               f"⏳ In {days_until} days")))
                 
-                # Clear the state
-                user_state.delete()
+                # Add sparkles for birthdays happening today or tomorrow
+                name_decoration = "✨ " if days_until <= 1 else ""
                 
-                return response, keyboard
+                button_text = f"{name_decoration}{birthday.name}{name_decoration} ({days_indicator})"
+                birthday_buttons.append([{
+                    "text": button_text,
+                    "callback_data": f"manage_id_{birthday.id}"
+                }])
+            
+            # Add back button
+            birthday_buttons.append([{"text": "🔙 BACK TO LIST", "callback_data": "back_to_list"}])
+            keyboard = self.create_inline_keyboard(birthday_buttons)
+            
+            # Clear the state
+            user_state.delete()
+            
+            return response, keyboard
 
         except Exception as e:
             logger.error(f"Error in handle_state_response: {e}")
@@ -915,6 +948,39 @@ class BirthdayBot(TelegramBot):
                 self.edit_message(user_id, message_id, response, keyboard)
                 return
 
+            elif callback_data == "remove_all_prompt":
+                response = ("⚠️ WARNING: This will remove ALL your stored birthdays!\n\n"
+                          "Are you absolutely sure you want to proceed?")
+                buttons = [
+                    [
+                        {"text": "✅ YES, PROCEED", "callback_data": "confirm_remove_all"},
+                        {"text": "❌ NO, CANCEL", "callback_data": "back_to_list"}
+                    ]
+                ]
+                keyboard = self.create_inline_keyboard(buttons)
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, keyboard)
+                return
+
+            elif callback_data == "confirm_remove_all":
+                # Set state for final text confirmation
+                UserState.objects.update_or_create(
+                    user_id=user_id,
+                    defaults={
+                        'state': 'waiting_for_remove_all_confirmation',
+                        'context': {'message_id': message_id}
+                    }
+                )
+                
+                response = ("For final confirmation, please type exactly:\n\n"
+                          "YES, REMOVE ALL MY BIRTHDAYS\n\n"
+                          "⚠️ This action cannot be undone!")
+                buttons = [[{"text": "❌ Cancel", "callback_data": "back_to_list"}]]
+                keyboard = self.create_inline_keyboard(buttons)
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, keyboard)
+                return
+
             elif callback_data == "add_birthday":
                 # Set state for name input
                 UserState.objects.update_or_create(
@@ -1103,6 +1169,9 @@ class BirthdayBot(TelegramBot):
             ],
             [
                 {"text": "🔍 SEARCH BY NAME", "callback_data": "search_by_name"}
+            ],
+            [
+                {"text": "❌ REMOVE ALL BIRTHDAYS", "callback_data": "remove_all_prompt"}
             ]
         ]
 
