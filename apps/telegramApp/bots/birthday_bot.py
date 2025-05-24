@@ -38,19 +38,19 @@ class BirthdayBot(TelegramBot):
         """Create the main menu keyboard."""
         buttons = [
             [
-                {"text": "🎂 <b>Add Birthday</b>", "callback_data": "add_birthday"},
-                {"text": "⏰ <b>Set Reminder</b>", "callback_data": "set_reminder"}
+                {"text": "🎂 ADD BIRTHDAY", "callback_data": "add_birthday"},
+                {"text": "⏰ SET REMINDER", "callback_data": "set_reminder"}
             ],
             [
-                {"text": "✏️ <b>Manage My Entries</b>", "callback_data": "manage_entries"}
+                {"text": "✏️ MANAGE MY ENTRIES", "callback_data": "manage_entries"}
             ],
             [
-                {"text": "❓ <b>Help</b>", "callback_data": "help"}
+                {"text": "❓ HELP", "callback_data": "help"}
             ]
         ]
         
         if show_cancel:
-            buttons.append([{"text": "❌ <b>Cancel</b>", "callback_data": "cancel"}])
+            buttons.append([{"text": "❌ CANCEL", "callback_data": "cancel"}])
             
         return self.create_inline_keyboard(buttons)
 
@@ -58,14 +58,14 @@ class BirthdayBot(TelegramBot):
         """Create the manage entries keyboard."""
         buttons = [
             [
-                {"text": "✏️ <b>Edit Name</b>", "callback_data": "edit_name"},
-                {"text": "📅 <b>Edit Date</b>", "callback_data": "edit_date"}
+                {"text": "✏️ EDIT NAME", "callback_data": "edit_name"},
+                {"text": "📅 EDIT DATE", "callback_data": "edit_date"}
             ],
             [
-                {"text": "🗑️ <b>Delete Birthday</b>", "callback_data": "delete_birthday"}
+                {"text": "🗑️ DELETE BIRTHDAY", "callback_data": "delete_birthday"}
             ],
             [
-                {"text": "🔙 <b>Back to Main</b>", "callback_data": "back_to_main"}
+                {"text": "🔙 BACK TO MAIN", "callback_data": "back_to_main"}
             ]
         ]
         return self.create_inline_keyboard(buttons)
@@ -473,23 +473,23 @@ class BirthdayBot(TelegramBot):
                 english_month = self.english_months[birthday.birth_date.month - 1]
                 
                 response = (f"Birthday Details:\n"
-                          f"👤 Name: {birthday.name}\n"
-                          f"📅 Gregorian: {birthday.birth_date.day} {english_month} {birthday.birth_date.year}\n"
-                          f"🗓️ Persian: {self.format_persian_date(persian_date.year, persian_date.month, persian_date.day)}\n"
+                          f"👤 {birthday.name}\n"
+                          f"📅 {birthday.birth_date.day} {english_month} {birthday.birth_date.year}\n"
+                          f"🗓️ {self.format_persian_date(persian_date.year, persian_date.month, persian_date.day)}\n"
                           f"{zodiac_sign}\n"
                           f"⏰ Reminder: {current_reminder} days before\n\n"
                           f"Choose an action:")
                 
                 buttons = [
                     [
-                        {"text": "✏️ <b>Edit Name</b>", "callback_data": f"edit_name_{birthday_id}"},
-                        {"text": "📅 <b>Edit Date</b>", "callback_data": f"edit_prompt_{birthday_id}"}
+                        {"text": "✏️ EDIT NAME", "callback_data": f"edit_name_{birthday_id}"},
+                        {"text": "📅 EDIT DATE", "callback_data": f"edit_prompt_{birthday_id}"}
                     ],
                     [
-                        {"text": "⏰ <b>Edit Reminder</b>", "callback_data": f"edit_reminder_{birthday_id}"},
-                        {"text": "❌ <b>Delete</b>", "callback_data": f"delete_prompt_{birthday_id}"}
+                        {"text": "⏰ EDIT REMINDER", "callback_data": f"edit_reminder_{birthday_id}"},
+                        {"text": "❌ DELETE", "callback_data": f"delete_prompt_{birthday_id}"}
                     ],
-                    [{"text": "🔙 <b>Back to List</b>", "callback_data": "back_to_list"}]
+                    [{"text": "🔙 BACK TO LIST", "callback_data": "back_to_list"}]
                 ]
                 keyboard = self.create_inline_keyboard(buttons)
                 
@@ -528,7 +528,7 @@ class BirthdayBot(TelegramBot):
                           f"📅 Gregorian: YYYY-MM-DD (e.g., 1990-12-31)\n"
                           f"🗓️ Persian: YYYY/MM/DD (e.g., {self.format_persian_date('1369', '10', '10')})")
                 
-                buttons = [[{"text": "🔙 <b>Cancel</b>", "callback_data": "back_to_list"}]]
+                buttons = [[{"text": "🔙 Cancel", "callback_data": "back_to_list"}]]
                 keyboard = self.create_inline_keyboard(buttons)
                 
                 self.answer_callback_query(callback_query_id)
@@ -550,8 +550,8 @@ class BirthdayBot(TelegramBot):
                 
                 buttons = [
                     [
-                        {"text": "✅ <b>Yes, Delete</b>", "callback_data": f"confirm_delete_{birthday_id}"},
-                        {"text": "❌ <b>No, Cancel</b>", "callback_data": "back_to_list"}
+                        {"text": "✅ YES, DELETE", "callback_data": f"confirm_delete_{birthday_id}"},
+                        {"text": "❌ NO, CANCEL", "callback_data": "back_to_list"}
                     ]
                 ]
                 keyboard = self.create_inline_keyboard(buttons)
@@ -611,7 +611,7 @@ class BirthdayBot(TelegramBot):
                     user_id=user_id,
                     defaults={'state': 'waiting_for_reminder'}
                 )
-                buttons = [[{"text": "🔙 <b>Back to Main</b>", "callback_data": "back_to_main"}]]
+                buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
                 keyboard = self.create_inline_keyboard(buttons)
                 response = ("Please enter the number of days before birthdays you want to be reminded\n"
                           "For example: 7")
@@ -639,7 +639,7 @@ class BirthdayBot(TelegramBot):
 
             elif callback_data == "help":
                 response = self.cmd_help()
-                buttons = [[{"text": "🔙 <b>Back to Main</b>", "callback_data": "back_to_main"}]]
+                buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
                 keyboard = self.create_inline_keyboard(buttons)
                 self.answer_callback_query(callback_query_id)
                 self.edit_message(user_id, message_id, response, keyboard)
@@ -698,12 +698,12 @@ class BirthdayBot(TelegramBot):
         # Add filter buttons at the top with HTML formatting
         filter_buttons = [
             [
-                {"text": "📅 <b>Next 5 Birthdays</b>", "callback_data": "filter_next_5"},
-                {"text": "🌟 <b>All Birthdays</b>", "callback_data": "filter_all"}
+                {"text": "📅 NEXT 5 BIRTHDAYS", "callback_data": "filter_next_5"},
+                {"text": "🌟 ALL BIRTHDAYS", "callback_data": "filter_all"}
             ],
             [
-                {"text": "🗓️ <b>Persian Month</b>", "callback_data": "choose_persian_month"},
-                {"text": "📆 <b>English Month</b>", "callback_data": "choose_english_month"}
+                {"text": "🗓️ PERSIAN MONTH", "callback_data": "choose_persian_month"},
+                {"text": "📆 ENGLISH MONTH", "callback_data": "choose_english_month"}
             ]
         ]
 
@@ -782,7 +782,7 @@ class BirthdayBot(TelegramBot):
         buttons = filter_buttons + birthday_buttons
         
         # Add Back button at the bottom
-        buttons.append([{"text": "🔙 Back to Main", "callback_data": "back_to_main"}])
+        buttons.append([{"text": "🔙 BACK TO MAIN", "callback_data": "back_to_main"}])
         
         keyboard = self.create_inline_keyboard(buttons)
         return response, keyboard
@@ -795,7 +795,7 @@ class BirthdayBot(TelegramBot):
         
         for i, month in enumerate(months):
             current_row.append({
-                "text": f"<b>{month if month_type == 'english' else self.format_rtl_text(month)}</b>",
+                "text": f"{month if month_type == 'english' else self.format_rtl_text(month)}",
                 "callback_data": f"select_{month_type}_month_{month}"
             })
             
@@ -809,7 +809,7 @@ class BirthdayBot(TelegramBot):
             buttons.append(current_row)
         
         # Add back button
-        buttons.append([{"text": "🔙 <b>Back</b>", "callback_data": "back_to_list"}])
+        buttons.append([{"text": "🔙 BACK", "callback_data": "back_to_list"}])
         
         response = f"Please select a {'Persian' if month_type == 'persian' else 'Gregorian'} month:"
         if month_type == 'persian':
