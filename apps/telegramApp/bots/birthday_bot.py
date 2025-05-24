@@ -164,7 +164,7 @@ class BirthdayBot(TelegramBot):
             if message_text == '/start':
                 welcome_text = ("Welcome to Birthday Reminder Bot! 🎉\n\n"
                               "Please use the buttons below to interact with me:")
-                self.send_message(user_id, welcome_text, self.get_main_menu_keyboard())
+                self.send_message(user_id, welcome_text, self.get_main_menu_keyboard(user_id=user_id))
                 return None
 
             # Check if user is in a conversation state
@@ -183,7 +183,7 @@ class BirthdayBot(TelegramBot):
             if handler:
                 response = handler(message_text, user_id, user_name)
                 if response:
-                    self.send_message(user_id, response, self.get_main_menu_keyboard())
+                    self.send_message(user_id, response, self.get_main_menu_keyboard(user_id=user_id))
                 return None
             return None
             
@@ -374,7 +374,7 @@ class BirthdayBot(TelegramBot):
                     import time
                     time.sleep(1)
                     response = "What would you like to do?"
-                    self.send_message(user_id, response, self.get_main_menu_keyboard())
+                    self.send_message(user_id, response, self.get_main_menu_keyboard(user_id=user_id))
                     return None
 
                 except ValueError:
@@ -929,7 +929,7 @@ class BirthdayBot(TelegramBot):
             elif callback_data == "back_to_main":
                 response = "What would you like to do?"
                 self.answer_callback_query(callback_query_id)
-                self.edit_message(user_id, message_id, response, self.get_main_menu_keyboard(show_cancel=False))
+                self.edit_message(user_id, message_id, response, self.get_main_menu_keyboard(user_id=user_id))
                 return
 
             elif callback_data == "back_to_manage":
@@ -994,11 +994,11 @@ class BirthdayBot(TelegramBot):
                     return
 
             self.answer_callback_query(callback_query_id)
-            self.edit_message(user_id, message_id, response, self.get_main_menu_keyboard())
+            self.edit_message(user_id, message_id, response, self.get_main_menu_keyboard(user_id=user_id))
 
         except Exception as e:
             logger.error(f"Error handling callback query: {e}")
-            self.send_message(user_id, f"An error occurred: {str(e)}", self.get_main_menu_keyboard())
+            self.send_message(user_id, f"An error occurred: {str(e)}", self.get_main_menu_keyboard(user_id=user_id))
 
     def cmd_cancel(self, message_text: str, user_id: str, *args) -> str:
         """Cancel current operation and clear state."""
