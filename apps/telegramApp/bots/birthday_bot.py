@@ -193,13 +193,46 @@ class BirthdayBot(TelegramBot):
                     date_str = message_text.strip()
                     
                     try:
-                        # Try to create birthday with the given date string
-                        birthday = GlobalBirthday(
+                        # Create a temporary birthday object to parse the date
+                        temp_birthday = GlobalBirthday(
                             name=name,
-                            birth_date=date_str,  # This will be parsed in save()
+                            birth_date=date_str,
                             added_by=user_id
                         )
-                        birthday.save()
+                        
+                        # Get the parsed Gregorian date
+                        gregorian_date, persian_date = temp_birthday.parse_date(date_str)
+                        
+                        # Check for existing birthdays on the same date
+                        existing_birthdays = GlobalBirthday.objects.filter(
+                            added_by=user_id,
+                            birth_date=gregorian_date
+                        )
+                        
+                        if existing_birthdays.exists():
+                            # Store the parsed dates in context for later use
+                            user_state.context['gregorian_date'] = gregorian_date.isoformat()
+                            user_state.context['persian_date'] = persian_date
+                            user_state.state = 'waiting_for_birthday_confirmation'
+                            user_state.save()
+                            
+                            # Format the confirmation message
+                            existing_names = ", ".join([b.name for b in existing_birthdays])
+                            response = (f"⚠️ There are already birthdays on this date:\n"
+                                      f"👥 {existing_names}\n\n"
+                                      f"Would you like to add {name}'s birthday anyway?")
+                            
+                            buttons = [
+                                [
+                                    {"text": "✅ Yes, add it", "callback_data": "confirm_duplicate_birthday"},
+                                    {"text": "❌ No, cancel", "callback_data": "back_to_main"}
+                                ]
+                            ]
+                            keyboard = self.create_inline_keyboard(buttons)
+                            return response, keyboard
+                        
+                        # If no duplicates, save directly
+                        temp_birthday.save()
                         
                         # Clear the state
                         user_state.delete()
@@ -207,9 +240,9 @@ class BirthdayBot(TelegramBot):
                         buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
                         keyboard = self.create_inline_keyboard(buttons)
                         return (f"✅ Birthday successfully added:\n"
-                               f"Name: {birthday.name}\n"
-                               f"📅 Gregorian: {birthday.birth_date}\n"
-                               f"🗓️ Persian: {birthday.persian_birth_date}"), keyboard
+                               f"Name: {temp_birthday.name}\n"
+                               f"📅 Gregorian: {temp_birthday.birth_date}\n"
+                               f"🗓️ Persian: {temp_birthday.persian_birth_date}"), keyboard
 
                     except ValueError as e:
                         buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
@@ -223,6 +256,10 @@ class BirthdayBot(TelegramBot):
                     buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
                     keyboard = self.create_inline_keyboard(buttons)
                     return "❌ An error occurred. Please try again.", keyboard
+
+            elif user_state.state == "waiting_for_birthday_confirmation":
+                # This state is handled by callback_query handler
+                return None
 
             elif user_state.state == "waiting_for_reminder":
                 try:
@@ -635,7 +672,8 @@ class BirthdayBot(TelegramBot):
                     return
 
             elif callback_data == "back_to_list":
-                response, keyboard = self.get_user_birthdays(user_id)
+                # Show manage entries menu without birthdays
+                response, keyboard = self.get_user_birthdays(user_id, show_birthdays=False)
                 self.answer_callback_query(callback_query_id)
                 self.edit_message(user_id, message_id, response, keyboard)
                 return
@@ -726,6 +764,43 @@ class BirthdayBot(TelegramBot):
                 self.answer_callback_query(callback_query_id)
                 self.edit_message(user_id, message_id, response, keyboard)
                 return
+
+            elif callback_data == "confirm_duplicate_birthday":
+                # Get the user state
+                user_state = UserState.objects.filter(user_id=user_id).first()
+                if not user_state or user_state.state != 'waiting_for_birthday_confirmation':
+                    self.answer_callback_query(callback_query_id, "❌ Session expired. Please try again.")
+                    return
+
+                try:
+                    # Create and save the birthday
+                    birthday = GlobalBirthday(
+                        name=user_state.context.get('name'),
+                        birth_date=user_state.context.get('gregorian_date'),
+                        added_by=user_id
+                    )
+                    birthday.save()
+
+                    # Show success message
+                    response = (f"✅ Birthday successfully added:\n"
+                              f"Name: {birthday.name}\n"
+                              f"📅 Gregorian: {birthday.birth_date}\n"
+                              f"🗓️ Persian: {birthday.persian_birth_date}")
+                    
+                    # Clear the state
+                    user_state.delete()
+                    
+                    buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
+                    keyboard = self.create_inline_keyboard(buttons)
+                    
+                    self.answer_callback_query(callback_query_id)
+                    self.edit_message(user_id, message_id, response, keyboard)
+                    return
+
+                except Exception as e:
+                    self.answer_callback_query(callback_query_id, "❌ An error occurred. Please try again.")
+                    user_state.delete()
+                    return
 
             self.answer_callback_query(callback_query_id)
             self.edit_message(user_id, message_id, response, self.get_main_menu_keyboard())
