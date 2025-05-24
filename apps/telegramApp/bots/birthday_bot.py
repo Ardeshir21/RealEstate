@@ -1022,7 +1022,8 @@ class BirthdayBot(TelegramBot):
                 return
 
             elif callback_data == "manage_entries":
-                response, keyboard = self.get_user_birthdays(user_id, show_birthdays=False)
+                response = "Choose an action to manage your birthdays:"
+                keyboard = self.get_manage_entries_keyboard()
                 self.answer_callback_query(callback_query_id)
                 self.edit_message(user_id, message_id, response, keyboard)
                 return
