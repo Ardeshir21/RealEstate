@@ -752,7 +752,7 @@ class BirthdayBot(TelegramBot):
                 return
             
             elif callback_data == "filter_all":
-                response, keyboard = self.get_user_birthdays(user_id, show_birthdays=True)
+                response, keyboard = self.get_user_birthdays(user_id, filter_type="filter_all", show_birthdays=True)
                 self.answer_callback_query(callback_query_id)
                 self.edit_message(user_id, message_id, response, keyboard)
                 return
@@ -1218,6 +1218,9 @@ class BirthdayBot(TelegramBot):
             persian_month = self.persian_months[persian_date.month - 1]
             response = f"📆 Birthdays in {self.format_rtl_text(filter_value)} ({self.format_rtl_text(persian_month)})\n" + "─" * 30 + "\n\n"
         
+        elif filter_type == "filter_all":
+            response = "🎂 All Your Birthdays 🎂\n" + "─" * 30 + "\n\n"
+        
         else:
             response = "🎂 Your Birthdays 🎂\n" + "─" * 30 + "\n\n"
 
@@ -1256,7 +1259,10 @@ class BirthdayBot(TelegramBot):
         buttons = filter_buttons + birthday_buttons
         
         # Add Back button at the bottom
-        buttons.append([{"text": "🔙 BACK TO MAIN", "callback_data": "back_to_main"}])
+        if filter_type:
+            buttons.append([{"text": "🔙 BACK TO LIST", "callback_data": "back_to_list"}])
+        else:
+            buttons.append([{"text": "🔙 BACK TO MAIN", "callback_data": "back_to_main"}])
         
         keyboard = self.create_inline_keyboard(buttons)
         return response, keyboard
