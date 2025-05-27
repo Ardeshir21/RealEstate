@@ -83,9 +83,6 @@ class BirthdayBot(TelegramBot):
             ],
             [
                 {"text": "✏️ MANAGE MY ENTRIES", "callback_data": "manage_entries"}
-            ],
-            [
-                {"text": "ℹ️ ABOUT", "callback_data": "about"}
             ]
         ]
         
@@ -189,7 +186,11 @@ class BirthdayBot(TelegramBot):
 
             if message_text == '/start':
                 welcome_text = ("Welcome to Birthday Reminder Bot! 🎉\n\n"
-                              "Please use the buttons below to interact with me:")
+                              "Use the buttons below to:\n"
+                              "• Add birthdays to your list\n"
+                              "• Set reminder preferences\n"
+                              "• Manage your entries\n\n"
+                              "You can also use /cancel at any time to cancel the current operation.")
                 self.send_message(user_id, welcome_text, self.get_main_menu_keyboard(user_id=user_id))
                 return None
 
@@ -1057,14 +1058,6 @@ class BirthdayBot(TelegramBot):
                 self.edit_message(user_id, message_id, response, keyboard)
                 return
 
-            elif callback_data == "about":
-                response = self.cmd_about()
-                buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
-                keyboard = self.create_inline_keyboard(buttons)
-                self.answer_callback_query(callback_query_id)
-                self.edit_message(user_id, message_id, response, keyboard)
-                return
-
             elif callback_data == "back_to_main":
                 response = "What would you like to do?"
                 self.answer_callback_query(callback_query_id)
@@ -1149,8 +1142,7 @@ class BirthdayBot(TelegramBot):
                "Use the buttons below to:\n"
                "• Add birthdays to your list\n"
                "• Set reminder preferences\n"
-               "• Manage your entries\n"
-               "• Learn about this bot\n\n"
+               "• Manage your entries\n\n"
                "You can also use /cancel at any time to cancel the current operation.")
 
     def cmd_about(self, *args) -> str:
