@@ -8,9 +8,6 @@ import re
 from django.db import IntegrityError
 from django.db.models import Count, Q, F
 import hashlib
-import matplotlib.pyplot as plt
-import os
-import tempfile
 
 from ..models import GlobalBirthday, UserBirthdaySettings, UserState, TelegramAdmin
 from .base import TelegramBot
@@ -1130,23 +1127,11 @@ class BirthdayBot(TelegramBot):
                     return
 
             elif callback_data == "birthday_report":
-                response, chart_files = self.generate_birthday_report(user_id)
+                response = self.generate_birthday_report(user_id)
                 buttons = [[{"text": "🔙 BACK TO MAIN", "callback_data": "back_to_main"}]]
                 keyboard = self.create_inline_keyboard(buttons)
-                
-                # First send the text report
                 self.answer_callback_query(callback_query_id)
                 self.edit_message(user_id, message_id, response, keyboard)
-                
-                # Then send each chart as a separate message
-                for chart_file in chart_files:
-                    try:
-                        with open(chart_file, 'rb') as photo:
-                            self.send_photo(user_id, photo)
-                        # Clean up the temporary file
-                        os.unlink(chart_file)
-                    except Exception as e:
-                        logger.error(f"Error sending chart: {e}")
                 return
 
             self.answer_callback_query(callback_query_id)
@@ -1583,46 +1568,12 @@ class BirthdayBot(TelegramBot):
             logger.error(f"Error removing admin: {e}")
             return "❌ An error occurred while processing your request."
 
-    def create_bar_chart(self, data: Dict[str, int], title: str, xlabel: str, ylabel: str, rotation: int = 45) -> str:
-        """Create a bar chart and save it as a temporary file."""
-        # Clear any existing plots
-        plt.clf()
-        
-        # Create figure with larger size and higher DPI
-        plt.figure(figsize=(10, 6), dpi=100)
-        
-        # Create bar chart
-        bars = plt.bar(list(data.keys()), list(data.values()))
-        
-        # Customize the chart
-        plt.title(title)
-        plt.xlabel(xlabel)
-        plt.ylabel(ylabel)
-        
-        # Rotate x-axis labels if needed
-        plt.xticks(rotation=rotation)
-        
-        # Add value labels on top of each bar
-        for bar in bars:
-            height = bar.get_height()
-            plt.text(bar.get_x() + bar.get_width()/2., height,
-                    f'{int(height)}',
-                    ha='center', va='bottom')
-        
-        # Adjust layout to prevent label cutoff
-        plt.tight_layout()
-        
-        # Save to temporary file
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.png') as tmp:
-            plt.savefig(tmp.name)
-            return tmp.name
-
-    def generate_birthday_report(self, user_id: str) -> tuple:
+    def generate_birthday_report(self, user_id: str) -> str:
         """Generate a comprehensive report of user's birthday entries."""
         birthdays = GlobalBirthday.objects.filter(added_by=user_id).order_by('birth_date')
         
         if not birthdays:
-            return "You haven't added any birthdays yet!", []
+            return "You haven't added any birthdays yet!"
 
         today = timezone.now().date()
         report = "📊 Your Birthday Report 📊\n\n"
@@ -1644,44 +1595,33 @@ class BirthdayBot(TelegramBot):
             report += f"📊 Average: {avg_age:.1f} years\n"
             report += "─" * 30 + "\n\n"
         
-        # Create charts for distributions
-        chart_files = []
+        # Monthly distribution
+        report += "📅 Monthly Distribution:\n\n"
         
-        # Monthly distribution - Gregorian
+        # Gregorian months
         month_count = {}
         for birthday in birthdays:
-            month = birthday.birth_date.strftime('%B')
+            month = birthday.birth_date.strftime('%B')  # Full month name
             month_count[month] = month_count.get(month, 0) + 1
         
-        # Only include months with birthdays
-        month_count = {k: v for k, v in month_count.items() if v > 0}
-        if month_count:
-            chart_file = self.create_bar_chart(
-                month_count,
-                "Birthdays by Month (Gregorian)",
-                "Month",
-                "Number of Birthdays"
-            )
-            chart_files.append(chart_file)
+        report += "🌍 Gregorian Calendar:\n"
+        for month in self.english_months:
+            count = month_count.get(month, 0)
+            if count > 0:
+                report += f"{month}: {count} \n"
         
-        # Monthly distribution - Persian
+        # Persian months
         persian_month_count = {}
         for birthday in birthdays:
             persian_date = jdatetime.date.fromgregorian(date=birthday.birth_date)
             month = self.persian_months[persian_date.month - 1]
             persian_month_count[month] = persian_month_count.get(month, 0) + 1
         
-        # Only include months with birthdays
-        persian_month_count = {k: v for k, v in persian_month_count.items() if v > 0}
-        if persian_month_count:
-            chart_file = self.create_bar_chart(
-                persian_month_count,
-                "Birthdays by Month (Persian)",
-                "Month",
-                "Number of Birthdays",
-                rotation=45
-            )
-            chart_files.append(chart_file)
+        report += "\n🗓️ Persian Calendar:\n"
+        for month in self.persian_months:
+            count = persian_month_count.get(month, 0)
+            if count > 0:
+                report += f"{self.format_rtl_text(month)}: {count} \n"
         
         # Zodiac sign distribution
         zodiac_count = {}
@@ -1689,16 +1629,8 @@ class BirthdayBot(TelegramBot):
             zodiac = self.get_zodiac_sign(birthday.birth_date)
             zodiac_count[zodiac] = zodiac_count.get(zodiac, 0) + 1
         
-        # Only include zodiac signs with birthdays
-        zodiac_count = {k: v for k, v in zodiac_count.items() if v > 0}
-        if zodiac_count:
-            chart_file = self.create_bar_chart(
-                zodiac_count,
-                "Birthdays by Zodiac Sign",
-                "Zodiac Sign",
-                "Number of Birthdays",
-                rotation=45
-            )
-            chart_files.append(chart_file)
+        report += "\n⭐ Zodiac Signs:\n"
+        for zodiac, count in sorted(zodiac_count.items(), key=lambda x: x[1], reverse=True):
+            report += f"{zodiac}: {count} birthdays\n"
         
-        return report, chart_files
+        return report
