@@ -960,15 +960,15 @@ class BirthdayBot(TelegramBot):
                     name = birthday.name
                     birthday.delete()
                     
-                    # Show success message then return to list
-                    response = f"✅ Successfully deleted {name}'s birthday.\n\nReturning to birthday list..."
+                    # Show success message
+                    response = f"✅ Successfully deleted {name}'s birthday."
                     self.answer_callback_query(callback_query_id)
                     self.edit_message(user_id, message_id, response, None)
                     
-                    # After a brief pause, show the updated list
+                    # After a brief pause, show the manage entries menu
                     import time
                     time.sleep(1)
-                    response, keyboard = self.get_user_birthdays(user_id)
+                    response, keyboard = self.get_user_birthdays(user_id, show_birthdays=False)
                     self.edit_message(user_id, message_id, response, keyboard)
                     return
                 except GlobalBirthday.DoesNotExist:
