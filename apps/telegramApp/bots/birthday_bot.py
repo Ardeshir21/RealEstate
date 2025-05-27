@@ -20,13 +20,7 @@ class BirthdayBot(TelegramBot):
         super().__init__(token)
         self.commands = {
             '/start': self.cmd_start,
-            '/cancel': self.cmd_cancel,
-            '/help': self.cmd_help,
-            '/admin': self.cmd_admin,
-            '/stats': self.cmd_stats,
-            '/users': self.cmd_users,
-            '/make_admin': self.cmd_make_admin,
-            '/remove_admin': self.cmd_remove_admin
+            '/about': self.cmd_about,
         }
         
         # Add month names
@@ -56,8 +50,7 @@ class BirthdayBot(TelegramBot):
             # Define bot commands that will appear in the menu
             commands = [
                 {"command": "start", "description": "🎉 Start the bot and see main menu"},
-                {"command": "help", "description": "❓ Get help and instructions"},
-                {"command": "cancel", "description": "❌ Cancel current operation"},
+                {"command": "about", "description": "ℹ️ About this bot"},
             ]
             
             # Set the commands
@@ -92,7 +85,7 @@ class BirthdayBot(TelegramBot):
                 {"text": "✏️ MANAGE MY ENTRIES", "callback_data": "manage_entries"}
             ],
             [
-                {"text": "❓ HELP", "callback_data": "help"}
+                {"text": "ℹ️ ABOUT", "callback_data": "about"}
             ]
         ]
         
@@ -1064,8 +1057,8 @@ class BirthdayBot(TelegramBot):
                 self.edit_message(user_id, message_id, response, keyboard)
                 return
 
-            elif callback_data == "help":
-                response = self.cmd_help()
+            elif callback_data == "about":
+                response = self.cmd_about()
                 buttons = [[{"text": "🔙 Back to Main", "callback_data": "back_to_main"}]]
                 keyboard = self.create_inline_keyboard(buttons)
                 self.answer_callback_query(callback_query_id)
@@ -1157,14 +1150,23 @@ class BirthdayBot(TelegramBot):
                "• Add birthdays to your list\n"
                "• Set reminder preferences\n"
                "• Manage your entries\n"
-               "• Get help\n\n"
+               "• Learn about this bot\n\n"
                "You can also use /cancel at any time to cancel the current operation.")
 
-    def cmd_help(self, *args) -> str:
-        return ("🎉 Welcome to the Birthday Celebration Central! 🎂\n\n"
-               "Never miss a chance to celebrate!"
-               "Remember: You can always say /cancel if you need a fresh start. 🔄\n\n"
-               "Now, let's make sure no birthday goes uncelebrated! 🎁")
+    def cmd_about(self, *args) -> str:
+        return ("🎂 Birthday Reminder Bot\n\n"
+               "ℹ️ About this bot:\n"
+               "• Never forget important birthdays\n"
+               "• Support for both Gregorian and Persian dates\n"
+               "• Customizable reminder notifications\n"
+               "• Easy birthday management\n\n"
+               "🔧 Features:\n"
+               "• Add birthdays with names and dates\n"
+               "• Set reminder preferences\n"
+               "• View upcoming birthdays\n"
+               "• Filter by month or search by name\n"
+               "• Zodiac sign display\n\n"
+               "Made with ❤️ for keeping connections strong!")
 
     def sort_birthdays_by_next_date(self, birthdays):
         """Sort birthdays by next occurrence, closest first."""
