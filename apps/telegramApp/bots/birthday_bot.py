@@ -473,7 +473,7 @@ class BirthdayBot(TelegramBot):
                     response = (f"✅ Successfully updated reminder:\n"
                               f"👤 Name: {birthday.name}\n"
                               f"📅 Date: {birthday.birth_date}\n"
-                              f"⏰ Reminder: {current_reminder} days before")
+                              f"⏰ Current reminder: {current_reminder} days before")
                     
                     # Send success message as a new message
                     self.send_message(user_id, response)
@@ -1583,46 +1583,20 @@ class BirthdayBot(TelegramBot):
         report += f"Total Birthdays: {total_birthdays}\n"
         report += "─" * 30 + "\n\n"
         
-        # Upcoming birthdays
-        upcoming = []
-        for birthday in birthdays:
-            next_birthday = birthday.get_next_birthday()
-            days_until = (next_birthday - today).days
-            upcoming.append((birthday, days_until))
-        
-        upcoming.sort(key=lambda x: x[1])  # Sort by days until next birthday
-        
-        # Next birthdays section
-        report += "🔜 Next Birthdays:\n"
-        for birthday, days in upcoming[:5]:  # Show next 5 birthdays
-            age = birthday.get_age() + (1 if days > 0 else 0)  # Add 1 to age if birthday hasn't occurred this year
-            zodiac = self.get_zodiac_sign(birthday.birth_date)
-            
-            # Get both Persian and Gregorian dates
-            persian_date = jdatetime.date.fromgregorian(date=birthday.birth_date)
-            english_month = self.english_months[birthday.birth_date.month - 1]
-            
-            report += f"\n👤 {birthday.name}\n"
-            report += f"📅 {birthday.birth_date.strftime('%d %B %Y')} ({birthday.persian_birth_date})\n"
-            report += f"🎂 Will turn {age} years old\n"
-            report += f"⏳ In {days} days\n"
-            report += f"{zodiac}\n"
-            report += "─" * 20 + "\n"
-        
         # Age statistics
         ages = [b.get_age() for b in birthdays]
         if ages:
             avg_age = sum(ages) / len(ages)
             youngest = min(ages)
             oldest = max(ages)
-            report += f"\n📈 Age Statistics:\n"
+            report += f"📈 Age Statistics:\n"
             report += f"👶 Youngest: {youngest} years\n"
             report += f"👴 Oldest: {oldest} years\n"
             report += f"📊 Average: {avg_age:.1f} years\n"
-            report += "─" * 30 + "\n"
+            report += "─" * 30 + "\n\n"
         
         # Monthly distribution
-        report += "\n📅 Monthly Distribution:\n"
+        report += "📅 Monthly Distribution:\n\n"
         
         # Gregorian months
         month_count = {}
@@ -1630,12 +1604,11 @@ class BirthdayBot(TelegramBot):
             month = birthday.birth_date.strftime('%B')  # Full month name
             month_count[month] = month_count.get(month, 0) + 1
         
-        report += "\n🌍 Gregorian Calendar:\n"
+        report += "🌍 Gregorian Calendar:\n"
         for month in self.english_months:
-            if month in month_count:
-                count = month_count[month]
-                bar = "🎂" * count
-                report += f"{month}: {bar} ({count})\n"
+            count = month_count.get(month, 0)
+            if count > 0:
+                report += f"{month}: {count} birthdays\n"
         
         # Persian months
         persian_month_count = {}
@@ -1646,10 +1619,9 @@ class BirthdayBot(TelegramBot):
         
         report += "\n🗓️ Persian Calendar:\n"
         for month in self.persian_months:
-            if month in persian_month_count:
-                count = persian_month_count[month]
-                bar = "🎂" * count
-                report += f"{self.format_rtl_text(month)}: {bar} ({count})\n"
+            count = persian_month_count.get(month, 0)
+            if count > 0:
+                report += f"{self.format_rtl_text(month)}: {count} birthdays\n"
         
         # Zodiac sign distribution
         zodiac_count = {}
@@ -1659,7 +1631,6 @@ class BirthdayBot(TelegramBot):
         
         report += "\n⭐ Zodiac Signs:\n"
         for zodiac, count in sorted(zodiac_count.items(), key=lambda x: x[1], reverse=True):
-            bar = "⭐" * count
-            report += f"{zodiac}: {bar} ({count})\n"
+            report += f"{zodiac}: {count} birthdays\n"
         
         return report
