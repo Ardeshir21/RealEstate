@@ -258,16 +258,15 @@ class BirthdayBot(TelegramBot):
                         response = (f"✅ Successfully updated birthday:\n"
                                   f"👤 Name: {birthday.name}\n"
                                   f"📅 Gregorian: {birthday.birth_date}\n"
-                                  f"🗓️ Persian: {birthday.persian_birth_date}\n\n"
-                                  f"Returning to birthday list...")
+                                  f"🗓️ Persian: {birthday.persian_birth_date}")
                         
                         # Send success message as a new message
                         self.send_message(user_id, response)
                         
-                        # After a brief pause, send the birthday list as a new message
+                        # After a brief pause, show the manage entries menu
                         import time
                         time.sleep(1)
-                        response, keyboard = self.get_user_birthdays(user_id)
+                        response, keyboard = self.get_user_birthdays(user_id, show_birthdays=False)
                         self.send_message(user_id, response, keyboard)
                         
                         # Clear the state after sending messages
@@ -422,16 +421,15 @@ class BirthdayBot(TelegramBot):
                     response = (f"✅ Successfully updated birthday:\n"
                               f"👤 New name: {birthday.name}\n"
                               f"📅 Date: {birthday.birth_date}\n"
-                              f"🗓️ Persian date: {birthday.persian_birth_date}\n\n"
-                              f"Returning to birthday list...")
+                              f"🗓️ Persian date: {birthday.persian_birth_date}")
                     
                     # Send success message as a new message
                     self.send_message(user_id, response)
                     
-                    # After a brief pause, send the birthday list as a new message
+                    # After a brief pause, show the manage entries menu
                     import time
                     time.sleep(1)
-                    response, keyboard = self.get_user_birthdays(user_id)
+                    response, keyboard = self.get_user_birthdays(user_id, show_birthdays=False)
                     self.send_message(user_id, response, keyboard)
                     
                     # Clear the state after sending messages
@@ -471,16 +469,15 @@ class BirthdayBot(TelegramBot):
                     response = (f"✅ Successfully updated reminder:\n"
                               f"👤 Name: {birthday.name}\n"
                               f"📅 Date: {birthday.birth_date}\n"
-                              f"⏰ Reminder: {current_reminder} days before\n\n"
-                              f"Returning to birthday list...")
+                              f"⏰ Reminder: {current_reminder} days before")
                     
                     # Send success message as a new message
                     self.send_message(user_id, response)
                     
-                    # After a brief pause, send the birthday list as a new message
+                    # After a brief pause, show the manage entries menu
                     import time
                     time.sleep(1)
-                    response, keyboard = self.get_user_birthdays(user_id)
+                    response, keyboard = self.get_user_birthdays(user_id, show_birthdays=False)
                     self.send_message(user_id, response, keyboard)
                     
                     # Clear the state after sending messages
