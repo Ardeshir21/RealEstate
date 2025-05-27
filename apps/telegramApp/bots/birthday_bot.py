@@ -82,7 +82,8 @@ class BirthdayBot(TelegramBot):
                 {"text": "⏰ SET REMINDER", "callback_data": "set_reminder"}
             ],
             [
-                {"text": "✏️ MANAGE MY ENTRIES", "callback_data": "manage_entries"}
+                {"text": "✏️ MANAGE MY ENTRIES", "callback_data": "manage_entries"},
+                {"text": "📊 BIRTHDAY REPORT", "callback_data": "birthday_report"}
             ]
         ]
         
@@ -119,6 +120,9 @@ class BirthdayBot(TelegramBot):
             ],
             [
                 {"text": "🗑️ DELETE BIRTHDAY", "callback_data": "delete_birthday"}
+            ],
+            [
+                {"text": "📊 BIRTHDAY REPORT", "callback_data": "birthday_report"}
             ],
             [
                 {"text": "🔙 BACK TO MAIN", "callback_data": "back_to_main"}
@@ -1122,6 +1126,14 @@ class BirthdayBot(TelegramBot):
                     user_state.delete()
                     return
 
+            elif callback_data == "birthday_report":
+                response = self.generate_birthday_report(user_id)
+                buttons = [[{"text": "🔙 BACK TO MAIN", "callback_data": "back_to_main"}]]
+                keyboard = self.create_inline_keyboard(buttons)
+                self.answer_callback_query(callback_query_id)
+                self.edit_message(user_id, message_id, response, keyboard)
+                return
+
             self.answer_callback_query(callback_query_id)
             self.edit_message(user_id, message_id, response, self.get_main_menu_keyboard(user_id=user_id))
 
@@ -1555,3 +1567,99 @@ class BirthdayBot(TelegramBot):
         except Exception as e:
             logger.error(f"Error removing admin: {e}")
             return "❌ An error occurred while processing your request."
+
+    def generate_birthday_report(self, user_id: str) -> str:
+        """Generate a comprehensive report of user's birthday entries."""
+        birthdays = GlobalBirthday.objects.filter(added_by=user_id).order_by('birth_date')
+        
+        if not birthdays:
+            return "You haven't added any birthdays yet!"
+
+        today = timezone.now().date()
+        report = "📊 Your Birthday Report 📊\n\n"
+        
+        # Total count
+        total_birthdays = birthdays.count()
+        report += f"Total Birthdays: {total_birthdays}\n"
+        report += "─" * 30 + "\n\n"
+        
+        # Upcoming birthdays
+        upcoming = []
+        for birthday in birthdays:
+            next_birthday = birthday.get_next_birthday()
+            days_until = (next_birthday - today).days
+            upcoming.append((birthday, days_until))
+        
+        upcoming.sort(key=lambda x: x[1])  # Sort by days until next birthday
+        
+        # Next birthdays section
+        report += "🔜 Next Birthdays:\n"
+        for birthday, days in upcoming[:5]:  # Show next 5 birthdays
+            age = birthday.get_age() + (1 if days > 0 else 0)  # Add 1 to age if birthday hasn't occurred this year
+            zodiac = self.get_zodiac_sign(birthday.birth_date)
+            
+            # Get both Persian and Gregorian dates
+            persian_date = jdatetime.date.fromgregorian(date=birthday.birth_date)
+            english_month = self.english_months[birthday.birth_date.month - 1]
+            
+            report += f"\n👤 {birthday.name}\n"
+            report += f"📅 {birthday.birth_date.strftime('%d %B %Y')} ({birthday.persian_birth_date})\n"
+            report += f"🎂 Will turn {age} years old\n"
+            report += f"⏳ In {days} days\n"
+            report += f"{zodiac}\n"
+            report += "─" * 20 + "\n"
+        
+        # Age statistics
+        ages = [b.get_age() for b in birthdays]
+        if ages:
+            avg_age = sum(ages) / len(ages)
+            youngest = min(ages)
+            oldest = max(ages)
+            report += f"\n📈 Age Statistics:\n"
+            report += f"👶 Youngest: {youngest} years\n"
+            report += f"👴 Oldest: {oldest} years\n"
+            report += f"📊 Average: {avg_age:.1f} years\n"
+            report += "─" * 30 + "\n"
+        
+        # Monthly distribution
+        report += "\n📅 Monthly Distribution:\n"
+        
+        # Gregorian months
+        month_count = {}
+        for birthday in birthdays:
+            month = birthday.birth_date.strftime('%B')  # Full month name
+            month_count[month] = month_count.get(month, 0) + 1
+        
+        report += "\n🌍 Gregorian Calendar:\n"
+        for month in self.english_months:
+            if month in month_count:
+                count = month_count[month]
+                bar = "🎂" * count
+                report += f"{month}: {bar} ({count})\n"
+        
+        # Persian months
+        persian_month_count = {}
+        for birthday in birthdays:
+            persian_date = jdatetime.date.fromgregorian(date=birthday.birth_date)
+            month = self.persian_months[persian_date.month - 1]
+            persian_month_count[month] = persian_month_count.get(month, 0) + 1
+        
+        report += "\n🗓️ Persian Calendar:\n"
+        for month in self.persian_months:
+            if month in persian_month_count:
+                count = persian_month_count[month]
+                bar = "🎂" * count
+                report += f"{self.format_rtl_text(month)}: {bar} ({count})\n"
+        
+        # Zodiac sign distribution
+        zodiac_count = {}
+        for birthday in birthdays:
+            zodiac = self.get_zodiac_sign(birthday.birth_date)
+            zodiac_count[zodiac] = zodiac_count.get(zodiac, 0) + 1
+        
+        report += "\n⭐ Zodiac Signs:\n"
+        for zodiac, count in sorted(zodiac_count.items(), key=lambda x: x[1], reverse=True):
+            bar = "⭐" * count
+            report += f"{zodiac}: {bar} ({count})\n"
+        
+        return report
