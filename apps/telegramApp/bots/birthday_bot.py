@@ -1219,7 +1219,9 @@ class BirthdayBot(TelegramBot):
             response = f"📆 Birthdays in {self.format_rtl_text(filter_value)} ({self.format_rtl_text(persian_month)})\n" + "─" * 30 + "\n\n"
         
         elif filter_type == "filter_all":
-            response = "🎂 All Your Birthdays 🎂\n" + "─" * 30 + "\n\n"
+            # Sort birthdays alphabetically by name for ALL BIRTHDAYS view
+            birthdays = sorted(birthdays, key=lambda x: x.name.lower())
+            response = "🎂 All Your Birthdays (A-Z) 🎂\n" + "─" * 30 + "\n\n"
         
         else:
             response = "🎂 Your Birthdays 🎂\n" + "─" * 30 + "\n\n"
@@ -1260,7 +1262,10 @@ class BirthdayBot(TelegramBot):
         
         # Add Back button at the bottom
         if filter_type:
-            buttons.append([{"text": "🔙 BACK TO LIST", "callback_data": "back_to_list"}])
+            if filter_type == "filter_all":
+                buttons.append([{"text": "🔙 BACK TO MENU", "callback_data": "back_to_list"}])
+            else:
+                buttons.append([{"text": "🔙 BACK TO LIST", "callback_data": "back_to_list"}])
         else:
             buttons.append([{"text": "🔙 BACK TO MAIN", "callback_data": "back_to_main"}])
         
