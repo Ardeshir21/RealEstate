@@ -47,6 +47,40 @@ class BirthdayBot(TelegramBot):
             getattr(settings, 'TELEGRAM_ADMIN_CODE', 'make_me_admin_please').encode()
         ).hexdigest()
 
+        # Setup bot menu and commands
+        self.setup_bot_menu()
+
+    def setup_bot_menu(self):
+        """Set up the bot's command list and menu button."""
+        try:
+            # Define bot commands that will appear in the menu
+            commands = [
+                {"command": "start", "description": "🎉 Start the bot and see main menu"},
+                {"command": "help", "description": "❓ Get help and instructions"},
+                {"command": "cancel", "description": "❌ Cancel current operation"},
+            ]
+            
+            # Set the commands
+            result = self.set_my_commands(commands)
+            if result.get('ok'):
+                logger.info("Bot commands set successfully")
+            else:
+                logger.error(f"Failed to set bot commands: {result}")
+            
+            # Set up the menu button (this creates the button next to attachment icon)
+            menu_button = {
+                "type": "commands"  # This shows the command list when clicked
+            }
+            
+            result = self.set_chat_menu_button(menu_button=menu_button)
+            if result.get('ok'):
+                logger.info("Bot menu button set successfully")
+            else:
+                logger.error(f"Failed to set bot menu button: {result}")
+                
+        except Exception as e:
+            logger.error(f"Error setting up bot menu: {e}")
+
     def get_main_menu_keyboard(self, show_cancel: bool = False, user_id: str = None) -> Dict:
         """Create the main menu keyboard."""
         buttons = [

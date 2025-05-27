@@ -59,6 +59,36 @@ class TelegramBot(ABC):
             logger.error(f"Error answering callback query: {e}")
             return {"error": str(e)}
 
+    def set_my_commands(self, commands: List[Dict[str, str]], scope: Optional[Dict] = None, language_code: Optional[str] = None) -> Dict[str, Any]:
+        """Set the list of the bot's commands."""
+        url = f"{self.base_url}/setMyCommands"
+        data = {"commands": commands}
+        if scope:
+            data["scope"] = scope
+        if language_code:
+            data["language_code"] = language_code
+        try:
+            response = requests.post(url, json=data)
+            return response.json()
+        except Exception as e:
+            logger.error(f"Error setting bot commands: {e}")
+            return {"error": str(e)}
+
+    def set_chat_menu_button(self, chat_id: Optional[str] = None, menu_button: Optional[Dict] = None) -> Dict[str, Any]:
+        """Set the bot's menu button in a private chat, or the default menu button."""
+        url = f"{self.base_url}/setChatMenuButton"
+        data = {}
+        if chat_id:
+            data["chat_id"] = chat_id
+        if menu_button:
+            data["menu_button"] = menu_button
+        try:
+            response = requests.post(url, json=data)
+            return response.json()
+        except Exception as e:
+            logger.error(f"Error setting chat menu button: {e}")
+            return {"error": str(e)}
+
     @abstractmethod
     def handle_command(self, message: Dict[str, Any]) -> Optional[str]:
         """Handle incoming commands - to be implemented by specific bots."""
