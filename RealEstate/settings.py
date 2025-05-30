@@ -429,10 +429,10 @@ DEBUG_PROPAGATE_EXCEPTIONS = True
 # Crontab Settings
 CRONJOBS = [
     # Run birthday reminders every day at 9:00 AM
-    ('0 9 * * *', 'apps.telegramApp.management.commands.send_birthday_reminder.Command.handle', ['--auto'], {}, '>> /tmp/birthday_reminder.log 2>&1'),
+    ('0 9 * * *', 'apps.telegramApp.management.commands.send_birthday_reminder.Command.handle', ['--auto']),
     
     # You can add more scheduled jobs here as needed
-    # Format: ('cron schedule', 'path.to.function', ['args'], {kwargs}, 'optional logging')
+    # Format: ('cron schedule', 'path.to.function', ['args'], {kwargs})
 ]
 
 # Crontab settings (optional)
