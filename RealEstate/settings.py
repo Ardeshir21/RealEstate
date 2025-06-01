@@ -429,7 +429,7 @@ DEBUG_PROPAGATE_EXCEPTIONS = True
 # Crontab Settings
 CRONJOBS = [
     # Run birthday reminders every 5 minutes
-    ('*/5 * * * *', 'apps.telegramApp.management.commands.send_birthday_reminder.Command.handle', ['--auto']),
+    ('*/5 * * * *', 'apps.telegramApp.cron.send_automatic_birthday_reminders'),
     
     # You can add more scheduled jobs here as needed
     # Format: ('cron schedule', 'path.to.function', ['args'], {kwargs})
