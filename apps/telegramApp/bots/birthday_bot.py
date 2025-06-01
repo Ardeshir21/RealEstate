@@ -1440,7 +1440,6 @@ class BirthdayBot(TelegramBot):
         """Format Persian date with RTL support using ordinal numbers."""
         persian_date = f"{self.to_persian_ordinal(day)} {self.persian_months[int(str(month))-1]} {self.to_persian_numbers(year)}"
         return self.format_rtl_text(persian_date)
-
     def is_admin(self, user_id: str) -> bool:
         """Check if user is an admin."""
         return TelegramAdmin.objects.filter(user_id=user_id).exists()
