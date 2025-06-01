@@ -40,6 +40,7 @@ class Command(BaseCommand):
         today = timezone.now().date()
         users = UserBirthdaySettings.objects.all()
         reminders_sent = 0
+        birthday_messages_sent = 0
 
         for user in users:
             try:
@@ -52,12 +53,21 @@ class Command(BaseCommand):
                     next_birthday = birthday.get_next_birthday()
                     days_until = (next_birthday - today).days
                     
-                    # Get reminder days (individual setting or user default)
+                    # Always send birthday message on the exact date
+                    if days_until == 0:
+                        message = self.format_reminder_message(birthday, days_until)
+                        # No keyboard on birthday message - it's a pure celebration!
+                        bot.send_message(user.user_id, message, None)
+                        birthday_messages_sent += 1
+                        continue  # Skip reminder logic on birthday
+                    
+                    # Handle reminders for upcoming birthdays
                     reminder_days = birthday.reminder_days or user.reminder_days
 
                     # Check if reminder should be sent
                     should_send = (
                         days_until <= reminder_days and  # Within reminder window
+                        days_until > 0 and  # Not today (handled above)
                         (not birthday.snoozed_until or birthday.snoozed_until <= today) and  # Not snoozed
                         (not birthday.last_reminder_sent or  # Never sent before
                          birthday.last_reminder_sent < next_birthday - timedelta(days=reminder_days))  # Not sent for this occurrence
@@ -80,7 +90,7 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                f'Automatic reminder job completed. Sent {reminders_sent} reminders.'
+                f'Automatic job completed. Sent {birthday_messages_sent} birthday messages and {reminders_sent} reminders.'
             )
         )
 
@@ -119,28 +129,74 @@ class Command(BaseCommand):
             self.stdout.write(self.style.ERROR('No upcoming birthdays found'))
             return
 
-        # Format and send the reminder
+        # Format and send the message
         message = self.format_reminder_message(birthday_obj, days_until)
-        keyboard = self.create_reminder_keyboard(bot, birthday_obj)
-        bot.send_message(user_id, message, keyboard)
-
-        self.stdout.write(
-            self.style.SUCCESS(
-                f'Successfully sent birthday reminder to user {user_id} '
-                f'for {birthday_obj.name}\'s birthday in {days_until} days'
+        
+        # If it's the birthday, send without keyboard
+        if days_until == 0:
+            bot.send_message(user_id, message, None)
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f'Successfully sent birthday message to user {user_id} '
+                    f'for {birthday_obj.name}\'s birthday today!'
+                )
             )
-        )
+        else:
+            # For reminders, include the keyboard
+            keyboard = self.create_reminder_keyboard(bot, birthday_obj)
+            bot.send_message(user_id, message, keyboard)
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f'Successfully sent birthday reminder to user {user_id} '
+                    f'for {birthday_obj.name}\'s birthday in {days_until} days'
+                )
+            )
 
     def format_reminder_message(self, birthday, days_until):
-        """Format the reminder message."""
+        """Format the reminder message based on the type of notification."""
+        today = timezone.now().date()
+        
+        # Birthday message (on the day)
         if days_until == 0:
-            message = f"🎉 Today is {birthday.name}'s birthday! 🎂"
-        elif days_until == 1:
-            message = f"🎈 Tomorrow is {birthday.name}'s birthday! 🎂"
+            message = (
+                f"🎉🎉🎉 HAPPY BIRTHDAY! 🎉🎉🎉\n\n"
+                f"Today is {birthday.name}'s special day! 🎂\n"
+                f"Wishing them a wonderful birthday filled with joy and happiness! 🎈\n"
+                f"Don't forget to send your warmest wishes! 🎁"
+            )
+        
+        # Reminder message (first notification before birthday)
+        elif not birthday.last_reminder_sent or birthday.last_reminder_sent < today - timedelta(days=1):
+            if days_until == 1:
+                message = (
+                    f"🎈 Birthday Tomorrow! 🎈\n\n"
+                    f"Don't forget - tomorrow is {birthday.name}'s birthday! 🎂\n"
+                    f"Time to prepare your wishes! ✨"
+                )
+            else:
+                message = (
+                    f"📅 Upcoming Birthday Reminder 📅\n\n"
+                    f"{birthday.name}'s birthday is coming up in {days_until} days! 🎂\n"
+                    f"Start planning how you'll celebrate! 🎈"
+                )
+        
+        # Snoozed reminder message
         else:
-            message = f"📅 {birthday.name}'s birthday is in {days_until} days! 🎂"
+            if days_until == 1:
+                message = (
+                    f"⏰ Snoozed Reminder: Birthday Tomorrow! ⏰\n\n"
+                    f"This is your snoozed reminder - {birthday.name}'s birthday is tomorrow! 🎂\n"
+                    f"Time to get ready! 🎈"
+                )
+            else:
+                message = (
+                    f"⏰ Snoozed Birthday Reminder ⏰\n\n"
+                    f"As requested, reminding you about {birthday.name}'s birthday!\n"
+                    f"It's coming up in {days_until} days! 🎂"
+                )
 
-        message += f"\nDate: {birthday.birth_date}"
+        # Add common information for all types
+        message += f"\n\nDate: {birthday.birth_date}"
         message += f"\nPersian date: {birthday.persian_birth_date}"
         
         # Add zodiac sign
@@ -151,14 +207,31 @@ class Command(BaseCommand):
 
     def create_reminder_keyboard(self, bot, birthday):
         """Create the reminder keyboard with snooze buttons."""
-        buttons = [
-            [
-                {"text": "Snooze 1 day", "callback_data": f"snooze_{birthday.id}_1"},
-                {"text": "Snooze 3 days", "callback_data": f"snooze_{birthday.id}_3"}
-            ],
-            [
-                {"text": "Snooze 1 week", "callback_data": f"snooze_{birthday.id}_7"},
-                {"text": "Dismiss", "callback_data": f"dismiss_reminder_{birthday.id}"}
-            ]
-        ]
+        today = timezone.now().date()
+        next_birthday = birthday.get_next_birthday()
+        days_until = (next_birthday - today).days
+        
+        buttons = []
+        snooze_options = []
+        
+        # Only add snooze options that are valid (less than days until birthday)
+        if days_until > 1:
+            snooze_options.append({"text": "Snooze 1 day", "callback_data": f"snooze_{birthday.id}_1"})
+        if days_until > 3:
+            snooze_options.append({"text": "Snooze 3 days", "callback_data": f"snooze_{birthday.id}_3"})
+        if days_until > 7:
+            snooze_options.append({"text": "Snooze 1 week", "callback_data": f"snooze_{birthday.id}_7"})
+            
+        # Add snooze buttons in pairs if available
+        while len(snooze_options) >= 2:
+            buttons.append(snooze_options[:2])
+            snooze_options = snooze_options[2:]
+        
+        # Add any remaining single snooze button
+        if snooze_options:
+            buttons.append(snooze_options)
+            
+        # Always add dismiss button in its own row
+        buttons.append([{"text": "Dismiss", "callback_data": f"dismiss_reminder_{birthday.id}"}])
+        
         return bot.create_inline_keyboard(buttons) 

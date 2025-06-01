@@ -626,11 +626,22 @@ class BirthdayBot(TelegramBot):
                     birthday_id = int(callback_data.replace("dismiss_reminder_", ""))
                     birthday = GlobalBirthday.objects.get(id=birthday_id, added_by=user_id)
                     
-                    # Set snooze until next reminder window
+                    # Set snooze until next reminder window or birthday, whichever is sooner
                     next_birthday = birthday.get_next_birthday()
-                    reminder_days = birthday.reminder_days or UserBirthdaySettings.objects.get(user_id=user_id).reminder_days
-                    birthday.snoozed_until = next_birthday - timedelta(days=reminder_days)
-                    birthday.save()
+                    today = timezone.now().date()
+                    days_until = (next_birthday - today).days
+                    
+                    # If birthday is tomorrow or today, mark as dismissed without snoozing
+                    if days_until <= 1:
+                        birthday.last_reminder_sent = today
+                        birthday.save()
+                    else:
+                        # For birthdays further away, snooze based on reminder days
+                        reminder_days = birthday.reminder_days or UserBirthdaySettings.objects.get(user_id=user_id).reminder_days
+                        # Use either the reminder days or days until birthday minus 1, whichever is smaller
+                        snooze_days = min(reminder_days, days_until - 1)
+                        birthday.snoozed_until = next_birthday - timedelta(days=snooze_days)
+                        birthday.save()
                     
                     response = "✅ Reminder dismissed"
                     self.answer_callback_query(callback_query_id)
