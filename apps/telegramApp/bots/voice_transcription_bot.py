@@ -155,25 +155,26 @@ class VoiceTranscriptionBot(TelegramBot):
             prompt = f"{persian_text}"
 
             response = self.openai_client.chat.completions.create(
-                            model="gpt-4o",
-                            messages=[
-                                {
-                                    "role": "system",
-                                    "content": (
-                                        "You are an expert translator. "
-                                        "You translate informal Persian (Farsi) into fluent, natural, and conversational English. "
-                                        "Focus on how native English speakers would commonly say the same thing. "
-                                        "Avoid word-for-word translation — preserve the meaning, tone, and cultural context."
-                                    )
-                                },
-                                {
-                                    "role": "user",
-                                    "content": prompt  # this should be the informal Persian text
-                                }
-                            ],
-                            max_tokens=1000,
-                            temperature=0.7  # Optional: Adjust for creativity; 0.7 gives a bit more natural variation
+                model="gpt-4o-mini",
+                messages=[
+                    {
+                        "role": "system",
+                        "content": (
+                            "You are an expert translator and language model specialized in processing informal spoken Persian (Farsi) text. "
+                            "The user will provide you with Persian text that may contain transcription errors, misspellings, or colloquial language from a voice message. "
+                            "Your job is to intelligently interpret and correct any errors or unclear parts based on context, "
+                            "then translate the corrected text into fluent, natural, and conversational English. "
+                            "Avoid literal translation — instead, focus on conveying the intended meaning, tone, and cultural nuances as a native English speaker would."
                         )
+                    },
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ],
+                max_tokens=1000,
+                temperature=0.7
+            )
             
             translation = response.choices[0].message.content.strip()
             return translation
