@@ -124,19 +124,18 @@ class VoiceTranscriptionBot(TelegramBot):
                 # Send Persian transcription first
                 if len(transcription) > 4000:
                     truncated_transcription = transcription[:4000] + "... (truncated)"
-                    self.send_message(chat_id, f"📝 Persian Transcription:\n\n{truncated_transcription}")
+                    self.send_message(chat_id, f"{truncated_transcription}")
                 else:
-                    self.send_message(chat_id, f"📝 Persian Transcription:\n\n{transcription}")
+                    self.send_message(chat_id, f"{transcription}")
                 
                 # Translate to English if OpenAI is available
                 if self.openai_client:
-                    self.send_message(chat_id, "🔄 Translating to English...")
                     translation = self._translate_to_english(transcription)
                     
                     if translation:
                         if len(translation) > 4000:
                             translation = translation[:4000] + "... (truncated)"
-                        self.send_message(chat_id, f"🌍 English Translation:\n\n{translation}")
+                        self.send_message(chat_id, f"{translation}")
                     else:
                         self.send_message(chat_id, "❌ Could not translate to English. Translation service is unavailable.")
                 else:
@@ -153,19 +152,28 @@ class VoiceTranscriptionBot(TelegramBot):
     def _translate_to_english(self, persian_text: str) -> Optional[str]:
         """Translate Persian text to English using OpenAI GPT"""
         try:
-            prompt = f"""Please translate the following Persian text to English. Provide only the English translation without any additional explanation or commentary:
-
-{persian_text}"""
+            prompt = f"{persian_text}"
 
             response = self.openai_client.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": "You are a professional translator. Translate Persian text to English accurately and naturally."},
-                    {"role": "user", "content": prompt}
-                ],
-                max_tokens=1000,
-                temperature=0.3
-            )
+                            model="gpt-4o",
+                            messages=[
+                                {
+                                    "role": "system",
+                                    "content": (
+                                        "You are an expert translator. "
+                                        "You translate informal Persian (Farsi) into fluent, natural, and conversational English. "
+                                        "Focus on how native English speakers would commonly say the same thing. "
+                                        "Avoid word-for-word translation — preserve the meaning, tone, and cultural context."
+                                    )
+                                },
+                                {
+                                    "role": "user",
+                                    "content": prompt  # this should be the informal Persian text
+                                }
+                            ],
+                            max_tokens=1000,
+                            temperature=0.7  # Optional: Adjust for creativity; 0.7 gives a bit more natural variation
+                        )
             
             translation = response.choices[0].message.content.strip()
             return translation
