@@ -96,34 +96,28 @@ class VoiceTranscriptionBot(TelegramBot):
             message_text = message.get('text', '')
             
             if message_text == '/start':
-                return (
-                    "🎤 <b>Voice Transcription Bot</b>\n\n"
-                    "Send me a voice message and I'll transcribe it to text for you!\n\n"
-                    "📝 <b>Features:</b>\n"
-                    "• High-quality speech-to-text conversion\n"
-                    "• Supports English and Persian languages\n"
-                    "• Fast processing with AI\n\n"
-                    "Just send a voice message to get started! 🚀"
-                )
+                # Send language selection immediately
+                chat_id = str(message.get('chat', {}).get('id'))
+                self._send_language_selection(chat_id)
+                return None  # Don't send text response, we sent the keyboard
             elif message_text == '/help':
                 return (
-                    "🆘 <b>How to use:</b>\n\n"
-                    "1. Record a voice message in Telegram\n"
-                    "2. Send it to this bot\n"
-                    "3. Select the language (English or Persian)\n"
-                    "4. Wait for the transcription\n\n"
-                    "💡 <b>Tips:</b>\n"
+                    "🆘 How to use:\n\n"
+                    "1. Use /start to begin\n"
+                    "2. Select your preferred language\n"
+                    "3. Send a voice message\n"
+                    "4. Receive your transcription\n\n"
+                    "💡 Tips:\n"
                     "• Speak clearly for better results\n"
                     "• Avoid background noise\n"
                     "• Keep messages under 5 minutes\n\n"
                     "Commands:\n"
-                    "/start - Welcome message\n"
+                    "/start - Start transcription\n"
                     "/help - Show this help"
                 )
             else:
                 return (
-                    "I can only transcribe voice messages. 🎤\n"
-                    "Please send me a voice message or use /help for more information."
+                    "Please use /start to begin voice transcription or /help for more information."
                 )
                 
         except Exception as e:
@@ -131,13 +125,12 @@ class VoiceTranscriptionBot(TelegramBot):
             return f"❌ An error occurred: {str(e)}"
 
     def _handle_voice_message(self, message: Dict[str, Any]) -> str:
-        """Handle voice message - store it and ask for language selection"""
+        """Handle voice message - check if language is selected"""
         try:
             voice = message.get('voice', {})
             file_id = voice.get('file_id')
             duration = voice.get('duration', 0)
             chat_id = str(message.get('chat', {}).get('id'))
-            message_id = message.get('message_id')
             
             if not file_id:
                 return "❌ Could not process the voice message. Please try again."
@@ -146,17 +139,39 @@ class VoiceTranscriptionBot(TelegramBot):
             if duration > 300:  # 5 minutes
                 return "❌ Voice message is too long. Please keep it under 5 minutes."
             
-            # Store the voice message for later processing
-            self.pending_voice_messages[chat_id] = {
-                'file_id': file_id,
-                'duration': duration,
-                'message_id': message_id
-            }
+            # Check if user has selected a language
+            if chat_id not in self.pending_voice_messages or 'selected_language' not in self.pending_voice_messages[chat_id]:
+                # No language selected, ask for language selection
+                self.pending_voice_messages[chat_id] = {
+                    'file_id': file_id,
+                    'duration': duration
+                }
+                self._send_language_selection(chat_id)
+                return None
             
-            # Send language selection keyboard
-            self._send_language_selection(chat_id, message_id)
+            # Language already selected, process immediately
+            selected_language = self.pending_voice_messages[chat_id]['selected_language']
+            language_display = "English 🇺🇸" if selected_language == 'english' else "Persian 🇮🇷"
             
-            return None  # Don't send a text response, we sent the keyboard instead
+            # Send processing message
+            self.send_message(chat_id, f"🎤 Processing your voice message in {language_display}...")
+            
+            # Process the voice message
+            transcription = self._process_voice_with_language(file_id, selected_language)
+            
+            if transcription:
+                # Send transcription result
+                if len(transcription) > 4000:
+                    transcription = transcription[:4000] + "... (truncated)"
+                
+                self.send_message(chat_id, f"📝 Transcription ({language_display}):\n\n{transcription}")
+                
+                # Send language selection for next voice message
+                self._send_language_selection(chat_id)
+                return None
+            else:
+                self.send_message(chat_id, "❌ Could not transcribe the voice message. Please try again with a clearer recording.")
+                return None
                 
         except Exception as e:
             logger.error(f"Error handling voice message: {e}", exc_info=True)
@@ -168,19 +183,13 @@ class VoiceTranscriptionBot(TelegramBot):
             callback_data = callback_query.get('data', '')
             chat_id = str(callback_query.get('message', {}).get('chat', {}).get('id'))
             callback_query_id = callback_query.get('id')
+            message_id = callback_query.get('message', {}).get('message_id')
             
             # Answer the callback query to remove loading state
             self._answer_callback_query(callback_query_id)
             
             if callback_data.startswith('lang_'):
                 language_code = callback_data.split('_')[1]
-                
-                # Get the pending voice message
-                if chat_id not in self.pending_voice_messages:
-                    self.send_message(chat_id, "❌ No pending voice message found. Please send a new voice message.")
-                    return
-                
-                voice_data = self.pending_voice_messages[chat_id]
                 
                 # Map language codes to Whisper language parameters
                 language_map = {
@@ -191,28 +200,42 @@ class VoiceTranscriptionBot(TelegramBot):
                 language = language_map.get(language_code, 'None')
                 language_display = "English 🇺🇸" if language_code == 'en' else "Persian 🇮🇷"
                 
-                # Send processing message
-                self.send_message(chat_id, f"🎤 Processing your voice message in {language_display}...")
+                # Store selected language
+                if chat_id not in self.pending_voice_messages:
+                    self.pending_voice_messages[chat_id] = {}
+                self.pending_voice_messages[chat_id]['selected_language'] = language
                 
-                # Process the voice message with selected language
-                transcription = self._process_voice_with_language(voice_data['file_id'], language)
+                # Edit the message to remove buttons and show waiting message
+                self._edit_message(chat_id, message_id, f"✅ Language selected: {language_display}\n\n🎤 Please send your voice message now.")
                 
-                if transcription:
-                    # Send transcription result
-                    if len(transcription) > 4000:
-                        transcription = transcription[:4000] + "... (truncated)"
+                # If there's a pending voice message, process it now
+                if 'file_id' in self.pending_voice_messages[chat_id]:
+                    file_id = self.pending_voice_messages[chat_id]['file_id']
                     
-                    self.send_message(chat_id, f"📝 <b>Transcription ({language_display}):</b>\n\n{transcription}", parse_mode="HTML")
+                    # Send processing message
+                    self.send_message(chat_id, f"🎤 Processing your voice message in {language_display}...")
                     
-                    # Send language selection for next voice message
-                    self._send_language_selection(chat_id)
-                else:
-                    self.send_message(chat_id, "❌ Could not transcribe the voice message. Please try again with a clearer recording.")
-                    # Send language selection again for retry
-                    self._send_language_selection(chat_id)
-                
-                # Clean up pending message
-                del self.pending_voice_messages[chat_id]
+                    # Process the voice message
+                    transcription = self._process_voice_with_language(file_id, language)
+                    
+                    if transcription:
+                        # Send transcription result
+                        if len(transcription) > 4000:
+                            transcription = transcription[:4000] + "... (truncated)"
+                        
+                        self.send_message(chat_id, f"📝 Transcription ({language_display}):\n\n{transcription}")
+                        
+                        # Send language selection for next voice message
+                        self._send_language_selection(chat_id)
+                    else:
+                        self.send_message(chat_id, "❌ Could not transcribe the voice message. Please try again with a clearer recording.")
+                        # Send language selection again for retry
+                        self._send_language_selection(chat_id)
+                    
+                    # Clean up the file_id since we processed it
+                    del self.pending_voice_messages[chat_id]['file_id']
+                    if 'duration' in self.pending_voice_messages[chat_id]:
+                        del self.pending_voice_messages[chat_id]['duration']
                 
         except Exception as e:
             logger.error(f"Error handling callback query: {e}", exc_info=True)
@@ -318,4 +341,17 @@ class VoiceTranscriptionBot(TelegramBot):
             return response.json()
         except Exception as e:
             logger.error(f"Error sending message: {e}")
-            return None 
+            return None
+
+    def _edit_message(self, chat_id: str, message_id: int, new_text: str):
+        """Edit an existing message"""
+        try:
+            url = f"{self.base_url}/editMessageText"
+            data = {
+                "chat_id": chat_id,
+                "message_id": message_id,
+                "text": new_text
+            }
+            requests.post(url, json=data)
+        except Exception as e:
+            logger.error(f"Error editing message: {e}") 
