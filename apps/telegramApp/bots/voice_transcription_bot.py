@@ -13,8 +13,22 @@ logger = logging.getLogger(__name__)
 class VoiceTranscriptionBot(TelegramBot):
     def __init__(self):
         super().__init__(settings.TELEGRAM_VOICE_BOT_TOKEN)
+        
+        # Validate that we have the required settings
+        if not hasattr(settings, 'REPLICATE_API_TOKEN') or not settings.REPLICATE_API_TOKEN:
+            logger.error("REPLICATE_API_TOKEN not found in settings")
+            raise ValueError("REPLICATE_API_TOKEN is required for voice transcription bot")
+        
         # Set Replicate API token as environment variable (preferred method)
         os.environ["REPLICATE_API_TOKEN"] = settings.REPLICATE_API_TOKEN
+        
+        try:
+            # Initialize replicate client for the new API version
+            self.replicate_client = replicate.Client(api_token=settings.REPLICATE_API_TOKEN)
+            logger.info("Replicate client initialized successfully")
+        except Exception as e:
+            logger.error(f"Failed to initialize Replicate client: {e}")
+            raise
 
     def handle_command(self, message: Dict[str, Any]) -> Optional[str]:
         try:
@@ -124,14 +138,15 @@ class VoiceTranscriptionBot(TelegramBot):
                 "batch_size": 64
             }
             
-            output = replicate.run(
+            # Use the client instance for the new API version
+            output = self.replicate_client.run(
                 "vaibhavs10/incredibly-fast-whisper:3ab86df6c8f54c11309d4d1f930ac292bad43ace52d10c80d87eb258b3c9f79c",
                 input=input_data
             )
             
             logger.info(f"Received output from Replicate: {type(output)}")
             
-            # Extract text from output
+            # Handle new API response format (1.0.7+)
             if isinstance(output, dict) and 'text' in output:
                 text = output['text'].strip()
                 logger.info(f"Extracted text (length: {len(text)}): {text[:100]}...")
@@ -142,7 +157,13 @@ class VoiceTranscriptionBot(TelegramBot):
                 return text
             else:
                 logger.error(f"Unexpected output format: {type(output)} - {output}")
-                return None
+                # For debugging, let's also try to access as string
+                try:
+                    text_output = str(output)
+                    logger.info(f"String conversion: {text_output[:200]}...")
+                    return text_output
+                except:
+                    return None
                 
         except Exception as e:
             logger.error(f"Error transcribing audio: {e}", exc_info=True)
