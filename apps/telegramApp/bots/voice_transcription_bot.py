@@ -235,17 +235,18 @@ class VoiceTranscriptionBot(TelegramBot):
                         if 'selected_language' in self.pending_voice_messages[chat_id]:
                             del self.pending_voice_messages[chat_id]['selected_language']
                         self._send_language_selection(chat_id)
-                        return None
                     else:
                         self.send_message(chat_id, "❌ Could not transcribe the voice message. Please try again with a clearer recording.")
                         # Send language selection again for retry
                         self._send_language_selection(chat_id)
                     
-                    # Clean up only the file_id and duration, keep selected_language
+                    # Clean up the file_id and duration after processing
                     if 'file_id' in self.pending_voice_messages[chat_id]:
                         del self.pending_voice_messages[chat_id]['file_id']
                     if 'duration' in self.pending_voice_messages[chat_id]:
                         del self.pending_voice_messages[chat_id]['duration']
+                # If no pending voice message, just wait for user to send voice message
+                # The selected_language will remain stored for when they send a voice message
                 
         except Exception as e:
             logger.error(f"Error handling callback query: {e}", exc_info=True)
