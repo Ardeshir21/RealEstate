@@ -5,6 +5,7 @@ import tempfile
 import os
 from django.conf import settings
 import logging
+import openai
 
 from .base import TelegramBot
 
@@ -40,6 +41,13 @@ class VoiceTranscriptionBot(TelegramBot):
                 logger.error(f"Failed to initialize Replicate client: {e}")
                 # Don't raise here - allow bot to work for text commands even if Replicate fails
                 self.replicate_client = None
+            
+            # Initialize OpenAI client
+            if hasattr(settings, 'CHATGPT_API') and settings.CHATGPT_API:
+                self.openai_client = openai.OpenAI(api_key=settings.CHATGPT_API)
+            else:
+                logger.error("CHATGPT_API not found in settings")
+                self.openai_client = None
                 
         except Exception as e:
             logger.error(f"Failed to initialize VoiceTranscriptionBot: {e}", exc_info=True)
@@ -59,11 +67,12 @@ class VoiceTranscriptionBot(TelegramBot):
             if message_text == '/start':
                 return (
                     "🎤 Voice Transcription Bot\n\n"
-                    "Send me a voice message and I'll transcribe it to Persian text for you!\n\n"
+                    "Send me a voice message and I'll transcribe it to Persian text and provide an English translation!\n\n"
                     "📝 Features:\n"
                     "• High-quality speech-to-text conversion\n"
                     "• Persian language transcription\n"
-                    "• Fast processing with AI\n\n"
+                    "• English translation with AI\n"
+                    "• Fast processing\n\n"
                     "Just send a voice message to get started! 🚀"
                 )
             elif message_text == '/help':
@@ -71,7 +80,8 @@ class VoiceTranscriptionBot(TelegramBot):
                     "🆘 How to use:\n\n"
                     "1. Record a voice message in Telegram\n"
                     "2. Send it to this bot\n"
-                    "3. Receive your Persian transcription\n\n"
+                    "3. Receive Persian transcription\n"
+                    "4. Receive English translation\n\n"
                     "💡 Tips:\n"
                     "• Speak clearly for better results\n"
                     "• Avoid background noise\n"
@@ -90,7 +100,7 @@ class VoiceTranscriptionBot(TelegramBot):
             return f"❌ An error occurred: {str(e)}"
 
     def _handle_voice_message(self, message: Dict[str, Any]) -> str:
-        """Handle voice message - transcribe directly in Persian"""
+        """Handle voice message - transcribe directly in Persian and translate to English"""
         try:
             voice = message.get('voice', {})
             file_id = voice.get('file_id')
@@ -111,17 +121,58 @@ class VoiceTranscriptionBot(TelegramBot):
             transcription = self._process_voice_message(file_id)
             
             if transcription:
-                # Send transcription result
+                # Send Persian transcription first
                 if len(transcription) > 4000:
-                    transcription = transcription[:4000] + "... (truncated)"
+                    truncated_transcription = transcription[:4000] + "... (truncated)"
+                    self.send_message(chat_id, f"📝 Persian Transcription:\n\n{truncated_transcription}")
+                else:
+                    self.send_message(chat_id, f"📝 Persian Transcription:\n\n{transcription}")
                 
-                return f"📝 Transcription:\n\n{transcription}"
+                # Translate to English if OpenAI is available
+                if self.openai_client:
+                    self.send_message(chat_id, "🔄 Translating to English...")
+                    translation = self._translate_to_english(transcription)
+                    
+                    if translation:
+                        if len(translation) > 4000:
+                            translation = translation[:4000] + "... (truncated)"
+                        self.send_message(chat_id, f"🌍 English Translation:\n\n{translation}")
+                    else:
+                        self.send_message(chat_id, "❌ Could not translate to English. Translation service is unavailable.")
+                else:
+                    self.send_message(chat_id, "❌ Translation service is not configured.")
+                
+                return None  # We've already sent the messages
             else:
                 return "❌ Could not transcribe the voice message. Please try again with a clearer recording."
                 
         except Exception as e:
             logger.error(f"Error handling voice message: {e}", exc_info=True)
             return f"❌ Error processing voice message: {str(e)}"
+
+    def _translate_to_english(self, persian_text: str) -> Optional[str]:
+        """Translate Persian text to English using OpenAI GPT"""
+        try:
+            prompt = f"""Please translate the following Persian text to English. Provide only the English translation without any additional explanation or commentary:
+
+{persian_text}"""
+
+            response = self.openai_client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": "You are a professional translator. Translate Persian text to English accurately and naturally."},
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=1000,
+                temperature=0.3
+            )
+            
+            translation = response.choices[0].message.content.strip()
+            return translation
+            
+        except Exception as e:
+            logger.error(f"Error translating text: {e}", exc_info=True)
+            return None
 
     def _process_voice_message(self, file_id: str) -> Optional[str]:
         """Process voice message and transcribe in Persian"""
