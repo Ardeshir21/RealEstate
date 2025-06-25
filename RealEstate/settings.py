@@ -379,9 +379,9 @@ LOGGING = {
             'level': 'ERROR',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(BASE_DIR, 'logs/gunicorn.log'),
-            'maxBytes': 1024 * 1024 * 100,  # 100MB
-            'backupCount': 5,
-            'formatter': 'verbose',
+            'maxBytes': 1024 * 1024 * 10,  # 10MB (reduced from 100MB)
+            'backupCount': 2,  # Keep only 2 backup files (reduced from 5)
+            'formatter': 'simple',  # Use simple formatter instead of verbose
         },
     },
     'loggers': {
@@ -412,7 +412,7 @@ LOGGING = {
         },
         'gunicorn.access': {
             'handlers': ['gunicorn'],
-            'level': 'INFO',
+            'level': 'WARNING',  # Changed from INFO to WARNING to reduce log volume
             'propagate': False,
         },
         # Add specific logger for telegramApp

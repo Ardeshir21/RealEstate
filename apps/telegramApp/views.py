@@ -35,13 +35,22 @@ logger = logging.getLogger(__name__)
 class BotFactory:
     @staticmethod
     def create_bot(secret_token: str) -> Optional[TelegramBot]:
+        logger.info(f"Creating bot for secret_token: '{secret_token}'")
+        
         if secret_token == 'Birthday':
+            logger.info("Creating BirthdayBot")
             return BirthdayBot()
         elif secret_token == 'Phrase':
+            logger.info("Creating PhraseBot")
             return PhraseBot()
         elif secret_token == 'Voice':
+            logger.info("Creating VoiceTranscriptionBot")
             return VoiceTranscriptionBot()
+        elif secret_token == 'Dictionary' or secret_token == '':
+            logger.info("Creating DictionaryBot (default)")
+            return DictionaryBot()
         else:
+            logger.warning(f"Unknown secret_token '{secret_token}', defaulting to DictionaryBot")
             return DictionaryBot()
 
 class TelegramWebhookView(generic.View):
@@ -55,6 +64,9 @@ class TelegramWebhookView(generic.View):
             data = json.loads(request.body.decode('utf-8'))
             secret_token = request.headers.get('X-Telegram-Bot-Api-Secret-Token', '')
             
+            logger.info(f"Received webhook with secret_token: '{secret_token}'")
+            logger.info(f"Update data: {json.dumps(data, indent=2)}")
+            
             # Create appropriate bot instance
             bot = BotFactory.create_bot(secret_token)
             if not bot:
@@ -63,6 +75,7 @@ class TelegramWebhookView(generic.View):
 
             # Handle callback query if present
             if 'callback_query' in data:
+                logger.info("Handling callback query")
                 bot.handle_callback_query(data['callback_query'])
                 return HttpResponse('Success', status=200)
 
@@ -74,11 +87,21 @@ class TelegramWebhookView(generic.View):
             username = user.get('username', '')
             first_name = user.get('first_name', '')
             last_name = user.get('last_name', '')
+            message_text = message.get('text', '')
+
+            logger.info(f"Processing message from user {user_id} ({username}): '{message_text}'")
+            logger.info(f"Chat ID: {chat_id}")
 
             # Handle both text and voice messages
             response = bot.handle_command(message)
+            logger.info(f"Bot response: '{response}'")
+            
             if response:
-                bot.send_message(chat_id, response)
+                logger.info(f"Sending response to chat {chat_id}")
+                send_result = bot.send_message(chat_id, response)
+                logger.info(f"Send message result: {send_result}")
+            else:
+                logger.warning("Bot returned no response")
             
             return HttpResponse('Success', status=200)
 

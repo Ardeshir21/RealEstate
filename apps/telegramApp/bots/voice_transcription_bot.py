@@ -12,34 +12,62 @@ logger = logging.getLogger(__name__)
 
 class VoiceTranscriptionBot(TelegramBot):
     def __init__(self):
-        super().__init__(settings.TELEGRAM_VOICE_BOT_TOKEN)
-        
-        # Validate that we have the required settings
-        if not hasattr(settings, 'REPLICATE_API_TOKEN') or not settings.REPLICATE_API_TOKEN:
-            logger.error("REPLICATE_API_TOKEN not found in settings")
-            raise ValueError("REPLICATE_API_TOKEN is required for voice transcription bot")
-        
-        # Set Replicate API token as environment variable (preferred method)
-        os.environ["REPLICATE_API_TOKEN"] = settings.REPLICATE_API_TOKEN
-        
         try:
-            # Initialize replicate client for the new API version
-            self.replicate_client = replicate.Client(api_token=settings.REPLICATE_API_TOKEN)
-            logger.info("Replicate client initialized successfully")
+            logger.info("Initializing VoiceTranscriptionBot")
+            
+            # Check if token exists
+            if not hasattr(settings, 'TELEGRAM_VOICE_BOT_TOKEN'):
+                logger.error("TELEGRAM_VOICE_BOT_TOKEN not found in settings")
+                raise ValueError("TELEGRAM_VOICE_BOT_TOKEN is required")
+            
+            token = settings.TELEGRAM_VOICE_BOT_TOKEN
+            if not token:
+                logger.error("TELEGRAM_VOICE_BOT_TOKEN is empty")
+                raise ValueError("TELEGRAM_VOICE_BOT_TOKEN cannot be empty")
+            
+            logger.info(f"Using voice bot token: {token[:10]}...")
+            super().__init__(token)
+            
+            # Validate that we have the required settings
+            if not hasattr(settings, 'REPLICATE_API_TOKEN') or not settings.REPLICATE_API_TOKEN:
+                logger.error("REPLICATE_API_TOKEN not found in settings")
+                raise ValueError("REPLICATE_API_TOKEN is required for voice transcription bot")
+            
+            # Set Replicate API token as environment variable (preferred method)
+            os.environ["REPLICATE_API_TOKEN"] = settings.REPLICATE_API_TOKEN
+            
+            try:
+                # Initialize replicate client for the new API version
+                self.replicate_client = replicate.Client(api_token=settings.REPLICATE_API_TOKEN)
+                logger.info("Replicate client initialized successfully")
+            except Exception as e:
+                logger.error(f"Failed to initialize Replicate client: {e}")
+                # Don't raise here - allow bot to work for text commands even if Replicate fails
+                self.replicate_client = None
+                
+            logger.info("VoiceTranscriptionBot initialized successfully")
+            
         except Exception as e:
-            logger.error(f"Failed to initialize Replicate client: {e}")
+            logger.error(f"Failed to initialize VoiceTranscriptionBot: {e}", exc_info=True)
             raise
 
     def handle_command(self, message: Dict[str, Any]) -> Optional[str]:
         try:
+            logger.info(f"VoiceTranscriptionBot handling command: {message}")
+            
             # Handle voice messages
             if 'voice' in message:
+                logger.info("Handling voice message")
+                if not self.replicate_client:
+                    return "❌ Voice transcription is currently unavailable. Please try again later."
                 return self._handle_voice_message(message)
             
             # Handle text commands
             message_text = message.get('text', '')
+            logger.info(f"Handling text command: '{message_text}'")
             
             if message_text == '/start':
+                logger.info("Responding to /start command")
                 return (
                     "🎤 <b>Voice Transcription Bot</b>\n\n"
                     "Send me a voice message and I'll transcribe it to text for you!\n\n"
@@ -50,6 +78,7 @@ class VoiceTranscriptionBot(TelegramBot):
                     "Just send a voice message to get started! 🚀"
                 )
             elif message_text == '/help':
+                logger.info("Responding to /help command")
                 return (
                     "🆘 <b>How to use:</b>\n\n"
                     "1. Record a voice message in Telegram\n"
@@ -64,13 +93,14 @@ class VoiceTranscriptionBot(TelegramBot):
                     "/help - Show this help"
                 )
             else:
+                logger.info("Responding to unknown text command")
                 return (
                     "I can only transcribe voice messages. 🎤\n"
                     "Please send me a voice message or use /help for more information."
                 )
                 
         except Exception as e:
-            logger.error(f"Error in VoiceTranscriptionBot: {e}")
+            logger.error(f"Error in VoiceTranscriptionBot.handle_command: {e}", exc_info=True)
             return f"❌ An error occurred: {str(e)}"
 
     def _handle_voice_message(self, message: Dict[str, Any]) -> str:
