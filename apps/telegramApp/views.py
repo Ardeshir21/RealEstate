@@ -9,6 +9,7 @@ from typing import Optional
 from .bots.birthday_bot import BirthdayBot
 from .bots.dictionary_bot import DictionaryBot
 from .bots.phrase_bot import PhraseBot
+from .bots.voice_transcription_bot import VoiceTranscriptionBot
 from .bots.base import TelegramBot
 
 logger = logging.getLogger(__name__)
@@ -28,6 +29,9 @@ logger = logging.getLogger(__name__)
 # Birthday Reminder
 # https://api.telegram.org/bot<token>/setWebhook?url=https://www.gammaturkey.com/telegram/&secret_token=Birthday
 
+# Voice Transcription
+# https://api.telegram.org/bot<token>/setWebhook?url=https://www.gammaturkey.com/telegram/&secret_token=Voice
+
 class BotFactory:
     @staticmethod
     def create_bot(secret_token: str) -> Optional[TelegramBot]:
@@ -35,6 +39,8 @@ class BotFactory:
             return BirthdayBot()
         elif secret_token == 'Phrase':
             return PhraseBot()
+        elif secret_token == 'Voice':
+            return VoiceTranscriptionBot()
         else:
             return DictionaryBot()
 
@@ -69,6 +75,7 @@ class TelegramWebhookView(generic.View):
             first_name = user.get('first_name', '')
             last_name = user.get('last_name', '')
 
+            # Handle both text and voice messages
             response = bot.handle_command(message)
             if response:
                 bot.send_message(chat_id, response)
