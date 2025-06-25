@@ -139,7 +139,7 @@ class VoiceTranscriptionBot(TelegramBot):
             if duration > 300:  # 5 minutes
                 return "❌ Voice message is too long. Please keep it under 5 minutes."
             
-            # Initialize chat data if not exists
+            # Initialize pending_voice_messages for this chat if it doesn't exist
             if chat_id not in self.pending_voice_messages:
                 self.pending_voice_messages[chat_id] = {}
             
@@ -168,7 +168,9 @@ class VoiceTranscriptionBot(TelegramBot):
                 
                 self.send_message(chat_id, f"📝 Transcription ({language_display}):\n\n{transcription}")
                 
-                # Send language selection for next voice message
+                # Clear selected language and send language selection for next voice message
+                if 'selected_language' in self.pending_voice_messages[chat_id]:
+                    del self.pending_voice_messages[chat_id]['selected_language']
                 self._send_language_selection(chat_id)
                 return None
             else:
@@ -204,11 +206,9 @@ class VoiceTranscriptionBot(TelegramBot):
                 language = language_map.get(language_code, 'None')
                 language_display = "English 🇺🇸" if language_code == 'en' else "Persian 🇮🇷"
                 
-                # Initialize chat data if not exists
+                # Store selected language
                 if chat_id not in self.pending_voice_messages:
                     self.pending_voice_messages[chat_id] = {}
-                
-                # Store selected language
                 self.pending_voice_messages[chat_id]['selected_language'] = language
                 
                 # Edit the message to remove buttons and show waiting message
@@ -231,14 +231,17 @@ class VoiceTranscriptionBot(TelegramBot):
                         
                         self.send_message(chat_id, f"📝 Transcription ({language_display}):\n\n{transcription}")
                         
-                        # Send language selection for next voice message
+                        # Clear selected language and send language selection for next voice message
+                        if 'selected_language' in self.pending_voice_messages[chat_id]:
+                            del self.pending_voice_messages[chat_id]['selected_language']
                         self._send_language_selection(chat_id)
+                        return None
                     else:
                         self.send_message(chat_id, "❌ Could not transcribe the voice message. Please try again with a clearer recording.")
                         # Send language selection again for retry
                         self._send_language_selection(chat_id)
                     
-                    # Clean up the processed voice message data
+                    # Clean up only the file_id and duration, keep selected_language
                     if 'file_id' in self.pending_voice_messages[chat_id]:
                         del self.pending_voice_messages[chat_id]['file_id']
                     if 'duration' in self.pending_voice_messages[chat_id]:
