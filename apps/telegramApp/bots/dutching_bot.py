@@ -107,8 +107,10 @@ class DutchingBot(TelegramBot):
                     if not isinstance(v, dict) or 'odds' not in v:
                         return f"Error: The value for '{k}' must be a dictionary containing 'odds'."
                 
+                import html
                 result = calculate_arbitrage(team_configs)
-                return f"<pre>{result}</pre>"
+                escaped_result = html.escape(result)
+                return f"<pre>{escaped_result}</pre>"
             except (ValueError, SyntaxError) as e:
                 return f"Error parsing dictionary: Make sure it is valid Python syntax.\n{str(e)}"
             except Exception as e:
