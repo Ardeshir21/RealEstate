@@ -10,6 +10,7 @@ from .bots.birthday_bot import BirthdayBot
 from .bots.dictionary_bot import DictionaryBot
 from .bots.phrase_bot import PhraseBot
 from .bots.voice_transcription_bot import VoiceTranscriptionBot
+from .bots.dutching_bot import DutchingBot
 from .bots.base import TelegramBot
 
 logger = logging.getLogger(__name__)
@@ -32,6 +33,9 @@ logger = logging.getLogger(__name__)
 # Voice Transcription
 # https://api.telegram.org/bot<token>/setWebhook?url=https://www.gammaturkey.com/telegram/&secret_token=Voice
 
+# Dutching Arbitrage
+# https://api.telegram.org/bot<token>/setWebhook?url=https://www.gammaturkey.com/telegram/&secret_token=Dutching
+
 class BotFactory:
     @staticmethod
     def create_bot(secret_token: str) -> Optional[TelegramBot]:
@@ -46,6 +50,9 @@ class BotFactory:
         elif secret_token == 'Voice':
             logger.info("Creating VoiceTranscriptionBot")
             return VoiceTranscriptionBot()
+        elif secret_token == 'Dutching':
+            logger.info("Creating DutchingBot")
+            return DutchingBot()
         elif secret_token == 'Dictionary' or secret_token == '':
             logger.info("Creating DictionaryBot (default)")
             return DictionaryBot()
