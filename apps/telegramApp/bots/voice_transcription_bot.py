@@ -172,8 +172,8 @@ class VoiceTranscriptionBot(TelegramBot):
                         "content": prompt
                     }
                 ],
-                max_tokens=1000,
-                temperature=0.7
+                reasoning_effort="low",
+                max_completion_tokens=2000
             )
             
             translation = response.choices[0].message.content.strip()

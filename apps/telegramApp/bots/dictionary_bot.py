@@ -43,8 +43,8 @@ class DictionaryBot(TelegramBot):
                 {"role": "user", "content": word},
                 {"role": "system", "content": system_content}
             ],
-            temperature=0.8,
-            max_tokens=3000,
+            reasoning_effort="low",
+            max_completion_tokens=4000,
         )
         
         return response.choices[0].message.content
