@@ -37,7 +37,6 @@ class PhraseBot(TelegramBot):
                 {"role": "user", "content": topic},
                 {"role": "system", "content": system_content}
             ],
-            reasoning_effort="low",
             max_completion_tokens=4000,
         )
         

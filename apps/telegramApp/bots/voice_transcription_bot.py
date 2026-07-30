@@ -172,7 +172,6 @@ class VoiceTranscriptionBot(TelegramBot):
                         "content": prompt
                     }
                 ],
-                reasoning_effort="low",
                 max_completion_tokens=2000
             )
             
