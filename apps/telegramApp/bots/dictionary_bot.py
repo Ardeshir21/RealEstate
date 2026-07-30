@@ -38,7 +38,7 @@ class DictionaryBot(TelegramBot):
         )
 
         response = self.openai_client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-5-nano",
             messages=[
                 {"role": "user", "content": word},
                 {"role": "system", "content": system_content}

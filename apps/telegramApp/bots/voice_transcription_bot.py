@@ -155,7 +155,7 @@ class VoiceTranscriptionBot(TelegramBot):
             prompt = f"{persian_text}"
 
             response = self.openai_client.chat.completions.create(
-                model="gpt-4o-mini",
+                model="gpt-5-nano",
                 messages=[
                     {
                         "role": "system",
