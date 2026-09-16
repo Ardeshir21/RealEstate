@@ -1,0 +1,123 @@
+# RealEstate local development
+# Gluetun is the network namespace for mainframe + cron (VPN off).
+# Caddy must reverse_proxy to gluetun:9000, not mainframe:9000.
+# Host port 8080 avoids clashing with TurkeyMode on :80.
+
+services:
+  gluetun:
+    image: alpine:3.21
+    restart: no
+    command: sleep infinity
+    extra_hosts:
+      - "db:172.31.0.10"
+    networks:
+      - realestate_internal
+    healthcheck:
+      test: ["CMD-SHELL", "true"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 2s
+
+  mainframe:
+    build:
+      context: .
+      dockerfile: ./docker/mainframe/Dockerfile
+      args:
+        APP_NAME: ${APP_NAME:-RealEstate}
+    command: bash ./docker/mainframe/dev-start.sh
+    restart: no
+    network_mode: "service:gluetun"
+    volumes:
+      - .:/app
+      - media_volume:/app/media
+    env_file:
+      - .env
+    environment:
+      - APP_NAME=${APP_NAME:-RealEstate}
+      - DATABASE_HOST=172.31.0.10
+      - DATABASE_PORT=5432
+    depends_on:
+      db:
+        condition: service_started
+      gluetun:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:9000/', timeout=2)"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 25s
+
+  caddy:
+    build:
+      context: .
+      dockerfile: ./docker/caddy/dev.Dockerfile
+    restart: no
+    volumes:
+      - media_volume:/app/media
+    env_file:
+      - .env
+    ports:
+      - "8080:80"
+    networks:
+      - realestate_internal
+    depends_on:
+      mainframe:
+        condition: service_healthy
+
+  cron:
+    build:
+      context: .
+      dockerfile: ./docker/mainframe/Dockerfile
+      args:
+        APP_NAME: ${APP_NAME:-RealEstate}
+    command: python /app/docker/cron/run.py
+    restart: no
+    network_mode: "service:gluetun"
+    volumes:
+      - .:/app
+      - media_volume:/app/media
+    env_file:
+      - .env
+    environment:
+      - APP_NAME=${APP_NAME:-RealEstate}
+      - DATABASE_HOST=172.31.0.10
+      - DATABASE_PORT=5432
+    depends_on:
+      db:
+        condition: service_started
+      gluetun:
+        condition: service_healthy
+      mainframe:
+        condition: service_healthy
+
+  db:
+    build:
+      context: .
+      dockerfile: ./docker/database/Dockerfile
+    restart: no
+    ports:
+      - "5546:5432"
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME:-RealEstate}
+      POSTGRES_USER: ${DATABASE_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    networks:
+      realestate_internal:
+        ipv4_address: 172.31.0.10
+
+networks:
+  realestate_internal:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.0.0/16
+
+volumes:
+  db_volume:
+  media_volume:

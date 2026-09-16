@@ -11,60 +11,51 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
-
-# This part of code is for keep secret variables secure and also it to change some parameters for Development/Production
-# It returns the secrets_dict which can be used in the main code
-# This file is different in Server and my local PC
-secret_file = 'RealEstateKEYS.txt'
-secrets = ['SECRET_KEY', 'DEBUG' , 'DATABASE_NAME', 'DATABASE_USERNAME', 'DATABASE_PASSWORD',
- 'EMAIL_HOST', 'EMAIL_HOST_USER', 'EMAIL_HOST_PASSWORD', 'CHATGPT_API', 
- 'TELEGRAM_DICTIONARY_BOT_TOKEN', 'TELEGRAM_TOPIC_BOT_TOKEN', 'TELEGRAM_BIRTHDAY_BOT_TOKEN',
- 'TELEGRAM_VOICE_BOT_TOKEN', 'TELEGRAM_ADMIN_CODE', 'REPLICATE_API_TOKEN', 'TELEGRAM_DUTCHING_BOT_TOKEN']
-SECRETS_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-filepath = os.path.join(SECRETS_DIR, secret_file)
-secrets_dict = {}
-with open(filepath) as fp:
-   line = fp.readline()
-   for item in secrets:
-       secrets_dict[item] = line.strip()
-       line = fp.readline()
-
+from dotenv import load_dotenv, dotenv_values
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
 
+dotenv_path = os.path.join(BASE_DIR, ".env")
+env_variables = dotenv_values(dotenv_path)
+for key in env_variables:
+    if key in os.environ:
+        del os.environ[key]
+load_dotenv(dotenv_path)
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = secrets_dict['SECRET_KEY']
+SECRET_KEY = os.getenv("SECRET_KEY")
 
-# Chat gpt API key
-CHATGPT_API = secrets_dict['CHATGPT_API']
+CHATGPT_API = os.getenv("CHATGPT_API")
 
-# Telegram Bot API token
-TELEGRAM_DICTIONARY_BOT_TOKEN = secrets_dict['TELEGRAM_DICTIONARY_BOT_TOKEN']
-TELEGRAM_TOPIC_BOT_TOKEN = secrets_dict['TELEGRAM_TOPIC_BOT_TOKEN']
-TELEGRAM_BIRTHDAY_BOT_TOKEN = secrets_dict['TELEGRAM_BIRTHDAY_BOT_TOKEN']
-TELEGRAM_VOICE_BOT_TOKEN = secrets_dict['TELEGRAM_VOICE_BOT_TOKEN']
-TELEGRAM_DUTCHING_BOT_TOKEN = secrets_dict['TELEGRAM_DUTCHING_BOT_TOKEN']
-REPLICATE_API_TOKEN = secrets_dict['REPLICATE_API_TOKEN']
+TELEGRAM_DICTIONARY_BOT_TOKEN = os.getenv("TELEGRAM_DICTIONARY_BOT_TOKEN")
+TELEGRAM_TOPIC_BOT_TOKEN = os.getenv("TELEGRAM_TOPIC_BOT_TOKEN")
+TELEGRAM_BIRTHDAY_BOT_TOKEN = os.getenv("TELEGRAM_BIRTHDAY_BOT_TOKEN")
+TELEGRAM_VOICE_BOT_TOKEN = os.getenv("TELEGRAM_VOICE_BOT_TOKEN")
+TELEGRAM_DUTCHING_BOT_TOKEN = os.getenv("TELEGRAM_DUTCHING_BOT_TOKEN")
+REPLICATE_API_TOKEN = os.getenv("REPLICATE_API_TOKEN")
+TELEGRAM_ADMIN_CODE = os.getenv("TELEGRAM_ADMIN_CODE")
 
-# Telegram Bot Settings
-TELEGRAM_ADMIN_CODE = secrets_dict['TELEGRAM_ADMIN_CODE']
+DEBUG = os.getenv("DEBUG", "").strip().lower() in ("1", "true", "yes", "on")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-# The DEBUG value in 'RealEstateKEYS.txt' is an empty string ''
-# I used bool() to return False
-DEBUG = bool(secrets_dict['DEBUG'])
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+    if host.strip()
+]
 
-ALLOWED_HOSTS = ['161.35.103.31',
-                 'localhost',
-                 '127.0.0.1',
-                 'www.gammaturkey.com',
-                 'gammaturkey.com',
-                 ]
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
+    if origin.strip()
+]
+
+if os.getenv("MY_SPACE") == "production":
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    USE_X_FORWARDED_HOST = True
 
 # for debug analysis
 # INTERNAL_IPS = [
@@ -158,10 +149,10 @@ ROBOTS_USE_SCHEME_IN_HOST = True
 ROBOTS_USE_HOST = False
 
 # Email settings
-EMAIL_HOST = secrets_dict['EMAIL_HOST']
+EMAIL_HOST = os.getenv("EMAIL_HOST")
 EMAIL_PORT = 465
-EMAIL_HOST_USER = secrets_dict['EMAIL_HOST_USER']
-EMAIL_HOST_PASSWORD = secrets_dict['EMAIL_HOST_PASSWORD']
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_USE_SSL = True
 
 # Maintenace mode
@@ -172,15 +163,14 @@ MAINTENANCE_MODE_TEMPLATE = '503.html'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-# Digital Ocean Database
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': secrets_dict['DATABASE_NAME'],
-        'USER': secrets_dict['DATABASE_USERNAME'],
-        'PASSWORD': secrets_dict['DATABASE_PASSWORD'],
-        'HOST': 'host.docker.internal' if DEBUG else 'localhost',
-        'PORT': '',
+        'NAME': os.getenv("DATABASE_NAME"),
+        'USER': os.getenv("DATABASE_USERNAME"),
+        'PASSWORD': os.getenv("DATABASE_PASSWORD"),
+        'HOST': os.getenv("DATABASE_HOST", "localhost"),
+        'PORT': os.getenv("DATABASE_PORT", "5432"),
     }
 }
 

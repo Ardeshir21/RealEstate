@@ -5,7 +5,8 @@
 __pycache__/
 letsencrypt/
 media/
-migrations/
+# Track Django migrations; ignore only bytecode inside them
+**/migrations/__pycache__/
 venv
 staticfiles
 /static
@@ -15,5 +16,6 @@ staticfiles
 db.sqlite3
 RealEstateKEYS.txt
 Digital Ocean.txt
-requirements.txt
 maintenance_mode_state.txt
+*.dump
+.data-import/

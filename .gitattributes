@@ -1,0 +1,2 @@
+*.sh text eol=lf
+docker/cron/crontab text eol=lf

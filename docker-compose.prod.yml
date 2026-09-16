@@ -1,0 +1,106 @@
+# RealEstate production app stack.
+# Does not bind host 80/443 — shared edge Caddy does (TurkeyMode docker-compose.edge.yml).
+# Gluetun is the network namespace for mainframe + cron (VPN off until enabled).
+# Edge Caddy must reverse_proxy to realestate-gluetun:9000.
+
+services:
+  gluetun:
+    image: alpine:3.21
+    container_name: realestate-gluetun
+    restart: always
+    command: sleep infinity
+    extra_hosts:
+      - "db:172.31.0.10"
+    networks:
+      realestate_internal:
+      edge_net:
+        aliases:
+          - realestate-gluetun
+    healthcheck:
+      test: ["CMD-SHELL", "true"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 2s
+
+  mainframe:
+    build:
+      context: .
+      dockerfile: ./docker/mainframe/Dockerfile
+      args:
+        APP_NAME: ${APP_NAME:-RealEstate}
+    restart: always
+    network_mode: "service:gluetun"
+    volumes:
+      - static_volume:/app/static
+      - media_volume:/app/media
+    env_file:
+      - .env
+    environment:
+      - APP_NAME=${APP_NAME:-RealEstate}
+      - DATABASE_HOST=172.31.0.10
+      - DATABASE_PORT=5432
+    depends_on:
+      db:
+        condition: service_started
+      gluetun:
+        condition: service_healthy
+
+  cron:
+    build:
+      context: .
+      dockerfile: ./docker/mainframe/Dockerfile
+      args:
+        APP_NAME: ${APP_NAME:-RealEstate}
+    command: python /app/docker/cron/run.py
+    restart: always
+    network_mode: "service:gluetun"
+    volumes:
+      - media_volume:/app/media
+    env_file:
+      - .env
+    environment:
+      - APP_NAME=${APP_NAME:-RealEstate}
+      - DATABASE_HOST=172.31.0.10
+      - DATABASE_PORT=5432
+    depends_on:
+      db:
+        condition: service_started
+      gluetun:
+        condition: service_healthy
+
+  db:
+    build:
+      context: .
+      dockerfile: ./docker/database/Dockerfile
+    restart: always
+    ports:
+      - "127.0.0.1:5546:5432"
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME:-RealEstate}
+      POSTGRES_USER: ${DATABASE_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    networks:
+      realestate_internal:
+        ipv4_address: 172.31.0.10
+
+networks:
+  realestate_internal:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.0.0/16
+  edge_net:
+    name: edge_net
+    external: true
+
+volumes:
+  db_volume:
+  static_volume:
+    name: realestate_static
+  media_volume:
+    name: realestate_media

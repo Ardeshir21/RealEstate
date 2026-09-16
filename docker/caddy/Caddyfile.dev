@@ -1,0 +1,41 @@
+{
+    auto_https off
+}
+
+:80 {
+    request_body {
+        max_size 100MB
+    }
+
+    handle /media/* {
+        root * /app
+        file_server
+    }
+
+    handle {
+        reverse_proxy gluetun:9000 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+
+            transport http {
+                read_timeout 500s
+                write_timeout 500s
+                dial_timeout 30s
+            }
+        }
+    }
+
+    header {
+        Cache-Control "no-cache, no-store, must-revalidate"
+        Pragma "no-cache"
+        -Server
+    }
+
+    log {
+        output stdout
+        format console
+        level INFO
+    }
+}

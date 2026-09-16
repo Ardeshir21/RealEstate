@@ -1,0 +1,22 @@
+.env
+__pycache__
+**/__pycache__
+*.pyc
+.git
+.idea
+.vs
+.cursor
+venv
+gammaEnv
+realestateEnv
+media/
+static/
+General Documents
+nginx
+*.log
+db.sqlite3
+docs
+.data-import
+RealEstateKEYS.txt
+Digital Ocean.txt
+letsencrypt/
