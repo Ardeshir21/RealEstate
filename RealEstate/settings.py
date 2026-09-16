@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 from dotenv import load_dotenv, dotenv_values
+from .settings_django_q import *
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -82,9 +83,9 @@ INSTALLED_APPS = [
     'apps.blogApp',
     'apps.FAbaseApp',
     'apps.FAblogApp',
-    'apps.chatApp',
     'apps.telegramApp',
-    
+    'django_q',
+
     # for templates to sperate digits
     'django.contrib.humanize',
     # for models phone number field
@@ -94,9 +95,6 @@ INSTALLED_APPS = [
     'ckeditor_uploader',
     # for scss files usage
     'compressor',
-    # for debug analysis
-    # 'debug_toolbar',
-    'django_crontab',
 ]
 
 MIDDLEWARE = [
@@ -165,7 +163,7 @@ MAINTENANCE_MODE_TEMPLATE = '503.html'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv("DATABASE_NAME"),
         'USER': os.getenv("DATABASE_USERNAME"),
         'PASSWORD': os.getenv("DATABASE_PASSWORD"),
@@ -202,8 +200,6 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_L10N = True
-
 USE_TZ = True
 
 
@@ -217,7 +213,7 @@ STATICFILES_FINDERS = ['django.contrib.staticfiles.finders.FileSystemFinder',
 COMPRESS_PRECOMPILERS = (
     ('text/x-scss', 'django_libsass.SassCompiler'),
 )
-COMPRESS_OFFLINE = True
+COMPRESS_OFFLINE = not DEBUG
 LIBSASS_OUTPUT_STYLE = 'compressed'
 
 STATIC_URL = '/static/'
@@ -230,10 +226,18 @@ STATIC_URL = '/static/'
 # The root for collecting all static files
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
-# This is for production use only.
-# https://docs.djangoproject.com/en/1.10/ref/contrib/staticfiles/#manifeststaticfilesstorage
-if DEBUG == False:
-    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': (
+            'django.contrib.staticfiles.storage.StaticFilesStorage'
+            if DEBUG
+            else 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
+        ),
+    },
+}
 
 
 # The root for uploaded files
@@ -418,17 +422,3 @@ LOGGING = {
 
 # This helps to get the errors even if the DEBUG is False
 DEBUG_PROPAGATE_EXCEPTIONS = True
-
-# Crontab Settings
-CRONJOBS = [
-    # Run birthday reminders every day at 9:00 AM
-    ('0 9 * * *', 'apps.telegramApp.cron.send_automatic_birthday_reminders'),
-    
-    # You can add more scheduled jobs here as needed
-    # Format: ('cron schedule', 'path.to.function', ['args'], {kwargs})
-]
-
-# Crontab settings (optional)
-CRONTAB_LOCK_JOBS = True
-CRONTAB_DJANGO_PROJECT_NAME = 'RealEstate'
-CRONTAB_DJANGO_MANAGE_PATH = os.path.join(BASE_DIR, 'manage.py')

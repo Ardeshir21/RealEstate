@@ -13,13 +13,14 @@
     }
 
     handle {
-        reverse_proxy gluetun:9000 {
+        reverse_proxy mainframe:9000 {
             header_up Host {host}
             header_up X-Real-IP {remote_host}
             header_up X-Forwarded-For {remote_host}
             header_up X-Forwarded-Proto {scheme}
 
             transport http {
+                keepalive off
                 read_timeout 500s
                 write_timeout 500s
                 dial_timeout 30s

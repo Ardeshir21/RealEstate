@@ -13,7 +13,6 @@ import json
 import io
 import xlsxwriter
 import openai
-import telegram
 from django.utils.decorators import method_decorator
 import requests
 from django.views.decorators.csrf import csrf_exempt

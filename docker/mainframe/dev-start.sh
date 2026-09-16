@@ -38,4 +38,6 @@ elif [ "$status" -ne 0 ]; then
   echo "Could not inspect database (status=$status); skipping migrate."
 fi
 
+python manage.py migrate django_q --noinput --fake-initial || true
+python manage.py sync_q_schedules || true
 exec python manage.py runserver 0.0.0.0:9000

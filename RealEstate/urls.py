@@ -25,7 +25,6 @@ urlpatterns = [
     path('blog/', include('apps.blogApp.urls')),
     path('fa/', include('apps.FAbaseApp.urls')),
     path('fa/راهنمای-ترکیه/', include('apps.FAblogApp.urls')),
-    path('chat/', include('apps.chatApp.urls')),
     path('telegram/', include('apps.telegramApp.urls')),
 
     # This is for Blog Editor in blogApp.models.py

@@ -1,24 +1,8 @@
 # RealEstate local development
-# Gluetun is the network namespace for mainframe + cron (VPN off).
-# Caddy must reverse_proxy to gluetun:9000, not mainframe:9000.
+# Caddy reverse_proxies to mainframe:9000 on realestate_internal.
 # Host port 8080 avoids clashing with TurkeyMode on :80.
 
 services:
-  gluetun:
-    image: alpine:3.21
-    restart: no
-    command: sleep infinity
-    extra_hosts:
-      - "db:172.31.0.10"
-    networks:
-      - realestate_internal
-    healthcheck:
-      test: ["CMD-SHELL", "true"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
-      start_period: 2s
-
   mainframe:
     build:
       context: .
@@ -27,7 +11,8 @@ services:
         APP_NAME: ${APP_NAME:-RealEstate}
     command: bash ./docker/mainframe/dev-start.sh
     restart: no
-    network_mode: "service:gluetun"
+    networks:
+      - realestate_internal
     volumes:
       - .:/app
       - media_volume:/app/media
@@ -40,8 +25,6 @@ services:
     depends_on:
       db:
         condition: service_started
-      gluetun:
-        condition: service_healthy
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:9000/', timeout=2)"]
       interval: 5s
@@ -56,6 +39,7 @@ services:
     restart: no
     volumes:
       - media_volume:/app/media
+      - ./docker/caddy/Caddyfile.dev:/etc/caddy/Caddyfile:ro
     env_file:
       - .env
     ports:
@@ -66,15 +50,16 @@ services:
       mainframe:
         condition: service_healthy
 
-  cron:
+  qcluster:
     build:
       context: .
       dockerfile: ./docker/mainframe/Dockerfile
       args:
         APP_NAME: ${APP_NAME:-RealEstate}
-    command: python /app/docker/cron/run.py
+    command: python manage.py qcluster
     restart: no
-    network_mode: "service:gluetun"
+    networks:
+      - realestate_internal
     volumes:
       - .:/app
       - media_volume:/app/media
@@ -87,8 +72,6 @@ services:
     depends_on:
       db:
         condition: service_started
-      gluetun:
-        condition: service_healthy
       mainframe:
         condition: service_healthy
 

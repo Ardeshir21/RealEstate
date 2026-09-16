@@ -1,36 +1,21 @@
 # RealEstate production app stack.
 # Does not bind host 80/443 — shared edge Caddy does (TurkeyMode docker-compose.edge.yml).
-# Gluetun is the network namespace for mainframe + cron (VPN off until enabled).
-# Edge Caddy must reverse_proxy to realestate-gluetun:9000.
+# Edge Caddy must reverse_proxy to realestate-mainframe:9000 on edge_net.
 
 services:
-  gluetun:
-    image: alpine:3.21
-    container_name: realestate-gluetun
-    restart: always
-    command: sleep infinity
-    extra_hosts:
-      - "db:172.31.0.10"
-    networks:
-      realestate_internal:
-      edge_net:
-        aliases:
-          - realestate-gluetun
-    healthcheck:
-      test: ["CMD-SHELL", "true"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
-      start_period: 2s
-
   mainframe:
     build:
       context: .
       dockerfile: ./docker/mainframe/Dockerfile
       args:
         APP_NAME: ${APP_NAME:-RealEstate}
+    container_name: realestate-mainframe
     restart: always
-    network_mode: "service:gluetun"
+    networks:
+      realestate_internal:
+      edge_net:
+        aliases:
+          - realestate-mainframe
     volumes:
       - static_volume:/app/static
       - media_volume:/app/media
@@ -43,18 +28,17 @@ services:
     depends_on:
       db:
         condition: service_started
-      gluetun:
-        condition: service_healthy
 
-  cron:
+  qcluster:
     build:
       context: .
       dockerfile: ./docker/mainframe/Dockerfile
       args:
         APP_NAME: ${APP_NAME:-RealEstate}
-    command: python /app/docker/cron/run.py
+    command: python manage.py qcluster
     restart: always
-    network_mode: "service:gluetun"
+    networks:
+      - realestate_internal
     volumes:
       - media_volume:/app/media
     env_file:
@@ -66,8 +50,6 @@ services:
     depends_on:
       db:
         condition: service_started
-      gluetun:
-        condition: service_healthy
 
   db:
     build:

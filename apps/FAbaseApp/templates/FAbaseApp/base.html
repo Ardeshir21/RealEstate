@@ -138,7 +138,6 @@
                                   </ul>
                                 </li>
 
-                                <!-- <li><a alt="FAQ" href="{% url "scrapeApp:all_stores" %}">خرید کالا</a></li> -->
                                 {% for navCategory in blogCategoriesNav %}
                                   <li><a alt="{{navCategory.category}}" class="navbar-bold" href="{% url "FAblogApp:category_list" category=navCategory.slug %}">{{navCategory.category}}</a></li>
                                 {% endfor %}

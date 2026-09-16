@@ -1,4 +1,4 @@
-FROM python:3.10-bookworm
+FROM python:3.13-bookworm
 
 WORKDIR /app
 
@@ -13,7 +13,7 @@ RUN pip install --no-cache-dir --upgrade pip \
 COPY . .
 
 RUN mkdir -p /app/logs /app/static /app/media \
-    && sed -i 's/\r$//' ./docker/mainframe/dev-start.sh ./docker/cron/crontab \
+    && sed -i 's/\r$//' ./docker/mainframe/dev-start.sh \
     && chmod +x ./docker/mainframe/dev-start.sh
 
 EXPOSE 9000

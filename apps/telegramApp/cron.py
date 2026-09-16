@@ -1,5 +1,4 @@
 from apps.telegramApp.management.commands.send_birthday_reminder import Command
-from django.utils import timezone
 import logging
 
 logger = logging.getLogger(__name__)
@@ -7,8 +6,7 @@ logger = logging.getLogger(__name__)
 def send_automatic_birthday_reminders():
     """
     Send automatic birthday reminders to all users.
-    This function is specifically designed to be called by cron jobs
-    for daily automatic reminder processing.
+    Called daily at 09:00 UTC by django-q2 (Q_SCHEDULE).
     """
     try:
         args = []
