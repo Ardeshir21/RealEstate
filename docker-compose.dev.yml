@@ -1,6 +1,7 @@
 # RealEstate local development
 # Caddy reverse_proxies to mainframe:9000 on realestate_internal.
-# Host port 8080 avoids clashing with TurkeyMode on :80.
+# Host port 8081 avoids clashing with TurkeyMode on :80 and other stacks on :8080.
+# Host ./media is the prod backup from .data-import/realestate-media.tgz.
 
 services:
   mainframe:
@@ -15,7 +16,6 @@ services:
       - realestate_internal
     volumes:
       - .:/app
-      - media_volume:/app/media
     env_file:
       - .env
     environment:
@@ -38,12 +38,12 @@ services:
       dockerfile: ./docker/caddy/dev.Dockerfile
     restart: no
     volumes:
-      - media_volume:/app/media
+      - ./media:/app/media:ro
       - ./docker/caddy/Caddyfile.dev:/etc/caddy/Caddyfile:ro
     env_file:
       - .env
     ports:
-      - "8080:80"
+      - "8081:80"
     networks:
       - realestate_internal
     depends_on:
@@ -62,7 +62,6 @@ services:
       - realestate_internal
     volumes:
       - .:/app
-      - media_volume:/app/media
     env_file:
       - .env
     environment:
@@ -103,4 +102,3 @@ networks:
 
 volumes:
   db_volume:
-  media_volume:
